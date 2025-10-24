@@ -1,7 +1,7 @@
 import NextAuth from "next-auth";
-import { initDatabase } from "@/helper/database";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
+import prisma from '@/lib/prisma'
 
 // Extend the User type to include our custom fields
 declare module "next-auth" {
@@ -27,36 +27,23 @@ const handlers = NextAuth({
       },
       async authorize(credentials) {
         try {
-            console.log('berhasil1');
-          const { models } = await initDatabase();
-          console.log('berhasil2');
-
           if (!credentials?.email || !credentials?.password) {
             throw new Error("Please enter an email and password");
           }
 
-          console.log('berhasil3');
-
-          const user = await models.Users.findOne({ 
-            where: { email: credentials.email }
-          });
-
+          // Find user with Prisma
+          const user = await prisma.users.findUnique({ where: { email: credentials.email } });
           if (!user) {
             throw new Error("No user found with that email");
           }
-
-          console.log('berhasil4');
 
           const isValid = await bcrypt.compare(credentials.password, user.password);
           if (!isValid) {
             throw new Error("Invalid password");
           }
 
-          console.log('berhasil');
-          
-
           return {
-            id: user.id.toString(),
+            id: typeof user.id === 'bigint' ? user.id.toString() : String(user.id),
             email: user.email,
             name: user.name,
             level: user.level,

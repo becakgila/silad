@@ -1,6 +1,5 @@
-'use client'
+"use client"
 import Image from "next/image";
-import sequelize from "@/helper/database";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from 'react-toastify';

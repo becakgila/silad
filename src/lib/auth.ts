@@ -1,10 +1,11 @@
 import NextAuth from "next-auth";
-import SequelizeAdapter from "@auth/sequelize-adapter";
-import sequelize, {initDatabase} from "@/helper/database";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import prisma from '@/lib/prisma'
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  adapter: PrismaAdapter(prisma as any),
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -13,15 +14,15 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials ) {
-        await (await initDatabase()).sequelize.sync();
+        if (!credentials) return null;
 
-        const user = await (await initDatabase()).models.Users.findOne({ where: { email: credentials!.email } });
+        const user = await prisma.users.findUnique({ where: { email: credentials.email } });
         if (!user) throw new Error("User not found");
 
-        const isValid = await bcrypt.compare(credentials!.password, user.password);
+        const isValid = await bcrypt.compare(credentials.password, user.password);
         if (!isValid) throw new Error("Invalid password");
 
-        return { id: user.id, name: user.name, email: user.email };
+        return { id: typeof user.id === 'bigint' ? user.id.toString() : String(user.id), name: user.name, email: user.email };
       },
     }),
   ],
@@ -29,5 +30,4 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
-  
 });

@@ -1,4 +1,4 @@
-import models from "@/helper/database"
+import prisma from '@/lib/prisma'
 type UrlParams =  { 
 
   params : {
@@ -14,7 +14,9 @@ export async function GET(request: Request, { params } : UrlParams) {
     // const id =  params.id;
     // const nama =  params.nama;
 
-    const data = await models.users.findByPk(id)
+  // Prisma `users.id` is a BigInt in the schema; convert the incoming id to BigInt
+  const uid = BigInt(id as unknown as string);
+  const data = await prisma.users.findUnique({ where: { id: uid } })
 
     return new Response(JSON.stringify({ message: data }), {
       status: 200,
