@@ -22,24 +22,20 @@ export default function SignInForm() {
     e.preventDefault();
 
     const res = await signIn("credentials", {
-      redirect: true,
+      redirect: false,
       email,
       password,
-      callbackUrl: "/",
+      // callbackUrl: "/",
       
     });
     
-    // console.log(res);
     
 
-    if (!res?.ok) {
-      // console.error("Login failed:", res?.error, res);
-      toast.error(`Login failed: ${res?.error || 'Unknown error'}`);
+    if (res?.ok) {      
+      toast.error(`Login Gagal: ${res?.error || 'Unknown error'}`);
     }else {
-      console.log('berhasil login');
-      
-      // router.push('/');
-      
+      console.log('berhasil login');      
+      router.push('/');      
     }
   };
 
