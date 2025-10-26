@@ -10,9 +10,8 @@ type UrlParams =  {
 export async function GET(request: Request, { params } : UrlParams) {
   try {        
     
-    const {id} =  await params;
-    // const id =  params.id;
-    // const nama =  params.nama;
+    const {id} = params;
+
 
   // Prisma `users.id` is a BigInt in the schema; convert the incoming id to BigInt
   const uid = BigInt(id as unknown as string);

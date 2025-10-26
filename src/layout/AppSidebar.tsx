@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useRef, useState,useCallback } from "react";
+import React, { useEffect, useRef, useState,useCallback, } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -97,6 +97,43 @@ const othersItems: NavItem[] = [
 const AppSidebar: React.FC = () => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
+
+  const [navItemsState, setNavItemsState] = useState<NavItem[]>(navItems);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+            const response = await fetch('/api/component/modules'); // Replace with your API endpoint
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const api = await response.json();
+
+            console.log(api);
+            
+            
+            const result: NavItem[] = api.data.map((item: any) => ({
+              name: item.modul_name,
+              icon: <BoxCubeIcon />,
+              path: `/${item.modul_url}`,
+
+            }));
+            
+            setNavItemsState(result);
+          } catch (err) {
+            
+          } finally {
+            
+          }
+    }
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    console.log('navItemsState updated:', navItemsState);
+  }, [navItemsState]);
+
+  
 
   const renderMenuItems = (
     navItems: NavItem[],
@@ -240,7 +277,7 @@ const AppSidebar: React.FC = () => {
     // Check if the current path matches any submenu item
     let submenuMatched = false;
     ["main", "others"].forEach((menuType) => {
-      const items = menuType === "main" ? navItems : othersItems;
+      const items = menuType === "main" ? navItemsState : othersItems;
       items.forEach((nav, index) => {
         if (nav.subItems) {
           nav.subItems.forEach((subItem) => {
@@ -353,7 +390,7 @@ const AppSidebar: React.FC = () => {
                   <HorizontaLDots />
                 )}
               </h2>
-              {renderMenuItems(navItems, "main")}
+              {renderMenuItems(navItemsState, "main")}
             </div>
 
             <div className="">

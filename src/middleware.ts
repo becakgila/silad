@@ -17,6 +17,7 @@ export async function middleware(req: NextRequest) {
     pathname.startsWith('/static') ||
     pathname.startsWith('/public') ||
     pathname.startsWith('/images') ||
+    pathname.startsWith('/component') ||
     pathname === '/favicon.ico' ||
     pathname.startsWith('/api/auth')
   ) {
@@ -25,7 +26,7 @@ export async function middleware(req: NextRequest) {
 
 
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-  const authPaths = new Set(['/signin', '/signup', '/login']);
+  const authPaths = new Set(['/signin', '/signup']);
 
 
   if (authPaths.has(pathname)) {
@@ -55,10 +56,11 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
+  // Run middleware for root and any page except Next internals, static files, favicons and api routes
   matcher: [
-    '/((?!_next|static|public|favicon.ico|api/).*))',
+    '/',
+    '/((?!_next|static|public|favicon.ico|api).*)',
     '/signin',
-    '/signup',
-    '/login'
+    '/signup',    
   ],
 };

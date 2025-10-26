@@ -71,6 +71,7 @@ const handlers = NextAuth({
     async jwt({ token, user }) {
       if (user) {
         token.level = user.level;
+        token.id = user.id;
       }
       return token;
     },

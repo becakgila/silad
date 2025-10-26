@@ -1,6 +1,7 @@
 generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
+  previewFeatures = ["prismaSchemaFolder"]
 }
 
 datasource db {
@@ -28,4 +29,47 @@ model users {
 enum users_status {
   no
   yes
+}
+
+model user_haks {
+  hakid      BigInt    @id @unique(map: "user_haks_hakid_unique") @default(autoincrement()) @db.UnsignedBigInt
+  modul_id   Int
+  user_id    Int
+  level      Int
+  created_at DateTime? @db.Timestamp(0)
+  updated_at DateTime? @db.Timestamp(0)
+}
+
+model moduls {
+  modul_id     BigInt              @id @default(autoincrement()) @db.UnsignedBigInt
+  modul_name   String              @unique(map: "moduls_modul_name_unique") @db.VarChar(255)
+  modul_induk  Int
+  modul_urut   String              @db.VarChar(255)
+  modul_url    String              @db.VarChar(255)
+  modul_aktif  moduls_modul_aktif  @default(no)
+  modul_simbol String              @db.VarChar(255)
+  modul_akses  moduls_modul_akses  @default(Prodi)
+  modul_newtab moduls_modul_newtab @default(no)
+  modul_id_sms String              @db.VarChar(255)
+  created_at   DateTime?           @db.Timestamp(0)
+  updated_at   DateTime?           @db.Timestamp(0)
+}
+
+enum moduls_modul_aktif {
+  yes
+  no
+}
+
+enum moduls_modul_akses {
+  Administrator
+  Fakultas
+  Prodi
+  Pengunjung
+  Pengguna
+  Asesor
+}
+
+enum moduls_modul_newtab {
+  yes
+  no
 }
