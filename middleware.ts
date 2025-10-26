@@ -23,10 +23,11 @@ export async function middleware(req: NextRequest) {
   }
 
   // Public pages that don't require authentication
-  const publicPaths = ['/signin', '/signup', '/login', '/'];
+  const publicPaths = ['/signin', '/signup', '/login'];
   if (publicPaths.includes(pathname)) {
     return NextResponse.next();
   }
+  
 
   // Get the token from next-auth (uses NEXTAUTH_SECRET)
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
@@ -50,5 +51,8 @@ export async function middleware(req: NextRequest) {
 
 // Apply middleware to all routes except Next internals, API auth and public pages
 export const config = {
-  matcher: ['/((?!_next|static|public|favicon.ico|api/auth|signin|signup|login).*)'],
+  matcher: [
+    '/', // explicitly protect root path
+    '/((?!_next|static|public|favicon.ico|api/auth|signin|signup|login).*)', // protect all other non-public routes
+  ],
 };

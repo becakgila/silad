@@ -26,6 +26,9 @@ const handlers = NextAuth({
         password: { label: "password", type: "password" },
       },
       async authorize(credentials) {
+
+        console.log('test');
+        
         try {
           if (!credentials?.email || !credentials?.password) {
             throw new Error("Please enter an email and password");

@@ -29,9 +29,11 @@ export default function SignInForm() {
       
     });
     
+    console.log(res);
+    
     
 
-    if (res?.ok) {      
+    if (res?.status === 401 || res?.error) {      
       toast.error(`Login Gagal: ${res?.error || 'Unknown error'}`);
     }else {
       console.log('berhasil login');      
