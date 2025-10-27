@@ -18,12 +18,23 @@ import {
   UserCircleIcon,
 } from "../icons/index";
 import SidebarWidget from "./SidebarWidget";
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { fas } from '@fortawesome/free-solid-svg-icons'
+import { far } from '@fortawesome/free-regular-svg-icons'
+import { fab } from '@fortawesome/free-brands-svg-icons'
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+library.add(fas, far, fab)
+
+
 
 type NavItem = {
   name: string;
   icon: React.ReactNode;
   path?: string;
   subItems?: { name: string; path: string; pro?: boolean; new?: boolean }[];
+
 };
 
 const navItems: NavItem[] = [
@@ -94,29 +105,31 @@ const othersItems: NavItem[] = [
   },
 ];
 
-const AppSidebar: React.FC = () => {
+interface AppSidebarProps {
+  example?: boolean;
+}
+
+const AppSidebar: React.FC<AppSidebarProps> = ({example = false}) => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
 
-  const [navItemsState, setNavItemsState] = useState<NavItem[]>(navItems);
+  const [navItemsState, setNavItemsState] = useState<NavItem[]>(example ? navItems:[]);
 
   useEffect(() => {
+    if(example) return;
     const fetchData = async () => {
       try {
-            const response = await fetch('/api/component/modules'); // Replace with your API endpoint
+            const response = await fetch('/api/component/modules/nav'); // Replace with your API endpoint
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const api = await response.json();
-
-            console.log(api);
+            const api = await response.json();            
             
             
             const result: NavItem[] = api.data.map((item: any) => ({
               name: item.modul_name,
-              icon: <BoxCubeIcon />,
+              icon: <FontAwesomeIcon icon={item.modul_simbol.split(" ")} />,
               path: `/${item.modul_url}`,
-
             }));
             
             setNavItemsState(result);
@@ -129,10 +142,6 @@ const AppSidebar: React.FC = () => {
     fetchData();
   }, []);
 
-  useEffect(() => {
-    console.log('navItemsState updated:', navItemsState);
-  }, [navItemsState]);
-
   
 
   const renderMenuItems = (
@@ -141,6 +150,7 @@ const AppSidebar: React.FC = () => {
   ) => (
     <ul className="flex flex-col gap-4">
       {navItems.map((nav, index) => (
+        
         <li key={nav.name}>
           {nav.subItems ? (
             <button

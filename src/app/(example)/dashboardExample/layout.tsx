@@ -23,7 +23,7 @@ export default function AdminLayout({
   return (
     <div className="min-h-screen xl:flex">
       {/* Sidebar and Backdrop */}
-      <AppSidebar />
+      <AppSidebar example={true} />
       <Backdrop />
       {/* Main Content Area */}
       <div

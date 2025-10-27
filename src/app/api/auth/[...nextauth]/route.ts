@@ -3,7 +3,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import prisma from '@/lib/prisma'
 
-// Extend the User type to include our custom fields
 declare module "next-auth" {
   interface User {
     level?: string;
@@ -26,8 +25,6 @@ const handlers = NextAuth({
         password: { label: "password", type: "password" },
       },
       async authorize(credentials) {
-
-        console.log('test');
         
         try {
           if (!credentials?.email || !credentials?.password) {
