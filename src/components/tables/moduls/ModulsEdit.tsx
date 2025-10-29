@@ -18,6 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormControl, FormField, FormLabel } from "@/components/ui/form"
 import * as z from "zod";
 import { useForm } from "react-hook-form"
+import { toast } from "react-toastify"
 
 interface ModulsEditProps {
     IconButton: React.JSX.Element,
@@ -27,7 +28,7 @@ interface ModulsEditProps {
 const formSchema = z.object({
     modul_name: z.string().nonempty({ message: "Wajib Diisi!!!" }),
     modul_url: z.string().nonempty({ message: "Wajib Diisi!!!" }),
-    modul_urut: z.string().nonempty({ message: "Wajib Diisi!!!" }),
+    modul_urut: z.string().refine(v => { let n = Number(v); return !Number.isNaN(n) }, {message: "Bukan angka!!!"}).refine(v => { let n = Number(v); return n > 0 }, {message: "Harus lebih dari 0!!!"})    ,
     modul_simbol: z.string().nonempty({ message: "Wajib Diisi!!!" }),
     modul_akses: z.string().nonempty({ message: "Wajib Diisi!!!" }),
 })
@@ -36,6 +37,7 @@ const formSchema = z.object({
 export default function ModulsEdit({ IconButton, data }: ModulsEditProps) {
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [isOpen, setIsOpen] = useState<boolean>(false)
 
     const {
         modul_id, modul_url, modul_urut, modul_simbol, modul_name, modul_akses
@@ -56,33 +58,31 @@ export default function ModulsEdit({ IconButton, data }: ModulsEditProps) {
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
 
-        setIsLoading(true) // Set loading to true when the request starts
+        try {                                 
+            setIsLoading(true) 
 
+            const response = await fetch(`/api/component/modules/${modul_id}`, {
+            method: 'PATCH',
+            body: JSON.stringify(values),
+            })
 
+            if (response.status === 200){
+            toast.success("Modul berhasil diupdate.")
+            }
 
-        try {
-            //   const formData = new FormData(event.currentTarget)            
-            console.log(values);
-
-
-            //   const response = await fetch(`/api/component/modul/${modul_id}`, {
-            //     method: 'POST',
-            //     body: formData,
-            //   })
-
-            // Handle response if necessary
-            //   const data = await response.json()
-            // ...
+            console.log(response);
+            
         } catch (error) {
             // Handle error if necessary
             console.error(error)
         } finally {
-            setIsLoading(false) // Set loading to false when the request completes
+            setIsOpen(false); 
+            setIsLoading(false); 
         }
     }
 
     return (
-        <Dialog>
+        <Dialog open={isOpen} onOpenChange={setIsOpen} >
             <DialogTrigger asChild>
                 {IconButton}
             </DialogTrigger>
