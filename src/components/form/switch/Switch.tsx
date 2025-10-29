@@ -13,6 +13,7 @@ const Switch: React.FC<SwitchProps> = ({
   label,
   defaultChecked = false,
   disabled = false,
+  
   onChangee,
   color = "blue", // Default to blue color
 }) => {

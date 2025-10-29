@@ -1,9 +1,9 @@
-"use client";
 
 import Button from "@/components/ui/button/Button";
 import { TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { PencilIcon, TrashBinIcon } from "@/icons";
 import ModulsEdit from "./ModulsEdit";
+import ModulsSwitch from "./ModulsSwitch";
 import Modul from "@/type/model/modul";
 import Switch from "@/components/form/switch/Switch";
 
@@ -16,8 +16,6 @@ export default async function ModulsBody() {
         message?: string;
         data: Modul[];
     } = await res.json();
-
-
 
     return (
         <TableBody className="divide-y divide-gray-100 dark:divide-white/5">
@@ -38,24 +36,13 @@ export default async function ModulsBody() {
                     <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                         {order.modul_akses}
                     </TableCell>
-                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                        {/* <div></div> */}
-                        <Switch
-                            label=""
-                            defaultChecked={order.modul_aktif === 'yes'}
-                            
-                        />
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                        <div></div>
-                        <Switch
-                            label=""
-                            defaultChecked={order.modul_newtab === 'yes'}
-                            // onChangee={function (checked: boolean): void {
-                            //     throw new Error("Function not implemented.");
-                            //     }}
-                        />
-                    </TableCell>
+                    <ModulsSwitch defaultChecked={order.modul_aktif === 'yes'} modulId={order.modul_id} field="modul_aktif" />
+                    <ModulsSwitch
+                        defaultChecked={order.modul_newtab === 'yes'}
+                        modulId={order.modul_id}
+                        field="modul_newtab"
+                    />
+
                     <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">
                         <ModulsEdit IconButton={(<Button size="sm" variant="primary"
                             className="bg-green-600"
