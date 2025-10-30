@@ -5,17 +5,17 @@ import { PencilIcon, TrashBinIcon } from "@/icons";
 import ModulsEdit from "./ModulsEdit";
 import ModulsSwitch from "./ModulsSwitch";
 import Modul from "@/type/model/modul";
-import Switch from "@/components/form/switch/Switch";
+import ModulsDelete from "./ModulsDelete";
 
 export default async function ModulsBody() {
 
 
-    const res = await fetch(`${process.env.NEXT_AUTH_URL}/api/component/modules`);
+    const res = await fetch(`/api/component/modules`);
 
     const resJson: {
         message?: string;
         data: Modul[];
-    } = await res.json();
+    } = await res.json();    
 
     return (
         <TableBody className="divide-y divide-gray-100 dark:divide-white/5">
@@ -48,14 +48,21 @@ export default async function ModulsBody() {
                             className="bg-green-600"
                         >
                             <PencilIcon />
-                        </Button>)} data={order as any} />
+                        </Button>)} data={order} />
 
-                        <Button size="sm" variant="primary"
-                            className="bg-red-500"
+                        <ModulsDelete OpenButton={
+                            (<Button  size="sm" variant="primary"
+                                className="bg-red-500"
+                            >
+                                <TrashBinIcon />
+                            </Button>)
+                        } 
 
-                        >
-                            <TrashBinIcon />
-                        </Button>
+                        modulId={order.modul_id.toString()}                        
+                        
+                        />
+
+
                     </TableCell>
                 </TableRow>
             ))}
