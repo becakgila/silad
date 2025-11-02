@@ -10,6 +10,7 @@ export default function ModulsPagination() {
   const modulsPage = useModuls((state) => state.modulsPage);
   const modulsTotal = useModuls((state) => state.modulsTotal);
   const modulsTake = useModuls((state) => state.modulsTake);
+  const setModulsTake = useModuls((state) => state.setModulsTake)
 
   const options = [
     { value: "10", label: "10" },
@@ -17,8 +18,8 @@ export default function ModulsPagination() {
     { value: "30", label: "30" },
     { value: "40", label: "40" },
     { value: "50", label: "50" },
-    { value: "semua", label: "semuaaaaaaaaaaaaaaa" },
-  ];
+    { value: "semua", label: "Semua" },
+  ]; 
 
   // Calculate the range being shown based on current page and total
   // If there are no results, show 0 to 0
@@ -32,18 +33,17 @@ export default function ModulsPagination() {
   return (
     <div className="flex items-center justify-between border-t border-white/10 px-4 py-3 sm:px-6">
       <div className="flex flex-1 justify-between sm:hidden">
-        <a
-          href="#"
+        <button
+          
           className="relative inline-flex items-center rounded-md border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-gray-400 hover:bg-white/10"
         >
           Previous
-        </a>
-        <a
-          href="#"
+        </button>
+        <button          
           className="relative ml-3 inline-flex items-center rounded-md border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-gray-400 hover:bg-white/10"
         >
           Next
-        </a>
+        </button>
       </div>
       <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div>
@@ -100,10 +100,13 @@ export default function ModulsPagination() {
           <div className="relative">
               <Select
                 options={options}
-                // placeholder="10"
-                onChange={() => { }}
+                
+                onChange={(val) => { 
+
+                  setModulsTake(val === "semua"? modulsTotal : Number(val))
+                }}
                 defaultValue="10"
-                className="dark:bg-dark-900 px-1! py-2! pr-10!  field-sizing-content text-sm "
+                className="dark:bg-dark-900 px-2! py-2! pr-10!  field-sizing-content text-sm "
               />
               <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
                 <ChevronDownIcon size={16} />

@@ -1,7 +1,6 @@
 import React from "react";
 import {
-  Table,
-  TableBody,
+  Table,  
   TableCell,
   TableHeader,
   TableRow,
