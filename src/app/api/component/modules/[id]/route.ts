@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import prisma from '@/lib/prisma'
+import { revalidateTag } from "next/cache";
 
 
 export async function PATCH(request: NextRequest, { params } : { params: { id: string } }) {
@@ -21,7 +22,9 @@ export async function PATCH(request: NextRequest, { params } : { params: { id: s
     const serializedModul = {
       ...updatedModul,
       modul_id: updatedModul.modul_id.toString()
-    };
+    };    
+
+    
 
     return new Response(JSON.stringify({ 
         message: "Modul updated successfully",

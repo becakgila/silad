@@ -1,28 +1,64 @@
-
+"use client"
 import Button from "@/components/ui/button/Button";
 import { TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { PencilIcon, TrashBinIcon } from "@/icons";
 import ModulsEdit from "./ModulsEdit";
 import ModulsSwitch from "./ModulsSwitch";
-import Modul from "@/type/model/modul";
+import Modul from "@/types/model/modul";
 import ModulsDelete from "./ModulsDelete";
+import { useModuls } from "@/hooks/useModuls";
+import { useEffect } from "react";
 
-export default async function ModulsBody() {
+export default function ModulsBody() {
 
 
-    const res = await fetch(`/api/component/modules`);
+    const moduls = useModuls(state => state.moduls);
+    const searchModuls = useModuls(state => state.searchModuls);
+    const setModuls = useModuls(state => state.setModuls);
+    const takeModuls = useModuls(state => state.modulsTake);
+    const pageModuls = useModuls(state => state.modulsPage);
+    const setModulsTotal = useModuls(state => state.setModulsTotal);
 
-    const resJson: {
-        message?: string;
-        data: Modul[];
-    } = await res.json();    
+    useEffect(() => {
+
+        const fetchData = async () => {
+
+            const params = new URLSearchParams({
+                search: searchModuls,
+                take: takeModuls?.toString() || '10',
+                page: pageModuls?.toString() || '1' 
+            });
+
+            const res = await fetch(`/api/component/modules?${params.toString()}`, {
+                method: 'GET',
+                next: {
+                    tags: ['moduls-data'],
+                }
+            });
+
+            const resJson: {
+                message?: string;
+                data: Modul[];
+                total: number;
+            } = await res.json();
+
+            console.log(resJson, 'fetch data');
+            
+
+            setModuls(resJson.data);
+            setModulsTotal(resJson.total);
+        }
+
+        fetchData();
+    }, [searchModuls, takeModuls, pageModuls]);    
+
 
     return (
         <TableBody className="divide-y divide-gray-100 dark:divide-white/5">
-            {resJson.data.map((order, idx) => (
+            {moduls.map((order, idx) => (
                 <TableRow key={order.modul_id ?? idx}>
                     <TableCell className="px-4 py-3 w-10 text-gray-500 text-center text-theme-sm dark:text-gray-400">
-                        {idx + 1}
+                        {idx + 1 + ((pageModuls! - 1) * takeModuls!)}                        
                     </TableCell>
                     <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
                         {order.modul_name}
@@ -51,18 +87,14 @@ export default async function ModulsBody() {
                         </Button>)} data={order} />
 
                         <ModulsDelete OpenButton={
-                            (<Button  size="sm" variant="primary"
+                            (<Button size="sm" variant="primary"
                                 className="bg-red-500"
                             >
                                 <TrashBinIcon />
                             </Button>)
-                        } 
-
-                        modulId={order.modul_id.toString()}                        
-                        
+                        }
+                            modulId={order.modul_id.toString()}
                         />
-
-
                     </TableCell>
                 </TableRow>
             ))}

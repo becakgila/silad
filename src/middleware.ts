@@ -26,7 +26,7 @@ export async function middleware(req: NextRequest) {
 
 
   const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-  const authPaths = new Set(['/signin', '/signup']);
+  const authPaths = new Set(['/admin/signin', '/signup']);
 
 
   if (authPaths.has(pathname)) {
@@ -41,7 +41,7 @@ export async function middleware(req: NextRequest) {
 
 
   if (!token) {
-    const signInUrl = new URL('/signin', req.url);
+    const signInUrl = new URL('/admin/signin', req.url);
     signInUrl.searchParams.set('callbackUrl', req.url);
     return NextResponse.redirect(signInUrl);
   }
@@ -60,7 +60,7 @@ export const config = {
   matcher: [
     '/',
     '/((?!_next|static|public|favicon.ico|api).*)',
-    '/signin',
+    '/admin/signin',
     '/signup',    
   ],
 };

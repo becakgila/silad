@@ -12,13 +12,15 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import Modul from "@/type/model/modul"
+import Modul from "@/types/model/modul"
 import { FormEvent, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormControl, FormField, FormLabel } from "@/components/ui/form"
 import * as z from "zod";
 import { useForm } from "react-hook-form"
 import { toast } from "react-toastify"
+import { revalidatePath } from "next/cache"
+import { useRouter } from 'next/navigation';
 
 interface ModulsEditProps {
     IconButton: React.JSX.Element,
@@ -38,6 +40,7 @@ export default function ModulsEdit({ IconButton, data }: ModulsEditProps) {
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [isOpen, setIsOpen] = useState<boolean>(false)
+    const router = useRouter();
 
     const {
         modul_id, modul_url, modul_urut, modul_simbol, modul_name, modul_akses
@@ -53,8 +56,6 @@ export default function ModulsEdit({ IconButton, data }: ModulsEditProps) {
             modul_akses
         },
     })
-
-
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
 
@@ -76,6 +77,7 @@ export default function ModulsEdit({ IconButton, data }: ModulsEditProps) {
             // Handle error if necessary
             console.error(error)
         } finally {
+            router.refresh() 
             setIsOpen(false); 
             setIsLoading(false); 
         }

@@ -16,7 +16,7 @@ export default function BasicTables() {
     <div>
       <PageBreadcrumb pageTitle="Pengaturan Moduls" />
       <div className="space-y-6">
-        <ComponentCard title="Moduls List">
+        <ComponentCard title="Moduls List" >
           <ModulsTable />
         </ComponentCard>
       </div>

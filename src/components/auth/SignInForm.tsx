@@ -30,7 +30,7 @@ export default function SignInForm() {
     if (res?.status === 401 || res?.error) {      
       toast.error(`Login Gagal: ${res?.error || 'Unknown error'}`);
     }else {           
-      router.push('/');      
+      router.push('/admin/');      
     }
   };
 
