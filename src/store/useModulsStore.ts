@@ -15,7 +15,7 @@ interface ModulsState {
 }
 
 
-export const useModuls = create<ModulsState>((set) => ({
+export const useModulsStore = create<ModulsState>((set) => ({
     moduls: [],
     setModuls: (moduls: Modul[]) => set({ moduls }),
     searchModuls: '',

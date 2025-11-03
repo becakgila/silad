@@ -129,7 +129,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({example = false}) => {
             const result: NavItem[] = api.data.map((item: any) => ({
               name: item.modul_name,
               icon: <FontAwesomeIcon icon={item.modul_simbol.split(" ")} />,
-              path: `/${item.modul_url}`,
+              path: `/admin/${item.modul_url}`,
             }));
             
             setNavItemsState(result);
