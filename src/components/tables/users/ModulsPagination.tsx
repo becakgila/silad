@@ -1,16 +1,16 @@
 "use client"
 
 import Select from "@/components/form/Select";
-import { useModulsStore } from "@/store/useModulsStore";
+import { useUsersStore as  useModulsStore    } from "@/store/useUsersStore";
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
 export default function ModulsPagination() {
 
-  const setModulsPage = useModulsStore((state) => state.setModulsPage);
-  const modulsPage = useModulsStore((state) => state.modulsPage);
-  const modulsTotal = useModulsStore((state) => state.modulsTotal);
-  const modulsTake = useModulsStore((state) => state.modulsTake);
-  const setModulsTake = useModulsStore((state) => state.setModulsTake)
+  const setModulsPage = useModulsStore((state) => state.setUsersPage);
+  const modulsPage = useModulsStore((state) => state.usersPage);
+  const modulsTotal = useModulsStore((state) => state.UsersTotal);
+  const modulsTake = useModulsStore((state) => state.usersTake);
+  const setModulsTake = useModulsStore((state) => state.setUsersTake)
 
   const options = [
     { value: "10", label: "10" },
@@ -28,7 +28,32 @@ export default function ModulsPagination() {
 
   // Build page numbers from total and take. Ensure at least 1 page to avoid empty UI.
   const totalPages = Math.max(1, Math.ceil(modulsTotal / Math.max(1, modulsTake)));
-  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+  // Show a window of pages around the current page (3 before and 3 after)
+  const getDisplayedPages = () => {
+  const siblingCount = 2; // pages before and after current
+    const start = Math.max(1, modulsPage - siblingCount);
+    const end = Math.min(totalPages, modulsPage + siblingCount);
+
+    const pages: (number | string)[] = [];
+
+    // Add first page and leading ellipsis if needed
+    if (start > 1) {
+      pages.push(1);
+      if (start > 2) pages.push('...');
+    }
+
+    // Add main range
+    for (let p = start; p <= end; p++) pages.push(p);
+
+    // Add trailing ellipsis and last page if needed
+    if (end < totalPages) {
+      if (end < totalPages - 1) pages.push('...');
+      pages.push(totalPages);
+    }
+
+    return pages;
+  };
+  const displayedPages = getDisplayedPages();
 
   return (
     <div className="flex items-center justify-between border-t border-white/10 px-4 py-3 sm:px-6">
@@ -65,21 +90,32 @@ export default function ModulsPagination() {
             </button>
             {/* Current: "z-10 text-white focus-visible:outline-2 focus-visible:outline-offset-2 bg-indigo-500 focus-visible:outline-indigo-500", Default: "inset-ring focus:outline-offset-0 text-gray-200 inset-ring-gray-400 hover:bg-white/5" */}
             {
-              pageNumbers.map((number) => (
-                <button
-                  key={number}
-                  onClick={() => {
-                    setModulsPage(number);
-                  }}
+              displayedPages.map((item, idx) => {
+                if (item === '...') {
+                  const prev = displayedPages[idx - 1];
+                  const next = displayedPages[idx + 1];
+                  const key = `ellipsis-${String(prev)}-${String(next)}`;
+                  return (
+                    <span key={key} className="relative inline-flex items-center px-4 py-2 text-sm font-semibold text-gray-400">{item}</span>
+                  );
+                }
 
-                  className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${number === modulsPage
-                      ? 'z-10 bg-brand-500 text-white focus:z-20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500'
-                      : 'text-gray-400 inset-ring inset-ring-gray-400 hover:bg-white/5 focus:z-20 focus:outline-offset-0'
-                    }`}
-                >
-                  {number}
-                </button>
-              ))
+                const number = item as number;
+                return (
+                  <button
+                    key={number}
+                    onClick={() => {
+                      setModulsPage(number);
+                    }}
+                    className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${number === modulsPage
+                        ? 'z-10 bg-brand-500 text-white focus:z-20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500'
+                        : 'text-gray-400 inset-ring inset-ring-gray-400 hover:bg-white/5 focus:z-20 focus:outline-offset-0'
+                      }`}
+                  >
+                    {number}
+                  </button>
+                );
+              })
             }
 
             <button

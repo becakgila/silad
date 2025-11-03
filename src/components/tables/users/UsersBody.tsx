@@ -1,21 +1,16 @@
 "use client"
-import Button from "@/components/ui/button/Button";
+
 import { TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { PencilIcon, TrashBinIcon } from "@/icons";
-import ModulsEdit from "./ModulsEdit";
-import ModulsSwitch from "./ModulsSwitch";
-import Modul from "@/types/model/modul";
-import ModulsDelete from "./ModulsDelete";
 import { useUsersStore } from "@/store/useUsersStore";
 import { useEffect } from "react";
-import User from "@/types/model/users";
+import listDataType from "@/types/listDataTable";
 
 export default function UsersBody({
     api,
     listData
 } : {
     api: string,
-    listData: string[],
+    listData: listDataType[],
 }) {
 
 
@@ -71,47 +66,11 @@ export default function UsersBody({
                         listData.map((data :any, idx2) => {
                             const Component = data.component;                            
 
-                            return (<Component key={data.nama + idx2} table={order} />)
+                            return (<Component key={`${data.nama}-${idx2}`} table={order} />)
                         })
                     }
                     
-                    {/* <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                        {order.name}
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                        {order.nips || '-'}
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                        {order.email}
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                        {order.phone || '-' }
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                        {order.level}
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                        {order.fakultas_id}
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                        {order.prodi_id}
-                    </TableCell>
-                    <ModulsSwitch defaultChecked={order.status === 'yes'} modulId={order.id} field="status" />
-                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                        {order.email_verified_at ? new Date(order.email_verified_at).toLocaleDateString() : "-"  }
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                        {new Date(order.created_at).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                        {new Date(order.updated_at).toLocaleDateString()}
-                    </TableCell> */}
-                    {/* <ModulsSwitch defaultChecked={order.modul_aktif === 'yes'} modulId={order.modul_id} field="modul_aktif" /> */}
-                    {/* <ModulsSwitch
-                        defaultChecked={order.modul_newtab === 'yes'}
-                        modulId={order.modul_id}
-                        field="modul_newtab"
-                    /> */}
+                   
 
                     <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">
                         {/* <ModulsEdit IconButton={(<Button size="sm" variant="primary"

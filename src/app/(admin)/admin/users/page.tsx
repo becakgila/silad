@@ -3,23 +3,21 @@
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import UsersTable from "@/components/tables/users/UsersTable";
-
-import { Metadata } from "next";
 import React from "react";
 import listDataType from "@/types/listDataTable";
 import { TableCell } from "@/components/ui/table";
+import ModulsSwitch from "@/components/tables/users/ModulsSwitch";
 
 
 const table : {
-  headers : any[],
   api: string,
   listData: listDataType[]
 } = {
-  headers :["no", "nama", "nip", "email", "5", 6, 7, 8, 9, 10, 11, 12, 13],
+  
   api: "/api/users",
   listData: [
     {
-      name: "nama",
+      name: "Nama",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.name}
@@ -27,15 +25,15 @@ const table : {
       )
     },
     {
-      name: "nip",
+      name: "NIP",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.nips}
+          {table.nips || "-" }
         </TableCell>
       )
     },
     {
-      name: "email",
+      name: "Email",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.email}
@@ -43,13 +41,68 @@ const table : {
       )
     },
     {
-      name: "nama",
+      name: "No HP",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.name}
+          {table.phone || "-"}
         </TableCell>
       )
     },
+    {
+      name: "Level",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.level}
+        </TableCell>
+      )
+    },
+    {
+      name: "Fakultas_id",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.fakultas_id}
+        </TableCell>
+      )
+    },
+    {
+      name: "Prodi Id",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.prodi_id}
+        </TableCell>
+      )
+    },
+    {
+      name: "Status",
+      component: ({ table }) => (
+        <ModulsSwitch defaultChecked={table.status === 'yes'} modulId={table.id} field="status" />
+      )
+    },
+    {
+      name: "Email Verified At",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                        {table.email_verified_at ? new Date(table.email_verified_at).toLocaleDateString() : "-"  }
+                    </TableCell>
+      )
+    },
+    {
+      name: "Created At",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                        {new Date(table.created_at).toLocaleDateString()}
+                    </TableCell>
+      )
+    },
+    {
+      name: "Updated At",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                        {new Date(table.updated_at).toLocaleDateString()}
+                    </TableCell>
+      )
+    },
+    
   ]
 
 }
@@ -63,8 +116,8 @@ export default function BasicTables() {
     <div>
       <PageBreadcrumb pageTitle="Users" />
       <div className="space-y-6">
-        <ComponentCard title="Users List" >
-          <UsersTable headers={table.headers} api={table.api} listData={table.listData} />
+        <ComponentCard api={table.api} title="Users List" >
+          <UsersTable api={table.api} listData={table.listData} />
         </ComponentCard>
       </div>
     </div>
