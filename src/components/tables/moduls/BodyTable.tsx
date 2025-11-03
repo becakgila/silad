@@ -6,18 +6,18 @@ import ModulsEdit from "./ModulsEdit";
 import ModulsSwitch from "./ModulsSwitch";
 import Modul from "@/types/model/modul";
 import ModulsDelete from "./ModulsDelete";
-import { useModuls } from "@/hooks/useModuls";
+import { useModulsStore } from "@/store/useModulsStore";
 import { useEffect } from "react";
 
 export default function BodyTable() {
 
 
-    const moduls = useModuls(state => state.moduls);
-    const searchModuls = useModuls(state => state.searchModuls);
-    const setModuls = useModuls(state => state.setModuls);
-    const takeModuls = useModuls(state => state.modulsTake);
-    const pageModuls = useModuls(state => state.modulsPage);
-    const setModulsTotal = useModuls(state => state.setModulsTotal);
+    const moduls = useModulsStore(state => state.moduls);
+    const searchModuls = useModulsStore(state => state.searchModuls);
+    const setModuls = useModulsStore(state => state.setModuls);
+    const takeModuls = useModulsStore(state => state.modulsTake);
+    const pageModuls = useModulsStore(state => state.modulsPage);
+    const setModulsTotal = useModulsStore(state => state.setModulsTotal);
 
     useEffect(() => {
 
