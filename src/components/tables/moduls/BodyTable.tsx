@@ -9,7 +9,7 @@ import ModulsDelete from "./ModulsDelete";
 import { useModuls } from "@/hooks/useModuls";
 import { useEffect } from "react";
 
-export default function ModulsBody() {
+export default function BodyTable() {
 
 
     const moduls = useModuls(state => state.moduls);
