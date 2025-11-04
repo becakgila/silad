@@ -1,9 +1,9 @@
 
 import React, { use } from "react";
-import ModulsSearch from "../tables/moduls/ModulsSearch";
+import TablesSearch from "../tables/TablesSearch";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import Mod from "../tables/moduls/ModulsTable";
-import ModulsPagination from "../tables/moduls/ModulsPagination";
+
+import TablesPagination from "../tables/TablesPagination";
 
 
 
@@ -14,6 +14,7 @@ interface ComponentCardProps {
   children: React.ReactNode;
   className?: string; // Additional custom classes for styling
   desc?: string; // Description text
+  api: string; // Description text
 }
 
 const ComponentCard: React.FC<ComponentCardProps> = ({
@@ -21,6 +22,8 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
   children,
   className = "",
   desc = "",
+  api
+
 }) => {
 
 
@@ -38,7 +41,7 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
           </h3>
 
 
-          <ModulsSearch />
+          <TablesSearch />
 
         </div>
         {desc && (
@@ -53,7 +56,7 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
         <div className="space-y-6">{children}</div>
       </div>
 
-      <ModulsPagination />
+      <TablesPagination />
 
     </div>
   );

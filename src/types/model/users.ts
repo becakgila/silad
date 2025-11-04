@@ -1,4 +1,4 @@
-export default interface User {
+export default interface userType {
   id: string,
   name: string,
   nips: string,
