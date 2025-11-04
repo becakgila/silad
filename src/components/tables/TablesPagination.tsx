@@ -138,8 +138,16 @@ export default function TablesPagination() {
                 options={options}
                 
                 onChange={(val) => { 
+                  const newTake = val === "semua" ? modulsTotal : Number(val);
+                  // update take in the store
+                  setModulsTake(newTake);
 
-                  setModulsTake(val === "semua"? modulsTotal : Number(val))
+                  // compute new total pages and clamp current page if needed
+                  const safeTake = Math.max(1, newTake);
+                  const newTotalPages = Math.max(1, Math.ceil(modulsTotal / safeTake));
+                  if (modulsPage > newTotalPages) {
+                    setModulsPage(newTotalPages);
+                  }
                 }}
                 defaultValue="10"
                 className="dark:bg-dark-900 px-2! py-2! pr-10!  field-sizing-content text-sm "

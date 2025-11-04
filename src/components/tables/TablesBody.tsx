@@ -19,7 +19,13 @@ export default function TableBody({
     const setModuls = useUsersStore(state => state.setUsers);
     const takeModuls = useUsersStore(state => state.usersTake);
     const pageModuls = useUsersStore(state => state.usersPage);
+    const setPageModuls = useUsersStore(state => state.setUsersPage);
     const setModulsTotal = useUsersStore(state => state.setUsersTotal);
+
+
+    useEffect(() => {
+        setPageModuls(1);
+    }, []);
 
     useEffect(() => {
 
