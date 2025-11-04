@@ -1,11 +1,11 @@
 "use client"
 
-import { TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { TableBody as TBody, TableCell, TableRow } from "@/components/ui/table";
 import { useUsersStore } from "@/store/useUsersStore";
 import { useEffect } from "react";
 import listDataType from "@/types/listDataTable";
 
-export default function UsersBody({
+export default function TableBody({
     api,
     listData
 } : {
@@ -56,7 +56,7 @@ export default function UsersBody({
 
 
     return (
-        <TableBody className="divide-y divide-gray-100 dark:divide-white/5">
+        <TBody className="divide-y divide-gray-100 dark:divide-white/5">
             {moduls.map((order, idx) => (
                 <TableRow key={order.id ?? idx}>
                     <TableCell className="px-4 py-3 w-10 text-gray-500 text-center text-theme-sm dark:text-gray-400">
@@ -92,6 +92,6 @@ export default function UsersBody({
                     </TableCell>
                 </TableRow>
             ))}
-        </TableBody>
+        </TBody>
     );
 }

@@ -1,4 +1,4 @@
-export default interface Modul {
+export default interface modulType {
     modul_id: string;
     modul_name: string;
     modul_induk: number;

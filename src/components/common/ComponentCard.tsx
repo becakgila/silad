@@ -1,7 +1,9 @@
 
 import React, { use } from "react";
-import ModulsSearch from "../tables/users/ModulsSearch";
-import ModulsPagination from "../tables/users/ModulsPagination";
+import TablesSearch from "../tables/TablesSearch";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
+
+import TablesPagination from "../tables/TablesPagination";
 
 
 
@@ -39,7 +41,7 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
           </h3>
 
 
-      <ModulsSearch  />
+          <TablesSearch />
 
         </div>
         {desc && (
@@ -54,7 +56,7 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
         <div className="space-y-6">{children}</div>
       </div>
 
-      <ModulsPagination  />
+      <TablesPagination />
 
     </div>
   );

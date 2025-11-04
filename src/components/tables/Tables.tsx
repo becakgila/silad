@@ -1,12 +1,12 @@
 import React from "react";
 import {
-  Table,  
+  Table as TableUi,  
   TableCell,
   TableHeader,
   TableRow,
-} from "../../ui/table";
+} from "../ui/table";
 
-import UsersBody from "./UsersBody";
+import UsersBody from "./TablesBody";
 import listDataType from "@/types/listDataTable";
 
 interface UserTableProps {  
@@ -14,24 +14,25 @@ interface UserTableProps {
   listData: listDataType[]
 }
 
-export default function UsersTable ({api, listData} : UserTableProps)  {
+export default function Tables ({ api, listData} : UserTableProps)  {
   return (
     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
       <div className="max-w-full overflow-x-auto">
         <div className="min-w-[1102px]">
-          <Table>
+          <TableUi>
             {/* Table Header */}
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
                 <TableCell
                     isHeader                
-                    className="px-5 py-3 w-10 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"                    
+                    className="px-5 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
+                    
                   >
                     No
                   </TableCell>
 
                 {
-                  listData.map((data ) => (
+                  listData.map((data : any) => (
 
                   <TableCell
                     isHeader                
@@ -42,13 +43,13 @@ export default function UsersTable ({api, listData} : UserTableProps)  {
                   </TableCell>
                   ))
                 }
-        
+                
               </TableRow>
             </TableHeader>
 
             {/* Table Body */}
             <UsersBody api={api} listData={listData} />
-          </Table>
+          </TableUi>
         </div>
       </div>
     </div>

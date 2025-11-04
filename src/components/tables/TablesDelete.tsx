@@ -1,6 +1,6 @@
 "use client"
 
-import * as onConfirmAction from "@/actions/moduls/deleteModul";
+import * as onConfirmAction from "@/actions/tables/deleteTable";
 import { AlertDialogFooter, AlertDialogHeader, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useRouter } from "next/navigation";
 import React from "react";
@@ -9,14 +9,15 @@ import { toast } from "react-toastify";
 type Props = {
   OpenButton?: React.JSX.Element;
   modulId: string;
+  api: string;
 }
 
 
-const ModulsDelete = ({ OpenButton, modulId }: Props) => {
+const ModulsDelete = ({ OpenButton, modulId, api }: Props) => {
 
-  const onConfirm = async (modulId: string) => {
+  const onConfirm = async (modulId: string, api: string) => {
     try {
-      const res = await onConfirmAction.default(modulId)
+      const res = await onConfirmAction.default({modulId, api})
 
       toast.success(res.message ?? 'Modul berhasil di hapus', {
         position: "top-right",
@@ -44,7 +45,7 @@ const ModulsDelete = ({ OpenButton, modulId }: Props) => {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Batal</AlertDialogCancel>
-          <AlertDialogAction onClick={() => onConfirm(modulId)}>Lanjutkan</AlertDialogAction>
+          <AlertDialogAction onClick={() => onConfirm(modulId, api)}>Lanjutkan</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

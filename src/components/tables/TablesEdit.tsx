@@ -24,7 +24,8 @@ import { useRouter } from 'next/navigation';
 
 interface ModulsEditProps {
     IconButton: React.JSX.Element,
-    data: Modul
+    data: Modul,
+    api: string,
 }
 
 const formSchema = z.object({
@@ -36,7 +37,7 @@ const formSchema = z.object({
 })
 
 
-export default function ModulsEdit({ IconButton, data }: ModulsEditProps) {
+export default function ModulsEdit({ IconButton, data, api }: ModulsEditProps) {
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [isOpen, setIsOpen] = useState<boolean>(false)
@@ -62,7 +63,7 @@ export default function ModulsEdit({ IconButton, data }: ModulsEditProps) {
         try {                                 
             setIsLoading(true) 
 
-            const response = await fetch(`/api/component/modules/${modul_id}`, {
+            const response = await fetch(`${api}/${modul_id}`, {
             method: 'PATCH',
             body: JSON.stringify(values),
             })
