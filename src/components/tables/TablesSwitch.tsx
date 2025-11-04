@@ -6,10 +6,11 @@ import Switch from "@/components/form/switch/Switch";
 interface ModulsSwitchProps {
   defaultChecked?: boolean;
   modulId?: string | number;
-  field: "modul_aktif" | "modul_newtab";  // The field to update in the PATCH request
+  field: string;  // The field to update in the PATCH request
+  api: string;
 }
 
-const ModulsSwitch: React.FC<ModulsSwitchProps> = ({ defaultChecked = false, modulId, field }) => {
+const ModulsSwitch: React.FC<ModulsSwitchProps> = ({ defaultChecked = false, modulId, field, api }) => {
   const handleChange = (checked: boolean) => {
     
     if (!modulId) {
@@ -17,9 +18,8 @@ const ModulsSwitch: React.FC<ModulsSwitchProps> = ({ defaultChecked = false, mod
       console.log("ModulsSwitch toggled", checked);
       return;
     }
-
-    // Best-effort update — errors are logged but don't break UI.
-    fetch(`/api/component/modules/${modulId}`, {
+    
+    fetch(`${api}/${modulId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ [field]: checked ? "yes" : "no" }),

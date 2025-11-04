@@ -2,20 +2,18 @@
 
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import UsersTable from "@/components/tables/users/UsersTable";
+import UsersTable from "@/components/tables/Tables";
 
-import { Metadata } from "next";
 import React from "react";
 import listDataType from "@/types/listDataTable";
 import { TableCell } from "@/components/ui/table";
+import userType from "@/types/model/users";
 
 
-const table : {
-  headers : any[],
+const table : {  
   api: string,
-  listData: listDataType[]
-} = {
-  headers :["no", "nama", "nip", "email", "5", 6, 7, 8, 9, 10, 11, 12, 13],
+  listData: listDataType<userType>[]
+} = {  
   api: "/api/users",
   listData: [
     {
@@ -27,15 +25,15 @@ const table : {
       )
     },
     {
-      name: "nip",
+      name: "Nip",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.nips}
+          {table.nips || '-'}
         </TableCell>
       )
     },
     {
-      name: "email",
+      name: "Email",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.email}
@@ -43,10 +41,10 @@ const table : {
       )
     },
     {
-      name: "nama",
+      name: "No Hp",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.name}
+          {table.phone || '-' }
         </TableCell>
       )
     },
@@ -64,7 +62,7 @@ export default function BasicTables() {
       <PageBreadcrumb pageTitle="Users" />
       <div className="space-y-6">
         <ComponentCard title="Users List" >
-          <UsersTable headers={table.headers} api={table.api} listData={table.listData} />
+          <UsersTable api={table.api} listData={table.listData} />
         </ComponentCard>
       </div>
     </div>

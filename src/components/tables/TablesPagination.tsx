@@ -4,7 +4,7 @@ import Select from "@/components/form/Select";
 import { useModulsStore } from "@/store/useModulsStore";
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
-export default function ModulsPagination() {
+export default function TablesPagination() {
 
   const setModulsPage = useModulsStore((state) => state.setModulsPage);
   const modulsPage = useModulsStore((state) => state.modulsPage);

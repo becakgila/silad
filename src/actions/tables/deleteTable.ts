@@ -3,10 +3,16 @@
 import { revalidateTag } from "next/cache";
 import { toast } from "react-toastify";
 
-export default async function onConfirm(modulId: string) {
+interface onConfirmProps {
+  api: string;
+  modulId: string;
+}
+
+
+export default async function onConfirm({ modulId, api }: onConfirmProps) {
   
   try {
-    const res = await fetch(`${process.env.NEXT_AUTH_URL}/api/component/modules/${modulId}`, {
+    const res = await fetch(`${process.env.NEXT_AUTH_URL}${api}/${modulId}`, {
       method: 'DELETE',
     });
 

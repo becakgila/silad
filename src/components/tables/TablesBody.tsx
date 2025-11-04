@@ -1,21 +1,22 @@
 "use client"
 import Button from "@/components/ui/button/Button";
-import { TableBody, TableCell, TableRow } from "@/components/ui/table";
+import { TableBody as TBody, TableCell, TableRow } from "@/components/ui/table";
 import { PencilIcon, TrashBinIcon } from "@/icons";
-import ModulsEdit from "./ModulsEdit";
-import ModulsSwitch from "./ModulsSwitch";
+import ModulsEdit from "./TablesEdit";
+import ModulsSwitch from "./TablesSwitch";
 import Modul from "@/types/model/modul";
-import ModulsDelete from "./ModulsDelete";
+import ModulsDelete from "./TablesDelete";
 import { useUsersStore } from "@/store/useUsersStore";
 import { useEffect } from "react";
 import User from "@/types/model/users";
+import listDataType from "@/types/listDataTable";
 
-export default function UsersBody({
+export default function TableBody({
     api,
     listData
 } : {
     api: string,
-    listData: string[],
+    listData: listDataType[],
 }) {
 
 
@@ -61,7 +62,7 @@ export default function UsersBody({
 
 
     return (
-        <TableBody className="divide-y divide-gray-100 dark:divide-white/5">
+        <TBody className="divide-y divide-gray-100 dark:divide-white/5">
             {moduls.map((order, idx) => (
                 <TableRow key={order.id ?? idx}>
                     <TableCell className="px-4 py-3 w-10 text-gray-500 text-center text-theme-sm dark:text-gray-400">
@@ -71,7 +72,7 @@ export default function UsersBody({
                         listData.map((data :any, idx2) => {
                             const Component = data.component;                            
 
-                            return (<Component key={data.nama + idx2} table={order} />)
+                            return (<Component key={data.name + idx2} table={order} />)
                         })
                     }
                     
@@ -133,6 +134,6 @@ export default function UsersBody({
                     </TableCell>
                 </TableRow>
             ))}
-        </TableBody>
+        </TBody>
     );
 }
