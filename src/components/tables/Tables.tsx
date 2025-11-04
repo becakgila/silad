@@ -6,7 +6,7 @@ import {
   TableRow,
 } from "../ui/table";
 
-import UsersBody from "./TablesBody";
+import TablesBody from "./TablesBody";
 import listDataType from "@/types/listDataTable";
 
 interface UserTableProps {  
@@ -48,7 +48,7 @@ export default function Tables ({ api, listData} : UserTableProps)  {
             </TableHeader>
 
             {/* Table Body */}
-            <UsersBody api={api} listData={listData} />
+            <TablesBody api={api} listData={listData} />
           </TableUi>
         </div>
       </div>
