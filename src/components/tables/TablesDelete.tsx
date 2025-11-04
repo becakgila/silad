@@ -13,7 +13,7 @@ type Props = {
 }
 
 
-const ModulsDelete = ({ OpenButton, modulId, api }: Props) => {
+const TableDelete = ({ OpenButton, modulId, api }: Props) => {
 
   const onConfirm = async (modulId: string, api: string) => {
     try {
@@ -52,4 +52,4 @@ const ModulsDelete = ({ OpenButton, modulId, api }: Props) => {
   )
 }
 
-export default ModulsDelete
+export default TableDelete

@@ -1,6 +1,5 @@
 import { NextRequest } from "next/server";
 import prisma from '@/lib/prisma'
-import { revalidateTag } from "next/cache";
 
 
 export async function PATCH(request: NextRequest, { params } : { params: { id: string } }) {

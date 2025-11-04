@@ -13,74 +13,83 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Modul from "@/types/model/modul"
-import { FormEvent, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormControl, FormField, FormLabel } from "@/components/ui/form"
 import * as z from "zod";
-import { useForm } from "react-hook-form"
+import { useForm, Resolver } from "react-hook-form"
 import { toast } from "react-toastify"
 import { revalidatePath } from "next/cache"
 import { useRouter } from 'next/navigation';
+import userType from "@/types/model/users"
 
-interface ModulsEditProps {
+interface ModulsEditProps<T = any> {
     IconButton: React.JSX.Element,
-    data: Modul,
+    data: T,
     api: string,
+    formSchema: z.ZodSchema<any>;
+    resolver: Resolver<any, any, any> | undefined;
+    id: string | number;
+    formData: {
+        name: string;
+        label: string;
+    }[];
+    title?: string;
+    description?: string;
 }
 
-const formSchema = z.object({
-    modul_name: z.string().nonempty({ message: "Wajib Diisi!!!" }),
-    modul_url: z.string().nonempty({ message: "Wajib Diisi!!!" }),
-    modul_urut: z.string().refine(v => { let n = Number(v); return !Number.isNaN(n) }, {message: "Bukan angka!!!"}).refine(v => { let n = Number(v); return n > 0 }, {message: "Harus lebih dari 0!!!"})    ,
-    modul_simbol: z.string().nonempty({ message: "Wajib Diisi!!!" }),
-    modul_akses: z.string().nonempty({ message: "Wajib Diisi!!!" }),
-})
 
 
-export default function ModulsEdit({ IconButton, data, api }: ModulsEditProps) {
+
+export default function TablesEdit({
+    IconButton,
+    data,
+    api,
+    formSchema,
+    resolver,
+    id,
+    formData,
+    title = "Edit",
+    description="Buat perubahan di sini. Klik simpan ketika sudah melakukan perubahan."
+}: Readonly<ModulsEditProps>) {
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const router = useRouter();
 
-    const {
-        modul_id, modul_url, modul_urut, modul_simbol, modul_name, modul_akses
-    } = data;
+    useEffect(() => {        
+        
+    }, [])
 
-    const form = useForm<z.infer<typeof formSchema>>({
-        resolver: zodResolver(formSchema),
-        defaultValues: {
-            modul_name,
-            modul_url,
-            modul_urut,
-            modul_simbol,
-            modul_akses
-        },
+
+    const form = useForm<z.infer<any>>({
+        resolver: resolver,
+        defaultValues: { ...JSON.parse(JSON.stringify(data).replace(/\:null/gi, "\:\"\"")) },
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
 
-        try {                                 
-            setIsLoading(true) 
+        try {
+            setIsLoading(true)
 
-            const response = await fetch(`${api}/${modul_id}`, {
-            method: 'PATCH',
-            body: JSON.stringify(values),
+            const response = await fetch(`${api}/${id}`, {
+                method: 'PATCH',
+                body: JSON.stringify(values),
             })
 
-            if (response.status === 200){
-            toast.success("Modul berhasil diupdate.")
+            if (response.status === 200) {
+                toast.success("Modul berhasil diupdate.")
             }
 
             console.log(response);
-            
+
         } catch (error) {
             // Handle error if necessary
             console.error(error)
         } finally {
-            router.refresh() 
-            setIsOpen(false); 
-            setIsLoading(false); 
+            router.refresh()
+            setIsOpen(false);
+            setIsLoading(false);
         }
     }
 
@@ -93,14 +102,57 @@ export default function ModulsEdit({ IconButton, data, api }: ModulsEditProps) {
                 <Form {...form} >
                     <form onSubmit={form.handleSubmit(onSubmit)} className="gap-8 flex flex-col" >
                         <DialogHeader>
-                            <DialogTitle>Edit Modul</DialogTitle>
+                            <DialogTitle>{title}</DialogTitle>
                             <DialogDescription>
-                                Buat perubahan pada modul di sini. Klik simpan ketika sudah melakukan perubahan.
+                                {description}
                             </DialogDescription>
                         </DialogHeader>
                         <div className="grid gap-4">
 
-                            <FormField
+                            {
+                                formData.map((val, idx) => {
+
+
+                                    return (
+                                        <FormField
+                                            control={form.control}
+                                            key={`${val.name}-${idx}`}
+                                            name={val.name}
+                                            render={({ field }) => (
+
+                                                <div className="grid gap-3">
+                                                    <div className="flex flex-row justify-between">
+                                                        <FormLabel htmlFor={field.name} >{val.label}</FormLabel>
+                                                        {form.formState.errors[val.name] && (
+                                                            <div className="text-red-600 text-[0.6rem]">
+                                                                {form.formState.errors[val.name]!.message as string}
+                                                            </div>
+                                                        )}
+
+                                                    </div>
+                                                    <FormControl>
+                                                        <Input
+                                                            id={field.name}
+                                                            {...field}
+                                                        />
+                                                    </FormControl>
+
+
+
+                                                </div>
+                                            )}
+                                        />
+                                    )
+
+                                })
+
+                            }
+
+
+
+
+
+                            {/* <FormField
                                 control={form.control}
                                 name="modul_name"
                                 render={({ field }) => (
@@ -209,7 +261,7 @@ export default function ModulsEdit({ IconButton, data, api }: ModulsEditProps) {
                                     </div>
 
                                 )}
-                            />
+                            /> */}
 
                         </div>
                         <DialogFooter>

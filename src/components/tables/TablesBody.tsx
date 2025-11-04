@@ -42,9 +42,7 @@ export default function TableBody({
                 message?: string;
                 data: any;
                 total: number;
-            } = await res.json();
-
-            console.log(resJson, 'fetch data');
+            } = await res.json();            
             
 
             setModuls(resJson.data);
@@ -72,24 +70,7 @@ export default function TableBody({
                     
                    
 
-                    <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">
-                        {/* <ModulsEdit IconButton={(<Button size="sm" variant="primary"
-                            className="bg-green-600"
-                        >
-                            <PencilIcon />
-                        </Button>)} data={order} /> */}
-                        <></>
-
-                        {/* <ModulsDelete OpenButton={
-                            (<Button size="sm" variant="primary"
-                                className="bg-red-500"
-                            >
-                                <TrashBinIcon />
-                            </Button>)
-                        }
-                            modulId={order.modul_id.toString()}
-                        /> */}
-                    </TableCell>
+                    
                 </TableRow>
             ))}
         </TBody>
