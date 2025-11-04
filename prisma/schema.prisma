@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
+  provider        = "prisma-client-js"
+  output          = "../src/generated/prisma"
   previewFeatures = ["prismaSchemaFolder"]
 }
 
@@ -26,11 +26,6 @@ model users {
   updated_at        DateTime?    @db.Timestamp(0)
 }
 
-enum users_status {
-  no
-  yes
-}
-
 model user_haks {
   hakid      BigInt    @id @unique(map: "user_haks_hakid_unique") @default(autoincrement()) @db.UnsignedBigInt
   modul_id   Int
@@ -53,7 +48,50 @@ model moduls {
   modul_id_sms String              @db.VarChar(255)
   created_at   DateTime?           @db.Timestamp(0)
   updated_at   DateTime?           @db.Timestamp(0)
-  
+}
+
+model fakultas {
+  fakultas_id   BigInt    @id @unique(map: "fakultas_fakultas_id_unique") @default(autoincrement()) @db.UnsignedBigInt
+  fakultas_name String    @db.VarChar(255)
+  created_at    DateTime? @db.Timestamp(0)
+  updated_at    DateTime? @db.Timestamp(0)
+}
+
+model mahasiswa {
+  nim           String   @id @db.VarChar(20)
+  password      String?  @db.VarChar(255)
+  nik           String   @db.VarChar(255)
+  nama          String   @db.VarChar(255)
+  prodi         String   @db.VarChar(100)
+  angkatan      String   @db.VarChar(50)
+  jenis_kelamin String   @db.VarChar(255)
+  tempat_lahir  String   @db.VarChar(255)
+  tanggal_lahir DateTime @db.Timestamp(0)
+  agama         String   @db.VarChar(255)
+  no_hp         String   @db.VarChar(255)
+  email         String   @unique(map: "users_email_unique") @db.VarChar(255)
+  jalur_masuk   String   @db.VarChar(100)
+  alamat        String   @db.VarChar(255)
+  provinsi      String   @db.VarChar(100)
+  kota          String   @db.VarChar(100)
+  kecamatan     String   @db.VarChar(100)
+}
+
+model prodi {
+  prodi_id         String              @unique(map: "prodi_prodi_id_unique") @db.VarChar(255)
+  prodi_name       String              @db.VarChar(255)
+  prodi_jenjang    prodi_prodi_jenjang @default(S1)
+  prodi_akreditasi String?             @db.VarChar(255)
+  fakultas_id      Int
+  created_at       DateTime?           @db.Timestamp(0)
+  updated_at       DateTime?           @db.Timestamp(0)
+
+  @@index([fakultas_id], map: "fakultas_id")
+}
+
+enum users_status {
+  no
+  yes
 }
 
 enum moduls_modul_aktif {
@@ -73,4 +111,12 @@ enum moduls_modul_akses {
 enum moduls_modul_newtab {
   yes
   no
+}
+
+enum prodi_prodi_jenjang {
+  S1
+  S2
+  S3
+  D4
+  Profesi
 }

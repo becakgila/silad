@@ -1,17 +1,203 @@
+"use client"
+
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import HeaderTable from "@/components/tables/moduls/HeaderTable";
-import React from "react";
+import Tables from "@/components/tables/Tables";
+import TableDelete from "@/components/tables/TablesDelete";
+import TablesEdit from "@/components/tables/TablesEdit";
+import TablesSwitch from "@/components/tables/TablesSwitch";
+import Button from "@/components/ui/button/Button";
 
-const headers = ['No', 'Nama Moduls', 'Url', 'Icon', 'Hak Akses', 'Aktif', 'New Tab', 'Aksi'];
+import { TableCell } from "@/components/ui/table";
+import { TrashBinIcon } from "@/icons";
+
+import listDataType from "@/types/listDataTable";
+import mahasiswaType from "@/types/model/mahasiswa";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { PencilIcon } from "lucide-react";
+import React from "react";
+import z from "zod";
+
+const api = "/api/mahasiswa";
+
+const formSchema = z.object({
+
+    modul_name: z.string().nonempty({ message: "Wajib Diisi!!!" }),
+    modul_url: z.string().nonempty({ message: "Wajib Diisi!!!" }),
+    modul_urut: z.string().refine(v => { let n = Number(v); return !Number.isNaN(n) }, {message: "Bukan angka!!!"}).refine(v => { let n = Number(v); return n > 0 }, {message: "Harus lebih dari 0!!!"})    ,
+    modul_simbol: z.string().nonempty({ message: "Wajib Diisi!!!" }),
+    modul_akses: z.string().nonempty({ message: "Wajib Diisi!!!" }),
+})
+
+const table : {  
+  api: string,
+  listData: listDataType<mahasiswaType>[]
+} = {  
+  api,
+  listData: [
+    {
+      name: "NIM",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.nim || "-"}
+        </TableCell>
+      )
+    },
+    {
+      name: "NAMA",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.nama || '-'}
+        </TableCell>
+      )
+    },
+    {
+      name: "PRODI",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.prodi || '-'}
+        </TableCell>
+      )
+    },
+    {
+      name: "ANGLKATAN",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.angkatan || '-'}
+        </TableCell>
+      )
+    },
+    {
+      name: "JENIS KELAMIN",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.jenis_kelamin || '-'}
+        </TableCell>          
+      )
+    },
+    {
+      name: "TEMPAT LAHIR",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.tempat_lahir || '-'}
+        </TableCell>        
+      )
+    },
+     {
+      name: "TANGGAL LAHIR",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.tanggal_lahir ? new Date(table.tanggal_lahir).toLocaleDateString() : "-"  }
+        </TableCell>        
+      )
+    },
+     {
+      name: "AGAMA",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.agama || '-'}
+        </TableCell>        
+      )
+    },
+     {
+      name: "HP",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.no_hp || '-'}
+        </TableCell>        
+      )
+    },
+     {
+      name: "JALUR MASUK",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.jalur_masuk || '-'}
+        </TableCell>        
+      )
+    },
+     {
+      name: "ALAMAT",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.alamat || '-'}
+        </TableCell>        
+      )
+    },
+     {
+      name: "PROVINSI",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.provinsi || '-'}
+        </TableCell>        
+      )
+    },
+    {
+      name: "Aksi",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">
+                        {/* <TablesEdit 
+                          api={api} 
+                          IconButton={(
+                            <Button size="sm" variant="primary"
+                              className="bg-green-600"
+                            >
+                                <PencilIcon />
+                            </Button>
+                          )} 
+                          data={table} 
+                          formData={[
+                            {
+                              name: "modul_name",
+                              label: "Nama"                              
+                            },
+                            {
+                              name: "modul_url",
+                              label: "Url"                              
+                            },
+                            {
+                              name: "modul_urut",
+                              label: "Urutan"                              
+                            },
+                            {
+                              name: "modul_simbol",
+                              label: "Icon"                              
+                            },
+                            {
+                              name: "modul_akses",
+                              label: "Akses"                              
+                            },
+                          ]}
+                          formSchema={formSchema}
+                          resolver={zodResolver(formSchema)}
+                          id={table.nim}                        
+                        /> */}
+                        
+
+                        <TableDelete api={api} OpenButton={
+                            (<Button size="sm" variant="primary"
+                                className="bg-red-500"
+                            >
+                                <TrashBinIcon />
+                            </Button>)
+                        }
+                            modulId={table.nim}
+                        />
+                    </TableCell>
+      )
+    },
+    
+    
+  ]
+
+}
 
 export default function BasicTables() {
   return (
     <div>
       <PageBreadcrumb pageTitle="Data Mahasiswa" />
       <div className="space-y-6">
-        <ComponentCard title="Mahasiswa List" >
-          <HeaderTable headers={headers} />
+        <ComponentCard api={table.api} title="Mahasiswa List" >
+          <Tables listData={table.listData} api={table.api} />
         </ComponentCard>
       </div>
     </div>
