@@ -17,7 +17,7 @@ import { TrashBinIcon } from "@/icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import userModalForm from "@/components/tables/modal/userModalForm";
-import { useUsersStore } from "@/store/useUsersStore";
+import { useTablesStore } from "@/store/useTablesStore";
 
 
 const api = "/api/users";

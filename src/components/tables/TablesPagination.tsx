@@ -1,7 +1,7 @@
 "use client"
 
 import Select from "@/components/form/Select";
-import { useUsersStore as  useModulsStore    } from "@/store/useUsersStore";
+import { useTablesStore as  useModulsStore    } from "@/store/useTablesStore";
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
 export default function TablesPagination() {
@@ -9,7 +9,7 @@ export default function TablesPagination() {
   const setModulsPage = useModulsStore((state) => state.setUsersPage);
   const modulsPage = useModulsStore((state) => state.usersPage);
   const modulsTotal = useModulsStore((state) => state.UsersTotal);
-  const modulsTake = useModulsStore((state) => state.usersTake);
+  const modulsTake = useModulsStore((state) => state.tablesTake);
   const setModulsTake = useModulsStore((state) => state.setUsersTake)
 
   const options = [

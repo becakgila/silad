@@ -3,6 +3,16 @@ import { Input } from "@/components/ui/input"
 import { Table } from "lucide-react"
 import { UseFormReturn } from "react-hook-form"
 import TableFormField from "../TableFormField"
+import z from "zod"
+
+const modulFormSchema = z.object({
+
+    modul_name: z.string().nonempty({ message: "Wajib Diisi!!!" }),
+    modul_url: z.string().nonempty({ message: "Wajib Diisi!!!" }),
+    modul_urut: z.string().refine(v => { let n = Number(v); return !Number.isNaN(n) }, {message: "Bukan angka!!!"}).refine(v => { let n = Number(v); return n > 0 }, {message: "Harus lebih dari 0!!!"})    ,
+    modul_simbol: z.string().nonempty({ message: "Wajib Diisi!!!" }),
+    modul_akses: z.string().nonempty({ message: "Wajib Diisi!!!" }),
+})
 
 const modulModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
   ({ form }) => (
@@ -53,5 +63,7 @@ const modulModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
  
 ]
 
+
+export { modulFormSchema };
 
 export default modulModalForm;

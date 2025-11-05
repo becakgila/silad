@@ -15,28 +15,38 @@ export async function GET(request: Request) {
 
     const whereClause = {
       // OR: [
-        // {
-        //   modul_name: {
-        //     contains: search,
-        //   }
-        // },
-        // {
-        //   modul_url: {
-        //     contains: search,
-        //   }
-        // },
-        // {
-        //   modul_simbol: {
-        //     contains: search,
-        //   }
-        // },
-        // {
-        //   modul_akses: {
-        //     in: Object.values(moduls_modul_akses).filter(s =>
-        //       s.toLowerCase().includes(search)
-        //     ),
-        //   }
-        // },
+      //   {
+      //     name: {
+      //       contains: search,
+      //     }
+      //   },
+      //   {
+      //     nips: {
+      //       contains: search,
+      //     }
+      //   },
+      //   {
+      //     email: {
+      //       contains: search,
+      //     }
+      //   },
+      //   {
+      //     phone: {
+      //       contains: search,
+      //     }
+      //   },
+      //   {
+      //     level: {
+      //       contains: search,
+      //     }
+      //   },
+      //   // {
+      //   //   modul_akses: {
+      //   //     in: Object.values(moduls_modul_akses).filter(s =>
+      //   //       s.toLowerCase().includes(search)
+      //   //     ),
+      //   //   }
+      //   // },
 
       // ]
     }
