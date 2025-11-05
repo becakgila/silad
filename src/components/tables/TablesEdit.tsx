@@ -17,7 +17,7 @@ import { FormEvent, useEffect, useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Form, FormControl, FormField, FormLabel } from "@/components/ui/form"
 import * as z from "zod";
-import { useForm, Resolver } from "react-hook-form"
+import { useForm, Resolver, UseFormReturn } from "react-hook-form"
 import { toast } from "react-toastify"
 import { revalidatePath } from "next/cache"
 import { useRouter } from 'next/navigation';
@@ -30,10 +30,7 @@ interface ModulsEditProps<T = any> {
     formSchema: z.ZodSchema<any>;
     resolver: Resolver<any, any, any> | undefined;
     id: string | number;
-    formData: {
-        name: string;
-        label: string;
-    }[];
+    formData: React.FC<{ form: UseFormReturn<any, any, any> }>[];
     title?: string;
     description?: string;
 }
@@ -110,37 +107,13 @@ export default function TablesEdit({
                         <div className="grid gap-4">
 
                             {
-                                formData.map((val, idx) => {
+                                formData.map((Component, idx) => {
 
 
                                     return (
-                                        <FormField
-                                            control={form.control}
-                                            key={`${val.name}-${idx}`}
-                                            name={val.name}
-                                            render={({ field }) => (
-
-                                                <div className="grid gap-3">
-                                                    <div className="flex flex-row justify-between">
-                                                        <FormLabel htmlFor={field.name} >{val.label}</FormLabel>
-                                                        {form.formState.errors[val.name] && (
-                                                            <div className="text-red-600 text-[0.6rem]">
-                                                                {form.formState.errors[val.name]!.message as string}
-                                                            </div>
-                                                        )}
-
-                                                    </div>
-                                                    <FormControl>
-                                                        <Input
-                                                            id={field.name}
-                                                            {...field}
-                                                        />
-                                                    </FormControl>
-
-
-
-                                                </div>
-                                            )}
+                                        <Component
+                                            key={`form-data-${idx}`}
+                                            form={form}
                                         />
                                     )
 

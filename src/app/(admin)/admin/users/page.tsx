@@ -4,7 +4,7 @@ import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import UsersTable from "@/components/tables/Tables";
 
-import React from "react";
+import React, { useEffect } from "react";
 import listDataType from "@/types/listDataTable";
 import { TableCell } from "@/components/ui/table";
 import userType from "@/types/model/users";
@@ -16,6 +16,8 @@ import TableDelete from "@/components/tables/TablesDelete";
 import { TrashBinIcon } from "@/icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
+import userModalForm from "@/components/tables/modal/userModalForm";
+import { useUsersStore } from "@/store/useUsersStore";
 
 
 const api = "/api/users";
@@ -29,14 +31,16 @@ const formSchema = z.object({
   level: z.string(),
   // modul_url: z.string().nonempty({ message: "Wajib Diisi!!!" }),
   // modul_urut: z.string().refine(v => { let n = Number(v); return !Number.isNaN(n) }, {message: "Bukan angka!!!"}).refine(v => { let n = Number(v); return n > 0 }, {message: "Harus lebih dari 0!!!"})    ,
-    // modul_simbol: z.string().nonempty({ message: "Wajib Diisi!!!" }),
-    // modul_akses: z.string().nonempty({ message: "Wajib Diisi!!!" }),
+  // modul_simbol: z.string().nonempty({ message: "Wajib Diisi!!!" }),
+  // modul_akses: z.string().nonempty({ message: "Wajib Diisi!!!" }),
 })
 
-const table : {  
+
+
+const table: {
   api: string,
   listData: listDataType<userType>[]
-} = {  
+} = {
   api: api,
   listData: [
     {
@@ -67,7 +71,7 @@ const table : {
       name: "No Hp",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.phone || '-' }
+          {table.phone || '-'}
         </TableCell>
       )
     },
@@ -81,81 +85,66 @@ const table : {
       name: "Email Verified At",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                        {table.email_verified_at ? new Date(table.email_verified_at).toLocaleDateString() : "-"  }
-                    </TableCell>
+          {table.email_verified_at ? new Date(table.email_verified_at).toLocaleDateString() : "-"}
+        </TableCell>
       )
     },
     {
       name: "Created At",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                        {table.created_at ? new Date(table.created_at).toLocaleDateString() : "-"  }
-                    </TableCell>
+          {table.created_at ? new Date(table.created_at).toLocaleDateString() : "-"}
+        </TableCell>
       )
     },
     {
       name: "Updated At",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                        {table.updated_at ? new Date(table.updated_at).toLocaleDateString() : "-"  }
-                    </TableCell>
+          {table.updated_at ? new Date(table.updated_at).toLocaleDateString() : "-"}
+        </TableCell>
       )
     },
     {
       name: "Aksi",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">
-                        <TablesEdit formData={
-                          [
-                            {
-                              label: "Nama",
-                              name: "name"
-                            },
-                            {
-                              label: "NIP",
-                              name: "nips"
-                            },
-                            {
-                              label: "Email",
-                              name: "email"
-                            },
-                            {
-                              label: "No Hp",
-                              name: "phone"
-                            },
-                            {
-                              label: "Level",
-                              name: "level"
-                            },
-                          ]
-                        } id={table.id} formSchema={formSchema} resolver={zodResolver(formSchema)} api={api} IconButton={(<Button size="sm" variant="primary"
-                            className="bg-green-600"
-                        >
-                            <PencilIcon />
-                        </Button>)} data={ table } />
-                        
+          <TablesEdit
+            formData={userModalForm}
+            id={table.id}
+            formSchema={formSchema}
+            resolver={zodResolver(formSchema)}
+            api={api}
+            IconButton={(
+              <Button size="sm" variant="primary"
+                className="bg-green-600"
+              >
+                <PencilIcon />
+              </Button>
+            )}
+            data={table}
+          />
 
-                        <TableDelete api={api} OpenButton={
-                            (<Button size="sm" variant="primary"
-                                className="bg-red-500"
-                            >
-                                <TrashBinIcon />
-                            </Button>)
-                        }
-                            modulId={table.id}
-                        />
-                    </TableCell>
+
+          <TableDelete api={api} OpenButton={
+            (<Button size="sm" variant="primary"
+              className="bg-red-500"
+            >
+              <TrashBinIcon />
+            </Button>)
+          }
+            modulId={table.id}
+          />
+        </TableCell>
       )
     },
-    
+
   ]
 
 }
 
 
 export default function BasicTables() {
-
-  
 
   return (
     <div>

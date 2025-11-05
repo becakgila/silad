@@ -2,8 +2,9 @@
 
 import { TableBody as TBody, TableCell, TableRow } from "@/components/ui/table";
 import { useUsersStore } from "@/store/useUsersStore";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import listDataType from "@/types/listDataTable";
+import { set } from "zod";
 
 export default function TableBody({
     api,
@@ -13,21 +14,21 @@ export default function TableBody({
     listData: listDataType[],
 }) {
 
-
+    const [loading, setLoading] =  useState(false);
     const moduls = useUsersStore(state => state.users);
     const searchModuls = useUsersStore(state => state.searchUsers);
     const setModuls = useUsersStore(state => state.setUsers);
     const takeModuls = useUsersStore(state => state.usersTake);
-    const pageModuls = useUsersStore(state => state.usersPage);
-    const setPageModuls = useUsersStore(state => state.setUsersPage);
+    const pageModuls = useUsersStore(state => state.usersPage);    
     const setModulsTotal = useUsersStore(state => state.setUsersTotal);
+    const setDefault = useUsersStore(state => state.setDefault);
 
+
+    
 
     useEffect(() => {
-        setPageModuls(1);
-    }, []);
 
-    useEffect(() => {
+        setLoading(true);
 
         const fetchData = async () => {
 
@@ -55,8 +56,10 @@ export default function TableBody({
             setModulsTotal(resJson.total);
         }
 
-        fetchData();
+        fetchData().finally(() => setLoading(false));
     }, [searchModuls, takeModuls, pageModuls]);    
+
+    loading && <div>Loading...</div>;
 
 
     return (

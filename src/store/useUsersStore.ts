@@ -13,6 +13,7 @@ interface UsersState {
     setUsersPage: (page: number) => void;
     UsersTotal: number;
     setUsersTotal: (total: number) => void;
+    setDefault: () => void;
 }
 
 
@@ -27,4 +28,11 @@ export const useUsersStore = create<UsersState>((set) => ({
     setUsersPage: (page: number) => set({ usersPage: page }),
     UsersTotal: 0,
     setUsersTotal: (total: number) => set({ UsersTotal: total }),
+    setDefault: () => set({
+        users: [],
+        searchUsers: '',
+        usersTake: 10,
+        usersPage: 1,
+        UsersTotal: 0,
+    }),
 }));
