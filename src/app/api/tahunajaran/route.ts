@@ -41,7 +41,7 @@ export async function GET(request: Request) {
       // ]
     }
 
-    const data = await prisma.users.findMany({
+    const data = await prisma.tahun_ajaran.findMany({
       take: take,
       skip: skip,
       where: whereClause,
@@ -49,11 +49,11 @@ export async function GET(request: Request) {
 
     const serializedData = data.map((item: any) => ({
       ...item,
-      id: item.id.toString() // Convert BigInt to string,
+      tahun_ajaran_id: item.tahun_ajaran_id.toString() // Convert BigInt to string,
 
     }));
 
-    const dataCount = await prisma.users.count({
+    const dataCount = await prisma.tahun_ajaran.count({
       where: whereClause,
     });
 

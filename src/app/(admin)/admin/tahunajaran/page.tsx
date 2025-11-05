@@ -55,7 +55,7 @@ const table : {
       name: "TANGGAL MULAI",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.start_date || '-'}
+          {table.start_date ? new Date(table.start_date).toLocaleDateString() : "-"  }
         </TableCell>
       )
     },
@@ -63,7 +63,7 @@ const table : {
       name: "TANGGAL SELESAI",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.end_date || '-'}
+          {table.end_date ? new Date(table.end_date).toLocaleDateString() : "-"  }
         </TableCell>
       )
     },
@@ -71,7 +71,7 @@ const table : {
       name: "Aksi",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">
-                        {/* <TablesEdit 
+                        <TablesEdit 
                           api={api} 
                           IconButton={(
                             <Button size="sm" variant="primary"
@@ -83,30 +83,30 @@ const table : {
                           data={table} 
                           formData={[
                             {
-                              name: "modul_name",
-                              label: "Nama"                              
+                              name: "tahun_awal",
+                              label: "Tahun Awal"                              
                             },
                             {
-                              name: "modul_url",
-                              label: "Url"                              
+                              name: "tahun_akhir",
+                              label: "Tahun Akhir"                              
                             },
                             {
-                              name: "modul_urut",
-                              label: "Urutan"                              
+                              name: "semester",
+                              label: "Semester"                              
                             },
                             {
-                              name: "modul_simbol",
-                              label: "Icon"                              
+                              name: "start_date",
+                              label: "Start Date"                              
                             },
                             {
-                              name: "modul_akses",
-                              label: "Akses"                              
+                              name: "end_date",
+                              label: "End Date"                              
                             },
                           ]}
                           formSchema={formSchema}
                           resolver={zodResolver(formSchema)}
-                          id={table.nim}                        
-                        /> */}
+                          id={table.tahun_ajaran_id}                        
+                        />
                         
 
                         <TableDelete api={api} OpenButton={

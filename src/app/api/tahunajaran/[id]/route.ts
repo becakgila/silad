@@ -14,9 +14,9 @@ export async function GET(request: Request, { params } : UrlParams) {
     const {id} = params;
 
 
-  // Prisma `users.id` is a BigInt in the schema; convert the incoming id to BigInt
+  // Prisma `tahun_ajaran.id` is a BigInt in the schema; convert the incoming id to BigInt
   const uid = BigInt(id as unknown as string);
-  const data = await prisma.users.findUnique({ where: { id: uid } })
+  const data = await prisma.tahun_ajaran.findUnique({ where: { id: uid } })
 
     return new Response(JSON.stringify({ message: data }), {
       status: 200,
@@ -42,7 +42,7 @@ export async function PATCH(request: NextRequest, { params } : { params: { id: s
         headers: { "Content-Type": "application/json" },
       });
     }    
-    const updatedUser = await prisma.users.update({
+    const updatedUser = await prisma.tahun_ajaran.update({
       where: { id: BigInt(id) },
       data: body
     });
@@ -88,7 +88,7 @@ export async function DELETE(request: NextRequest, { params } : { params: { id: 
         headers: { "Content-Type": "application/json" },
       });
     } 
-    await prisma.users.delete({
+    await prisma.tahun_ajaran.delete({
       where: { id: BigInt(id) }
     }); 
 
