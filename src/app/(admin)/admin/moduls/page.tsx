@@ -2,6 +2,7 @@
 
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
+import modulModalForm from "@/components/tables/modal/modulModalForm";
 import Tables from "@/components/tables/Tables";
 import TableDelete from "@/components/tables/TablesDelete";
 import TablesEdit from "@/components/tables/TablesEdit";
@@ -94,28 +95,7 @@ const table : {
                             </Button>
                           )} 
                           data={table} 
-                          formData={[
-                            {
-                              name: "modul_name",
-                              label: "Nama"                              
-                            },
-                            {
-                              name: "modul_url",
-                              label: "Url"                              
-                            },
-                            {
-                              name: "modul_urut",
-                              label: "Urutan"                              
-                            },
-                            {
-                              name: "modul_simbol",
-                              label: "Icon"                              
-                            },
-                            {
-                              name: "modul_akses",
-                              label: "Akses"                              
-                            },
-                          ]}
+                          formData={modulModalForm}
                           formSchema={formSchema}
                           resolver={zodResolver(formSchema)}
                           id={table.modul_id}                        

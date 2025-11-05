@@ -1,9 +1,10 @@
 
-import React, { use } from "react";
+import React, { use, useEffect } from "react";
 import TablesSearch from "../tables/TablesSearch";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
 import TablesPagination from "../tables/TablesPagination";
+import { useUsersStore } from "@/store/useUsersStore";
 
 
 
@@ -25,6 +26,12 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
   api
 
 }) => {
+
+  const setDefault = useUsersStore(state => state.setDefault);  
+
+  useEffect(() => {
+          setDefault();
+      }, []);
 
 
 
