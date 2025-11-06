@@ -1,9 +1,10 @@
+import { ControllerRenderProps, FieldValues } from "react-hook-form";
 import { FormControl, FormField, FormLabel } from "../ui/form"
 
 interface TableFormFieldProps {
     form: any;
     InputComponent: React.FC<{
-        field: any;
+        field: ControllerRenderProps<FieldValues, string>;
     }>;
     name: string;
     label: string;

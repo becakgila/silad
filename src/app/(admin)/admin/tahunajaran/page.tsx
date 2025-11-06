@@ -2,6 +2,8 @@
 
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
+import tahunAjaranModalForm from "@/components/tables/modal/tahunAjaranModalForm";
+// import modulModalForm from "@/components/tables/modal/tahunajaranModalForm";
 import Tables from "@/components/tables/Tables";
 import TableDelete from "@/components/tables/TablesDelete";
 import TablesEdit from "@/components/tables/TablesEdit";
@@ -81,31 +83,10 @@ const table : {
                             </Button>
                           )} 
                           data={table} 
-                          formData={[
-                            {
-                              name: "tahun_awal",
-                              label: "Tahun Awal"                              
-                            },
-                            {
-                              name: "tahun_akhir",
-                              label: "Tahun Akhir"                              
-                            },
-                            {
-                              name: "semester",
-                              label: "Semester"                              
-                            },
-                            {
-                              name: "start_date",
-                              label: "Start Date"                              
-                            },
-                            {
-                              name: "end_date",
-                              label: "End Date"                              
-                            },
-                          ]}
+                          formData={tahunAjaranModalForm}
                           formSchema={formSchema}
                           resolver={zodResolver(formSchema)}
-                          id={table.tahun_ajaran_id}                        
+                          id={table.tahun_ajaran_id}                          
                         />
                         
 

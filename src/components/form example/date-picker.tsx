@@ -11,6 +11,7 @@ type PropsType = {
   mode?: "single" | "multiple" | "range" | "time";
   onChange?: Hook | Hook[];
   defaultDate?: DateOption;
+  label?: string;
   placeholder?: string;
 };
 
@@ -18,22 +19,18 @@ export default function DatePicker({
   id,
   mode,
   onChange,
+  label,
   defaultDate,
   placeholder,
 }: PropsType) {
   useEffect(() => {
-    const element = document.getElementById(id);
-    if (!element) return;
-    
-    const flatPickr: flatpickr.Instance = flatpickr(element, {
+    const flatPickr = flatpickr(`#${id}`, {
       mode: mode || "single",
       static: true,
       monthSelectorType: "static",
       dateFormat: "Y-m-d",
       defaultDate,
       onChange,
-      // position: "above",
-      positionElement: element,
     });
 
     return () => {
@@ -44,7 +41,8 @@ export default function DatePicker({
   }, [mode, onChange, id, defaultDate]);
 
   return (
-    
+    <div>
+      {label && <Label htmlFor={id}>{label}</Label>}
 
       <div className="relative">
         <input
@@ -57,6 +55,6 @@ export default function DatePicker({
           <CalenderIcon className="size-6" />
         </span>
       </div>
-    
+    </div>
   );
 }
