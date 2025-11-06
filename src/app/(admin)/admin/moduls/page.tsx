@@ -19,7 +19,7 @@ import { PencilIcon } from "lucide-react";
 import React from "react";
 import z from "zod";
 
-const api = "/api/component/modules";
+const api = "/api/modules";
 
 const formSchema = z.object({
 

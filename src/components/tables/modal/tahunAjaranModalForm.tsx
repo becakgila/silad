@@ -18,7 +18,7 @@ const tahunAjaranModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] =
     />
   ),
   ({ form }) => (
-    <TableFormField form={form} name="tahun_awal" label="Tahun Akhir" InputComponent={({ field }) => (
+    <TableFormField form={form} name="tahun_akhir" label="Tahun Akhir" InputComponent={({ field }) => (
       <Input
         id={field.name}
         {...field}
@@ -51,13 +51,20 @@ const tahunAjaranModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] =
     )}}
     />
   ),
-  ({ form }) => (
-    <TableFormField form={form} name="end_date" label="Tgl Akhir" InputComponent={({ field }) => (
-      <Input
-        id={field.name}
-        {...field}
-      />
-    )}
+({ form }) => (
+    <TableFormField form={form} name="end_date" label="Tgl Akhir" InputComponent={({ field }) => { 
+      
+      return (
+      <DatePicker
+                  id={field.name}
+                  {...field}
+                  defaultDate={field.value}
+                  onChange={(dates, currentDateString) => {
+                    // Handle your logic
+                    console.log({ dates, currentDateString });
+                  }}
+                />
+    )}}
     />
   ),
  

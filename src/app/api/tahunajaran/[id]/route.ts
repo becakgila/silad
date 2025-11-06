@@ -42,14 +42,14 @@ export async function PATCH(request: NextRequest, { params } : { params: { id: s
         headers: { "Content-Type": "application/json" },
       });
     }    
-    const updatedUser = await prisma.tahun_ajaran.update({
-      where: { id: BigInt(id) },
+    const update = await prisma.tahun_ajaran.update({
+      where: { tahun_ajaran_id: BigInt(id) },
       data: body
     });
 
     const serializedUser = {
-      ...updatedUser,
-      id: updatedUser.id.toString()
+      ...update,
+      tahun_ajaran_id: update.tahun_ajaran_id.toString()
     };    
 
     

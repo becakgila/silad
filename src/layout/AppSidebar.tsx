@@ -119,7 +119,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({example = false}) => {
     if(example) return;
     const fetchData = async () => {
       try {
-            const response = await fetch('/api/component/modules/nav'); // Replace with your API endpoint
+            const response = await fetch('/api/component/nav'); // Replace with your API endpoint
             if (!response.ok) {
               throw new Error(`HTTP error! status: ${response.status}`);
             }

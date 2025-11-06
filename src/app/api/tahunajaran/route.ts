@@ -15,28 +15,31 @@ export async function GET(request: Request) {
 
     const whereClause = {
       // OR: [
-        // {
-        //   modul_name: {
-        //     contains: search,
-        //   }
-        // },
-        // {
-        //   modul_url: {
-        //     contains: search,
-        //   }
-        // },
-        // {
-        //   modul_simbol: {
-        //     contains: search,
-        //   }
-        // },
-        // {
-        //   modul_akses: {
-        //     in: Object.values(moduls_modul_akses).filter(s =>
-        //       s.toLowerCase().includes(search)
-        //     ),
-        //   }
-        // },
+      //   {
+      //     tahun_awal: {
+      //       contains: search,
+      //     }
+      //   },
+      //   {
+      //     tahun_akhir: {
+      //       contains: search,
+      //     }
+      //   },
+      //   {
+      //     semester: {
+      //       contains: search,
+      //     }
+      //   },
+      //   {
+      //     start_date: {
+      //       contains: search,
+      //     }
+      //   },
+      //   {
+      //     end_date: {
+      //       contains: search,
+      //     }
+      //   },
 
       // ]
     }
