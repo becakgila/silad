@@ -1,7 +1,5 @@
 import { create } from "zustand";
 
-// import User from "@/types/model/tables";
-
 interface tableState<T = any> {
     tables: T[];
     setTables: (tables: T[]) => void;
@@ -14,6 +12,8 @@ interface tableState<T = any> {
     tablesTotal: number;
     setTablesTotal: (total: number) => void;
     setTablesDefault: () => void;
+    lastPath: string;
+    setLastPath: (path: string) => void;
 }
 
 
@@ -28,11 +28,21 @@ export const useTablesStore = create<tableState<any>>((set) => ({
     setTablesPage: (page: number) => set({ tablesPage: page }),
     tablesTotal: 0,
     setTablesTotal: (total: number) => set({ tablesTotal: total }),
+    lastPath: '',
+    setLastPath: (path: string) => {
+        const currentState = useTablesStore.getState();
+        const pathChanged = currentState.lastPath !== path;
+        set({ 
+            lastPath: path,
+            ...(pathChanged && { tablesPage: 1 })  // Reset page to 1 only when path changes
+        });
+    },
     setTablesDefault: () => set({
         tables: [],
         searchTables: '',
         tablesTake: 10,
         tablesPage: 1,
         tablesTotal: 0,
+        lastPath: '',
     }),
 })); 

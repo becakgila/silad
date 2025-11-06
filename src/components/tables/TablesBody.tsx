@@ -3,8 +3,9 @@
 import { TableBody as TBody, TableCell, TableRow } from "@/components/ui/table";
 import { useTablesStore } from "@/store/useTablesStore";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import listDataType from "@/types/listDataTable";
-import { set } from "zod";
+import { ca } from "zod/v4/locales";
 
 export default function TableBody({
     api,
@@ -20,42 +21,54 @@ export default function TableBody({
     const setModuls = useTablesStore(state => state.setTables);
     const takeModuls = useTablesStore(state => state.tablesTake);
     const pageModuls = useTablesStore(state => state.tablesPage);    
-    const setModulsTotal = useTablesStore(state => state.setTablesPage);
-    // const setDefault = useTablesStore(state => state.setTablesDefault);
-
-
-    
+    const setModulsTotal = useTablesStore(state => state.setTablesTotal);
+    const setLastPath = useTablesStore(state => state.setLastPath);
+    const pathname = usePathname();
 
     useEffect(() => {
         setLoading(true);
+
         const fetchData = async () => {
+            // Ensure the store knows about the current pathname and reset page if needed
 
-            const params = new URLSearchParams({
-                search: searchModuls,
-                take: takeModuls?.toString() || '10',
-                page: pageModuls?.toString() || '1' 
-            });
+            try{
+                setLastPath(pathname);
+    
+                // Read the current page from the store after potential reset
+                const currentState = useTablesStore.getState();
+                const currentPage = currentState.tablesPage ?? 1;
+    
+                const params = new URLSearchParams({
+                    search: searchModuls,
+                    take: (takeModuls?.toString() || '10'),
+                    page: currentPage.toString()
+                });
+    
+                const res = await fetch(`${api}?${params.toString()}`, {
+                    method: 'GET',
+                });
+    
+                const resJson: {
+                    message?: string;
+                    data: any;
+                    total: number;
+                } = await res.json();
+    
+    
+                setModuls(resJson.data);
+                setModulsTotal(resJson.total);
+            }catch(e){
+                setModuls([]);
+                setModulsTotal(0);
 
-            const res = await fetch(`${api}?${params.toString()}`, {
-                method: 'GET',                
-            });
-
-            const resJson: {
-                message?: string;
-                data: any;
-                total: number;
-            } = await res.json();            
-            
-
-            setModuls(resJson.data);
-            setModulsTotal(resJson.total);
+                console.log(e);
+            }
         }
 
         fetchData().finally(() => setLoading(false));
-    }, [searchModuls, takeModuls, pageModuls]);    
+    }, [searchModuls, takeModuls, pageModuls, pathname]);
 
-    loading && <div>Loading...</div>;
-
+    loading && (<div>Loading...</div>);
 
     return (
         <TBody className="divide-y divide-gray-100 dark:divide-white/5">

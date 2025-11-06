@@ -14,22 +14,22 @@ export async function GET(request: Request) {
     const skip = (page - 1) * take;
 
     const whereClause = {
-      // OR: [
-      //   {
-      //     name: {
-      //       contains: search,
-      //     }
-      //   },
-      //   {
-      //     nips: {
-      //       contains: search,
-      //     }
-      //   },
-      //   {
-      //     email: {
-      //       contains: search,
-      //     }
-      //   },
+      OR: [
+        {
+          name: {
+            contains: search,
+          }
+        },
+        {
+          nips: {
+            contains: search,
+          }
+        },
+        {
+          email: {
+            contains: search,
+          }
+        },
       //   {
       //     phone: {
       //       contains: search,
@@ -48,7 +48,7 @@ export async function GET(request: Request) {
       //   //   }
       //   // },
 
-      // ]
+      ]
     }
 
     const data = await prisma.users.findMany({

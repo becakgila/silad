@@ -4,18 +4,14 @@ import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import Tables from "@/components/tables/Tables";
 import TableDelete from "@/components/tables/TablesDelete";
-import TablesEdit from "@/components/tables/TablesEdit";
-import TablesSwitch from "@/components/tables/TablesSwitch";
 import Button from "@/components/ui/button/Button";
-
 import { TableCell } from "@/components/ui/table";
 import { TrashBinIcon } from "@/icons";
-
+import { useTablesStore } from "@/store/useTablesStore";
 import listDataType from "@/types/listDataTable";
 import mahasiswaType from "@/types/model/mahasiswa";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { PencilIcon } from "lucide-react";
-import React from "react";
+import { usePathname } from "next/navigation";
+import React, { useEffect } from "react";
 import z from "zod";
 
 const api = "/api/mahasiswa";
@@ -192,6 +188,15 @@ const table : {
 }
 
 export default function BasicTables() {
+  const setTableDefault = useTablesStore(state => state.setTablesDefault);
+  const setLastPath = useTablesStore(state => state.setLastPath);
+  const pathname = usePathname();
+  
+  useEffect(() => {
+    setTableDefault();
+    setLastPath(pathname);
+  }, [pathname]);
+
   return (
     <div>
       <PageBreadcrumb pageTitle="Data Mahasiswa" />

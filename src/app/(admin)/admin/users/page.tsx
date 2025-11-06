@@ -80,15 +80,7 @@ const table: {
       component: ({ table }) => (
         <ModulsSwitch api={api} defaultChecked={table.status === 'yes'} modulId={table.id} field="status" />
       )
-    },
-    {
-      name: "Email Verified At",
-      component: ({ table }) => (
-        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.email_verified_at ? new Date(table.email_verified_at).toLocaleDateString() : "-"}
-        </TableCell>
-      )
-    },
+    },    
     {
       name: "Created At",
       component: ({ table }) => (

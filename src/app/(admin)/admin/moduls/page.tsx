@@ -11,12 +11,14 @@ import Button from "@/components/ui/button/Button";
 
 import { TableCell } from "@/components/ui/table";
 import { TrashBinIcon } from "@/icons";
+import { useTablesStore } from "@/store/useTablesStore";
 
 import listDataType from "@/types/listDataTable";
 import modulType from "@/types/model/modul";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PencilIcon } from "lucide-react";
-import React from "react";
+import { usePathname } from "next/navigation";
+import React, { use, useEffect } from "react";
 
 
 const api = "/api/component/modules";
@@ -109,6 +111,17 @@ const table: {
 }
 
 export default function BasicTables() {
+
+
+  const setTableDefault = useTablesStore(state => state.setTablesDefault);
+  const setLastPath = useTablesStore(state => state.setLastPath);
+  const pathname = usePathname();
+  
+  useEffect(() => {
+    setTableDefault();
+    setLastPath(pathname);
+  }, [pathname]);
+
   return (
     <div>
       <PageBreadcrumb pageTitle="Pengaturan Moduls" />

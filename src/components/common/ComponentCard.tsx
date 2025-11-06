@@ -1,10 +1,19 @@
 
-import React, { use, useEffect } from "react";
+import React from "react";
 import TablesSearch from "../tables/TablesSearch";
-import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-
 import TablesPagination from "../tables/TablesPagination";
 import { useTablesStore } from "@/store/useTablesStore";
+
+// Extract store selectors
+const useTablesPaginationState = () => {
+  const page = useTablesStore(state => state.tablesPage);
+  const setPage = useTablesStore(state => state.setTablesPage);
+  const total = useTablesStore(state => state.tablesTotal);
+  const take = useTablesStore(state => state.tablesTake);
+  const setTake = useTablesStore(state => state.setTablesTake);
+  
+  return { page, setPage, total, take, setTake };
+};
 
 
 
@@ -24,16 +33,9 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
   className = "",
   desc = "",
   api
-
 }) => {
-
-  const setDefault = useTablesStore(state => state.setTablesDefault);  
-
-  useEffect(() => {
-          setDefault();
-      }, []);
-
-
+  // Get pagination state from store
+  const paginationState = useTablesPaginationState();
 
   return (
     <div
@@ -63,7 +65,7 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
         <div className="space-y-6">{children}</div>
       </div>
 
-      <TablesPagination />
+      <TablesPagination {...paginationState} />
 
     </div>
   );
