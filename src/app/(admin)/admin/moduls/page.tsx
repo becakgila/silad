@@ -116,7 +116,7 @@ export default function BasicTables() {
   const setTableDefault = useTablesStore(state => state.setTablesDefault);
   const setLastPath = useTablesStore(state => state.setLastPath);
   const pathname = usePathname();
-  
+
   useEffect(() => {
     setTableDefault();
     setLastPath(pathname);
@@ -126,7 +126,14 @@ export default function BasicTables() {
     <div>
       <PageBreadcrumb pageTitle="Pengaturan Moduls" />
       <div className="space-y-6">
-        <ComponentCard api={table.api} title="Moduls List" >
+        <ComponentCard api={table.api} add={
+          {
+            api: table.api,
+            formData: modulModalForm,
+            formSchema: modulFormSchema,
+            resolver: zodResolver(modulFormSchema)
+          }
+        } title="Moduls List" >
           <Tables listData={table.listData} api={table.api} />
         </ComponentCard>
       </div>

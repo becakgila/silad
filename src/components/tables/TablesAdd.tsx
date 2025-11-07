@@ -24,12 +24,10 @@ import { useRouter } from 'next/navigation';
 import userType from "@/types/model/users"
 
 interface ModulsEditProps<T = any> {
-    IconButton: React.JSX.Element,
-    data: T,
+    IconButton: React.JSX.Element,    
     api: string,
     formSchema: z.ZodSchema<any>;
-    resolver: Resolver<any, any, any> | undefined;
-    id: string | number;
+    resolver: Resolver<any, any, any> | undefined;    
     formData: React.FC<{ form: UseFormReturn<any, any, any> }>[];
     title?: string;
     description?: string;
@@ -38,16 +36,14 @@ interface ModulsEditProps<T = any> {
 
 
 
-export default function TablesEdit({
-    IconButton,
-    data,
+export default function TablesAdd({
+    IconButton,    
     api,
     formSchema,
-    resolver,
-    id,
+    resolver,    
     formData,
-    title = "Edit",
-    description="Buat perubahan di sini. Klik simpan ketika sudah melakukan perubahan."
+    title = "Tambah",
+    description="Buat penambahan data di sini. Klik simpan ketika sudah melakukan penambahan."
 }: Readonly<ModulsEditProps>) {
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -61,7 +57,10 @@ export default function TablesEdit({
 
     const form = useForm<z.infer<any>>({
         resolver: resolver,
-        defaultValues: { ...JSON.parse(JSON.stringify(data).replace(/\:null/gi, "\:\"\"")) },
+        defaultValues: {
+            
+        },
+        
     })
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -69,8 +68,8 @@ export default function TablesEdit({
         try {
             setIsLoading(true)
 
-            const response = await fetch(`${api}/${id}`, {
-                method: 'PATCH',
+            const response = await fetch(`${api}`, {
+                method: 'POST',
                 body: JSON.stringify(values),
             })
 
@@ -129,7 +128,7 @@ export default function TablesEdit({
                                 <Button variant="outline">Batal</Button>
                             </DialogClose>
                             {/* <Button type="submit" disabled={isLoading}>{isLoading ? "Loading..." : "Simpan Perubahan"}</Button> */}
-                            <Button type="submit" >Simpan Perubahan</Button>
+                            <Button type="submit" disabled={isLoading} >Simpan Perubahan</Button>
                         </DialogFooter>
                     </form>
                 </Form>

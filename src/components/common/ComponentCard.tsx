@@ -3,6 +3,13 @@ import React from "react";
 import TablesSearch from "../tables/TablesSearch";
 import TablesPagination from "../tables/TablesPagination";
 import { useTablesStore } from "@/store/useTablesStore";
+import Button from "../ui/button/Button";
+import { PlusIcon } from "lucide-react";
+import TablesAdd from "../tables/TablesAdd";
+import modulModalForm, { modulFormSchema } from "../tables/modal/modulModalForm";
+import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod";
+import { Resolver, UseFormReturn } from "react-hook-form";
 
 // Extract store selectors
 const useTablesPaginationState = () => {
@@ -11,7 +18,7 @@ const useTablesPaginationState = () => {
   const total = useTablesStore(state => state.tablesTotal);
   const take = useTablesStore(state => state.tablesTake);
   const setTake = useTablesStore(state => state.setTablesTake);
-  
+
   return { page, setPage, total, take, setTake };
 };
 
@@ -25,14 +32,20 @@ interface ComponentCardProps {
   className?: string; // Additional custom classes for styling
   desc?: string; // Description text
   api: string; // Description text
+  add?: {
+    api: string,
+    formSchema: z.ZodSchema<any>;
+    resolver: Resolver<any, any, any> | undefined;
+    formData: React.FC<{ form: UseFormReturn<any, any, any> }>[];
+  }
 }
 
 const ComponentCard: React.FC<ComponentCardProps> = ({
   title,
   children,
   className = "",
-  desc = "",
-  api
+  desc = "",  
+  add
 }) => {
   // Get pagination state from store
   const paginationState = useTablesPaginationState();
@@ -49,8 +62,32 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
             {title}
           </h3>
 
+          <div className="flex gap-3.5 items-center">
 
-          <TablesSearch />
+            <TablesSearch />
+
+            {add &&
+              <TablesAdd
+                formData={add.formData}
+                formSchema={add.formSchema}
+                resolver={add.resolver}
+                IconButton={
+                  <Button size="sm" variant="primary"
+
+                  >
+                    <PlusIcon />
+                  </Button>
+                }
+                api={add.api}
+
+
+              />
+            }
+
+
+
+
+          </div>
 
         </div>
         {desc && (

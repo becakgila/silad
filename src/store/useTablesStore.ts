@@ -32,9 +32,12 @@ export const useTablesStore = create<tableState<any>>((set) => ({
     setLastPath: (path: string) => {
         const currentState = useTablesStore.getState();
         const pathChanged = currentState.lastPath !== path;
-        set({ 
+        set({
             lastPath: path,
-            ...(pathChanged && { tablesPage: 1 })  // Reset page to 1 only when path changes
+            ...(pathChanged && {
+                tablesPage: 1, 
+                searchTables: ''
+            })
         });
     },
     setTablesDefault: () => set({
