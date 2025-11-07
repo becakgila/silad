@@ -1,9 +1,9 @@
 "use client"
-import { useUsersStore } from "@/store/useUsersStore";
+import { useTablesStore } from "@/store/useTablesStore";
 
 export default function ModulsSearch() {
 
-  const setSearchModulsUpdate= useUsersStore(state=> state.setSearchUsersUpdate);    
+  const setSearchTablesUpdate= useTablesStore(state=> state.setSearchTablesUpdate);    
 
   return (
     <form 
@@ -12,7 +12,7 @@ export default function ModulsSearch() {
             const formData = new FormData(e.currentTarget);
             const searchValue = formData.get("searchModuls") as string;                        
 
-            setSearchModulsUpdate(searchValue);
+            setSearchTablesUpdate(searchValue);
         }}
     >
 

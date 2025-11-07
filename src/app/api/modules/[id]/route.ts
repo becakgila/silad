@@ -26,7 +26,7 @@ export async function PATCH(request: NextRequest, { params } : { params: { id: s
     
 
     return new Response(JSON.stringify({ 
-        message: "Modul updated successfully",
+        message: "Modul cre successfully",
         data: serializedModul
     }), {
       status: 200,

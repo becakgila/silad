@@ -1,10 +1,11 @@
 "use client"
 
 import { TableBody as TBody, TableCell, TableRow } from "@/components/ui/table";
-import { useUsersStore } from "@/store/useUsersStore";
+import { useTablesStore } from "@/store/useTablesStore";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import listDataType from "@/types/listDataTable";
-import { set } from "zod";
+import { ca } from "zod/v4/locales";
 
 export default function TableBody({
     api,
@@ -15,56 +16,63 @@ export default function TableBody({
 }) {
 
     const [loading, setLoading] =  useState(false);
-    const moduls = useUsersStore(state => state.users);
-    const searchModuls = useUsersStore(state => state.searchUsers);
-    const setModuls = useUsersStore(state => state.setUsers);
-    const takeModuls = useUsersStore(state => state.usersTake);
-    const pageModuls = useUsersStore(state => state.usersPage);    
-    const setModulsTotal = useUsersStore(state => state.setUsersTotal);
-    const setDefault = useUsersStore(state => state.setDefault);
-
-
-    
+    const tables = useTablesStore(state => state.tables);
+    const searchModuls = useTablesStore(state => state.searchTables);
+    const setModuls = useTablesStore(state => state.setTables);
+    const takeModuls = useTablesStore(state => state.tablesTake);
+    const pageModuls = useTablesStore(state => state.tablesPage);    
+    const setModulsTotal = useTablesStore(state => state.setTablesTotal);
+    const setLastPath = useTablesStore(state => state.setLastPath);
+    const pathname = usePathname();
 
     useEffect(() => {
-
         setLoading(true);
 
         const fetchData = async () => {
+            // Ensure the store knows about the current pathname and reset page if needed
 
-            const params = new URLSearchParams({
-                search: searchModuls,
-                take: takeModuls?.toString() || '10',
-                page: pageModuls?.toString() || '1' 
-            });
+            try{
+                setLastPath(pathname);
+    
+                // Read the current page from the store after potential reset
+                const currentState = useTablesStore.getState();
+                const currentPage = currentState.tablesPage ?? 1;
+    
+                const params = new URLSearchParams({
+                    search: searchModuls,
+                    take: (takeModuls?.toString() || '10'),
+                    page: currentPage.toString()
+                });
+    
+                const res = await fetch(`${api}?${params.toString()}`, {
+                    method: 'GET',
+                });
+    
+                const resJson: {
+                    message?: string;
+                    data: any;
+                    total: number;
+                } = await res.json();
+    
+    
+                setModuls(resJson.data);
+                setModulsTotal(resJson.total);
+            }catch(e){
+                setModuls([]);
+                setModulsTotal(0);
 
-            const res = await fetch(`${api}?${params.toString()}`, {
-                method: 'GET',
-                next: {
-                    tags: ['users-data'],
-                }
-            });
-
-            const resJson: {
-                message?: string;
-                data: any;
-                total: number;
-            } = await res.json();            
-            
-
-            setModuls(resJson.data);
-            setModulsTotal(resJson.total);
+                console.log(e);
+            }
         }
 
         fetchData().finally(() => setLoading(false));
-    }, [searchModuls, takeModuls, pageModuls]);    
+    }, [searchModuls, takeModuls, pageModuls, pathname]);
 
-    loading && <div>Loading...</div>;
-
+    loading && (<div>Loading...</div>);
 
     return (
         <TBody className="divide-y divide-gray-100 dark:divide-white/5">
-            {moduls.map((order, idx) => (
+            {tables.map((order, idx) => (
                 <TableRow key={order.id ?? idx}>
                     <TableCell className="px-4 py-3 w-10 text-gray-500 text-center text-theme-sm dark:text-gray-400">
                         {idx + 1 + ((pageModuls! - 1) * takeModuls!)}                        
@@ -75,10 +83,7 @@ export default function TableBody({
 
                             return (<Component key={`${data.nama}-${idx2}`} table={order} />)
                         })
-                    }
-                    
-                   
-
+                    }                            
                     
                 </TableRow>
             ))}

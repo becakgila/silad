@@ -1,16 +1,24 @@
 "use client"
 
 import Select from "@/components/form/Select";
-import { useUsersStore as  useModulsStore    } from "@/store/useUsersStore";
+import { useTablesStore } from "@/store/useTablesStore";
 import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 
-export default function TablesPagination() {
+type TablesPaginationProps = {
+  page: number;
+  setPage: (page: number) => void;
+  total: number;
+  take: number;
+  setTake: (take: number) => void;
+};
 
-  const setModulsPage = useModulsStore((state) => state.setUsersPage);
-  const modulsPage = useModulsStore((state) => state.usersPage);
-  const modulsTotal = useModulsStore((state) => state.UsersTotal);
-  const modulsTake = useModulsStore((state) => state.usersTake);
-  const setModulsTake = useModulsStore((state) => state.setUsersTake)
+export default function TablesPagination({
+  page,
+  setPage,
+  total,
+  take,
+  setTake
+}: TablesPaginationProps) {
 
   const options = [
     { value: "10", label: "10" },
@@ -20,19 +28,17 @@ export default function TablesPagination() {
     { value: "50", label: "50" },
     { value: "semua", label: "Semua" },
   ]; 
-
-  // Calculate the range being shown based on current page and total
-  // If there are no results, show 0 to 0
-  const showingStart = modulsTotal === 0 ? 0 : ((modulsPage - 1) * modulsTake) + 1;
-  const showingEnd = Math.min(modulsPage * modulsTake, modulsTotal);
+  
+  const showingStart = total === 0 ? 0 : ((page - 1) * take) + 1;
+  const showingEnd = Math.min(page * take, total);
 
   // Build page numbers from total and take. Ensure at least 1 page to avoid empty UI.
-  const totalPages = Math.max(1, Math.ceil(modulsTotal / Math.max(1, modulsTake)));
-  // Show a window of pages around the current page (3 before and 3 after)
+  const totalPages = Math.max(1, Math.ceil(total / Math.max(1, take)));
+  // Show a window of pages around the current page (2 before and 2 after)
   const getDisplayedPages = () => {
-  const siblingCount = 2; // pages before and after current
-    const start = Math.max(1, modulsPage - siblingCount);
-    const end = Math.min(totalPages, modulsPage + siblingCount);
+    const siblingCount = 2; // pages before and after current
+    const start = Math.max(1, page - siblingCount);
+    const end = Math.min(totalPages, page + siblingCount);
 
     const pages: (number | string)[] = [];
 
@@ -74,14 +80,14 @@ export default function TablesPagination() {
         <div>
           <p className="text-sm text-gray-400">
             Tampil <span className="font-medium">{showingStart}</span> - <span className="font-medium">{showingEnd}</span> dari{' '}
-            <span className="font-medium">{modulsTotal}</span> data
+            <span className="font-medium">{total}</span> data
           </p>
         </div>
         <div>
           <nav aria-label="Pagination" className="isolate inline-flex -space-x-px rounded-md text-gray-400">
             <button
               onClick={() => {
-                setModulsPage(modulsPage === 1 ? modulsPage : modulsPage - 1)
+                setPage(page === 1 ? page : page - 1)
               }}
               className="relative inline-flex items-center rounded-l-md px-2 py-2  inset-ring inset-ring-gray-400 hover:bg-white/5 focus:z-20 focus:outline-offset-0"
             >
@@ -105,9 +111,9 @@ export default function TablesPagination() {
                   <button
                     key={number}
                     onClick={() => {
-                      setModulsPage(number);
+                      setPage(number);
                     }}
-                    className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${number === modulsPage
+                    className={`relative inline-flex items-center px-4 py-2 text-sm font-semibold ${number === page
                         ? 'z-10 bg-brand-500 text-white focus:z-20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500'
                         : 'text-gray-400 inset-ring inset-ring-gray-400 hover:bg-white/5 focus:z-20 focus:outline-offset-0'
                       }`}
@@ -120,7 +126,7 @@ export default function TablesPagination() {
 
             <button
               onClick={() => {
-                setModulsPage(modulsPage === totalPages ? modulsPage : modulsPage + 1)
+                setPage(page === totalPages ? page : page + 1)
               }}
               className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 inset-ring inset-ring-gray-400 hover:bg-white/5 focus:z-20 focus:outline-offset-0"
             >
@@ -138,15 +144,15 @@ export default function TablesPagination() {
                 options={options}
                 
                 onChange={(val) => { 
-                  const newTake = val === "semua" ? modulsTotal : Number(val);
+                  const newTake = val === "semua" ? total : Number(val);
                   // update take in the store
-                  setModulsTake(newTake);
+                  setTake(newTake);
 
                   // compute new total pages and clamp current page if needed
                   const safeTake = Math.max(1, newTake);
-                  const newTotalPages = Math.max(1, Math.ceil(modulsTotal / safeTake));
-                  if (modulsPage > newTotalPages) {
-                    setModulsPage(newTotalPages);
+                  const newTotalPages = Math.max(1, Math.ceil(total / safeTake));
+                  if (page > newTotalPages) {
+                    setPage(newTotalPages);
                   }
                 }}
                 defaultValue="10"

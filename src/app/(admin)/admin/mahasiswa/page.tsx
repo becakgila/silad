@@ -4,18 +4,14 @@ import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import Tables from "@/components/tables/Tables";
 import TableDelete from "@/components/tables/TablesDelete";
-import TablesEdit from "@/components/tables/TablesEdit";
-import TablesSwitch from "@/components/tables/TablesSwitch";
 import Button from "@/components/ui/button/Button";
-
 import { TableCell } from "@/components/ui/table";
 import { TrashBinIcon } from "@/icons";
-
+import { useTablesStore } from "@/store/useTablesStore";
 import listDataType from "@/types/listDataTable";
 import mahasiswaType from "@/types/model/mahasiswa";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { PencilIcon } from "lucide-react";
-import React from "react";
+import { usePathname } from "next/navigation";
+import React, { useEffect } from "react";
 import z from "zod";
 
 const api = "/api/mahasiswa";
@@ -134,43 +130,7 @@ const table : {
     {
       name: "Aksi",
       component: ({ table }) => (
-        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">
-                        {/* <TablesEdit 
-                          api={api} 
-                          IconButton={(
-                            <Button size="sm" variant="primary"
-                              className="bg-green-600"
-                            >
-                                <PencilIcon />
-                            </Button>
-                          )} 
-                          data={table} 
-                          formData={[
-                            {
-                              name: "modul_name",
-                              label: "Nama"                              
-                            },
-                            {
-                              name: "modul_url",
-                              label: "Url"                              
-                            },
-                            {
-                              name: "modul_urut",
-                              label: "Urutan"                              
-                            },
-                            {
-                              name: "modul_simbol",
-                              label: "Icon"                              
-                            },
-                            {
-                              name: "modul_akses",
-                              label: "Akses"                              
-                            },
-                          ]}
-                          formSchema={formSchema}
-                          resolver={zodResolver(formSchema)}
-                          id={table.nim}                        
-                        /> */}
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">                      
                         
 
                         <TableDelete api={api} OpenButton={
@@ -192,6 +152,15 @@ const table : {
 }
 
 export default function BasicTables() {
+  
+  const setLastPath = useTablesStore(state => state.setLastPath);
+  const pathname = usePathname();
+  
+  useEffect(() => {
+    
+    setLastPath(pathname);
+  }, [pathname]);
+
   return (
     <div>
       <PageBreadcrumb pageTitle="Data Mahasiswa" />
