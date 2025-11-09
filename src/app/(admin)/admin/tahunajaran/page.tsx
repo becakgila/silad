@@ -6,11 +6,14 @@ import tahunAjaranModalForm from "@/components/tables/modal/tahunAjaranModalForm
 // import modulModalForm from "@/components/tables/modal/tahunajaranModalForm";
 import Tables from "@/components/tables/Tables";
 import TableDelete from "@/components/tables/TablesDelete";
+import TablesEdit from "@/components/tables/TablesEdit";
 import Button from "@/components/ui/button/Button";
 import { TableCell } from "@/components/ui/table";
 import { TrashBinIcon } from "@/icons";
 import { useTablesStore } from "@/store/useTablesStore";
 import listDataType from "@/types/listDataTable";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { PencilIcon } from "lucide-react";
 import tahunajaranType from "@/types/model/tahunajaran";
 import { usePathname } from "next/navigation";
 import React, { useEffect } from "react";
