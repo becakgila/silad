@@ -1,4 +1,5 @@
 import prisma from '@/lib/prisma'
+import { id } from 'zod/v4/locales';
 
 export async function GET(request: Request) {
   try {
@@ -55,18 +56,26 @@ export async function GET(request: Request) {
       take: take,
       skip: skip,
       where: whereClause,
+      include: {
+        fakultas: true, // Include the fakultas relation
+      },
     });
-
-    const serializedData = data.map((item: any) => ({
-      ...item,
-      id: item.id.toString() // Convert BigInt to string,
-
-    }));
+    
+    const serializedData = data.map((item: any) => {
+      return { 
+        ...item, 
+        id: item.id.toString(),
+        fakultas_id: item.fakultas_id.toString(),
+        fakultas: item.fakultas ? {
+          ...item.fakultas,
+          fakultas_id: item.fakultas.fakultas_id.toString(),
+        }: null,
+      };
+    });              
 
     const dataCount = await prisma.users.count({
       where: whereClause,
-    });
-
+    });    
 
     return new Response(JSON.stringify({
       message: "Route is working",

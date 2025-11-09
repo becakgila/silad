@@ -68,6 +68,22 @@ const table: {
       )
     },
     {
+      name: "Fakultas",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.fakultas?.fakultas_name || '-'}
+        </TableCell>
+      )
+    },
+    {
+      name: "Jurusan",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.prodi?.prodi_name || '-'}
+        </TableCell>
+      )
+    },
+    {
       name: "No Hp",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
