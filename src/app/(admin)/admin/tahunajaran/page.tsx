@@ -2,8 +2,7 @@
 
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import tahunAjaranModalForm from "@/components/tables/modal/tahunAjaranModalForm";
-// import modulModalForm from "@/components/tables/modal/tahunajaranModalForm";
+import tahunAjaranModalForm, { formSchema } from "@/components/tables/modal/tahunAjaranModalForm";
 import Tables from "@/components/tables/Tables";
 import TableDelete from "@/components/tables/TablesDelete";
 import TablesEdit from "@/components/tables/TablesEdit";
@@ -20,12 +19,6 @@ import React, { useEffect } from "react";
 import z from "zod";
 
 const api = "/api/tahunajaran";
-
-const formSchema = z.object({
-
-    tahun_awal: z.string().nonempty({ message: "Wajib Diisi!!!" }),
-    tahun_akhir: z.string().nonempty({ message: "Wajib Diisi!!!" }),
-})
 
 const table : {  
   api: string,
@@ -118,7 +111,14 @@ export default function BasicTables() {
     <div>
       <PageBreadcrumb pageTitle="Data Tahun Ajaran" />
       <div className="space-y-6">
-        <ComponentCard api={table.api} title="Tahun Ajaran List" >
+        <ComponentCard api={table.api} add={
+          {
+            api: table.api,
+            formData: tahunAjaranModalForm,
+            formSchema: formSchema,
+            resolver: zodResolver(formSchema)
+          }
+        } >
           <Tables listData={table.listData} api={table.api} />
         </ComponentCard>
       </div>

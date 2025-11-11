@@ -18,7 +18,7 @@ export async function GET(request: Request, { params } : UrlParams) {
   const uid = BigInt(id as unknown as string);
   const data = await prisma.tahun_ajaran.findUnique({ where: { id: uid } })
 
-    return new Response(JSON.stringify({ message: data }), {
+    return new Response(JSON.stringify({ message: "Request Berhasil", data: data }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });

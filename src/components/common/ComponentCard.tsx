@@ -27,7 +27,6 @@ const useTablesPaginationState = () => {
 
 
 interface ComponentCardProps {
-  title: string;
   children: React.ReactNode;
   className?: string; // Additional custom classes for styling
   desc?: string; // Description text
@@ -41,7 +40,6 @@ interface ComponentCardProps {
 }
 
 const ComponentCard: React.FC<ComponentCardProps> = ({
-  title,
   children,
   className = "",
   desc = "",  
@@ -59,13 +57,6 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
         <div className="flex justify-between items-center">
 
           <h3 className="text-base font-medium text-gray-800 dark:text-white/90">
-            {title}
-          </h3>
-
-          <div className="flex gap-3.5 items-center">
-
-            <TablesSearch />
-
             {add &&
               <TablesAdd
                 formData={add.formData}
@@ -75,7 +66,7 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
                   <Button size="sm" variant="primary"
 
                   >
-                    <PlusIcon />
+                    TAMBAH <PlusIcon />
                   </Button>
                 }
                 api={add.api}
@@ -83,6 +74,13 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
 
               />
             }
+          </h3>
+
+          <div className="flex gap-3.5 items-center">
+
+            <TablesSearch />
+
+            
 
 
 

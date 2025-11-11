@@ -14,6 +14,7 @@ interface tableState<T = any> {
     setTablesDefault: () => void;
     lastPath: string;
     setLastPath: (path: string) => void;
+    setTableFromId: (id: string | number, idTable: string | number, table: T) => void;
 }
 
 
@@ -48,4 +49,8 @@ export const useTablesStore = create<tableState<any>>((set) => ({
         tablesTotal: 0,
         lastPath: '',
     }),
+    setTableFromId: (id: string | number, idTable="id", tableUpdate) => set((state) => ({
+        tables: state.tables.map(table => table[idTable] === id ? { ...table ,...tableUpdate } : table)
+    }))
+
 })); 

@@ -22,6 +22,7 @@ import { toast } from "react-toastify"
 import { revalidatePath } from "next/cache"
 import { useRouter } from 'next/navigation';
 import userType from "@/types/model/users"
+import { useTablesStore } from "@/store/useTablesStore"
 
 interface ModulsEditProps<T = any> {
     IconButton: React.JSX.Element,
@@ -54,9 +55,7 @@ export default function TablesEdit({
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const router = useRouter();
 
-    useEffect(() => {        
-        
-    }, [])
+    const setTableFromId = useTablesStore(state => state.setTableFromId);
 
 
     const form = useForm<z.infer<any>>({
@@ -69,6 +68,9 @@ export default function TablesEdit({
         try {
             setIsLoading(true)
 
+            console.log(values, 'ini val');
+            
+
             const response = await fetch(`${api}/${id}`, {
                 method: 'PATCH',
                 body: JSON.stringify(values),
@@ -76,7 +78,12 @@ export default function TablesEdit({
 
             if (response.status === 200) {
                 toast.success("Modul berhasil diupdate.")
+                const updatedData = await response.json();
+                
+                setTableFromId(id, "tahun_ajaran_id", updatedData.data);
             }
+
+
 
             console.log(response);
 
@@ -126,7 +133,7 @@ export default function TablesEdit({
                         </div>
                         <DialogFooter>
                             <DialogClose asChild>
-                                <Button variant="outline">Batal</Button>
+                                <Button disabled={isLoading} variant="outline">Batal</Button>
                             </DialogClose>
                             {/* <Button type="submit" disabled={isLoading}>{isLoading ? "Loading..." : "Simpan Perubahan"}</Button> */}
                             <Button type="submit" >Simpan Perubahan</Button>
