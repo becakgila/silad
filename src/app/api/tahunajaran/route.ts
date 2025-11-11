@@ -15,34 +15,34 @@ export async function GET(request: Request) {
     const skip = (page - 1) * take;
 
     const whereClause = {
-      // OR: [
-      //   {
-      //     tahun_awal: {
-      //       contains: search,
-      //     }
-      //   },
-      //   {
-      //     tahun_akhir: {
-      //       contains: search,
-      //     }
-      //   },
-      //   {
-      //     semester: {
-      //       contains: search,
-      //     }
-      //   },
-      //   {
-      //     start_date: {
-      //       contains: search,
-      //     }
-      //   },
-      //   {
-      //     end_date: {
-      //       contains: search,
-      //     }
-      //   },
+      OR: [
+        {
+          tahun_awal: {
+            contains: search,
+          }
+        },
+        {
+          tahun_akhir: {
+            contains: search,
+          }
+        },
+        // {
+        //   semester: {
+        //     contains: search,
+        //   }
+        // },
+        // {
+        //   start_date: {
+        //     contains: search,
+        //   }
+        // },
+        // {
+        //   end_date: {
+        //     contains: search,
+        //   }
+        // },
 
-      // ]
+      ]
     }
 
     const data = await prisma.tahun_ajaran.findMany({

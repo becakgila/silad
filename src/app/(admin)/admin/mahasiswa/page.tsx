@@ -165,7 +165,7 @@ export default function BasicTables() {
     <div>
       <PageBreadcrumb pageTitle="Data Mahasiswa" />
       <div className="space-y-6">
-        <ComponentCard api={table.api} title="Mahasiswa List" >
+        <ComponentCard api={table.api} >
           <Tables listData={table.listData} api={table.api} />
         </ComponentCard>
       </div>
