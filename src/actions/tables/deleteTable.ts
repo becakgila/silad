@@ -12,8 +12,6 @@ interface onConfirmProps {
 export default async function onConfirm({ modulId, api }: onConfirmProps) {
   
   try {
-
-    console.log(`${process.env.NEXT_AUTH_URL}${api}/${modulId}`);
     
     const res = await fetch(`${process.env.NEXT_AUTH_URL}${api}/${modulId}`, {
       method: 'DELETE',

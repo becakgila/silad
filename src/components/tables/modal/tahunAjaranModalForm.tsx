@@ -9,11 +9,11 @@ import Select from "@/components/form/Select"
 
 const formSchema = z.object({
 
-  tahun_awal: z.string().nonempty({ message: "Wajib Diisi!!!" }),
-  tahun_akhir: z.string().nonempty({ message: "Wajib Diisi!!!" }),
-  start_date: z.string().nonempty({ message: "Wajib Diisi!!!" }),
-  end_date: z.string().nonempty({ message: "Wajib Diisi!!!" }),
-  semester: z.string().nonempty({ message: "Wajib Diisi!!!" }),
+  tahun_awal: z.string().nonempty({ message: "Wajib Diisi!!!" }).default(""),
+  tahun_akhir: z.string().nonempty({ message: "Wajib Diisi!!!" }).default(""),
+  start_date: z.string().nonempty({ message: "Wajib Diisi!!!" }).default(""),
+  end_date: z.string().nonempty({ message: "Wajib Diisi!!!" }).default(""),
+  semester: z.string().nonempty({ message: "Wajib Diisi!!!" }).default(""),
 })
 
 const tahunAjaranModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
@@ -22,6 +22,7 @@ const tahunAjaranModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] =
       <Input
         id={field.name}
         {...field}
+        value={field.value ?? ""}
       />
     )}
     />
@@ -31,6 +32,7 @@ const tahunAjaranModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] =
       <Input
         id={field.name}
         {...field}
+        value={field.value ?? ""}
       />
     )}
     />
@@ -45,6 +47,7 @@ const tahunAjaranModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] =
               { value: 'genap', label: 'Genap' },
             ]}
             {...field}
+            
             defaultValue={field.value}
             // onChange={handleSelectChange}
             className="dark:bg-dark-900"
@@ -63,7 +66,7 @@ const tahunAjaranModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] =
         <DatePicker
           id={field.name}
           field={field}
-          defaultDate={field.value}
+          defaultDate={field.value ?? ""}
           onChange={(dates, currentDateString) => {
             let isoString = currentDateString;
             if (dates && dates[0] instanceof Date) {
@@ -91,7 +94,7 @@ const tahunAjaranModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] =
         <DatePicker
           id={field.name}
           field={field}
-          defaultDate={field.value}
+          defaultDate={field.value ?? ""}
           onChange={(dates, currentDateString) => {
             let isoString = currentDateString;
             if (dates && dates[0] instanceof Date) {

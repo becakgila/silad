@@ -41,7 +41,26 @@ export async function PATCH(request: NextRequest, { params } : { params: { id: s
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
-    }    
+    }
+    
+    const check = await prisma.tahun_ajaran.findUnique({
+      where: { 
+        tahun_awal: body.tahun_awal, 
+        tahun_akhir: body.tahun_akhir, 
+        semester: body.semester 
+      }
+    })
+
+    console.log(check, body);
+    
+
+    if (check) {
+      return new Response(JSON.stringify({ message: "Tahun Ajaran sudah ada di database" }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     const update = await prisma.tahun_ajaran.update({
       where: { tahun_ajaran_id: BigInt(id) },
       data: body
@@ -89,7 +108,7 @@ export async function DELETE(request: NextRequest, { params } : { params: { id: 
       });
     } 
     await prisma.tahun_ajaran.delete({
-      where: { id: BigInt(id) }
+      where: { tahun_ajaran_id: BigInt(id) }
     }); 
 
     return new Response(JSON.stringify({ 

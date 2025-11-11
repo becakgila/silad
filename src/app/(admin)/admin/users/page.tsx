@@ -158,7 +158,7 @@ export default function BasicTables() {
     <div>
       <PageBreadcrumb pageTitle="Users" />
       <div className="space-y-6">
-        <ComponentCard api={table.api} title="Users List" >
+        <ComponentCard api={table.api}>
           <UsersTable api={table.api} listData={table.listData} />
         </ComponentCard>
       </div>

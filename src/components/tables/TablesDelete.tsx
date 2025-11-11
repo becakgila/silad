@@ -2,6 +2,7 @@
 
 import * as onConfirmAction from "@/actions/tables/deleteTable";
 import { AlertDialogFooter, AlertDialogHeader, AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { useTablesStore } from "@/store/useTablesStore";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "react-toastify";
@@ -15,15 +16,27 @@ type Props = {
 
 const TableDelete = ({ OpenButton, modulId, api }: Props) => {
 
+  const setTables = useTablesStore((state) => state.setTables)
+  const tables = useTablesStore((state) => state.tables)
+
   const onConfirm = async (modulId: string, api: string) => {
     try {
       const res = await onConfirmAction.default({modulId, api})
 
-      toast.success(res.message ?? 'Modul berhasil di hapus', {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-      });
+      if (res) {
+        
+        console.log(modulId, tables, res.success);
+          
+        const updatedTables = tables.filter((table) => table.tahun_ajaran_id !== modulId);
+        setTables(updatedTables);
+  
+        toast.success(res.message ?? 'Modul berhasil di hapus', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+        });
+      }
+
 
     } catch (error) {
       console.error('An error occurred while deleting the modul', error);
