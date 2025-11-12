@@ -66,7 +66,7 @@ model mahasiswa {
   password      String?  @db.VarChar(255)
   nik           String   @db.VarChar(255)
   nama          String   @db.VarChar(255)
-  prodi         String   @db.VarChar(100)
+  prodi_id      String   @db.VarChar(100)
   angkatan      String   @db.VarChar(50)
   jenis_kelamin String   @db.VarChar(255)
   tempat_lahir  String   @db.VarChar(255)
@@ -79,6 +79,8 @@ model mahasiswa {
   provinsi      String   @db.VarChar(100)
   kota          String   @db.VarChar(100)
   kecamatan     String   @db.VarChar(100)
+
+  prodi         prodi?   @relation("MahasiswaProdi", fields: [prodi_id], references: [prodi_id])
 }
 
 model prodi {
@@ -92,6 +94,7 @@ model prodi {
 
   fakultas         fakultas?           @relation("ProdiFakultas", fields: [fakultas_id], references: [fakultas_id])
   users            users[]             @relation("UserProdi")
+  mahasiswa        mahasiswa[]         @relation("MahasiswaProdi")
   @@index([fakultas_id], map: "fakultas_id")
 }
 
