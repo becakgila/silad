@@ -133,7 +133,7 @@ export default function BasicTables() {
             formSchema: modulFormSchema,
             resolver: zodResolver(modulFormSchema)
           }
-        }>
+        } >
           <Tables listData={table.listData} api={table.api} />
         </ComponentCard>
       </div>

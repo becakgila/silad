@@ -22,6 +22,7 @@ import { toast } from "react-toastify"
 import { revalidatePath } from "next/cache"
 import { useRouter } from 'next/navigation';
 import userType from "@/types/model/users"
+import { useTablesStore } from "@/store/useTablesStore"
 
 interface ModulsEditProps<T = any> {
     IconButton: React.JSX.Element,    
@@ -48,18 +49,23 @@ export default function TablesAdd({
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
     const [isOpen, setIsOpen] = useState<boolean>(false)
+
+    const setTables = useTablesStore((state) => state.setTables)
+    const tables = useTablesStore((state) => state.tables)
     const router = useRouter();
 
     useEffect(() => {        
+        
+        
         
     }, [])
 
 
     const form = useForm<z.infer<any>>({
         resolver: resolver,
-        defaultValues: {
+        // defaultValues: {
             
-        },
+        // },
         
     })
 
@@ -73,11 +79,17 @@ export default function TablesAdd({
                 body: JSON.stringify(values),
             })
 
+            form.reset();
             if (response.status === 200) {
                 toast.success("Modul berhasil diupdate.")
+                const res = await response.json();
+                setTables([...tables, res.data]);
             }
 
-            console.log(response);
+            if (response.status === 400) {
+                const res = await response.json();
+                toast.warning(`Gagal mengupdate modul. ${res.message || 'Terjadi kesalahan tidak terduga.'}`)
+            }
 
         } catch (error) {
             // Handle error if necessary

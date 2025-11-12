@@ -58,6 +58,7 @@ export async function GET(request: Request) {
       where: whereClause,
       include: {
         fakultas: true, // Include the fakultas relation
+        prodi: true, // Include the fakultas relation
       },
     });
     
@@ -69,6 +70,10 @@ export async function GET(request: Request) {
         fakultas: item.fakultas ? {
           ...item.fakultas,
           fakultas_id: item.fakultas.fakultas_id.toString(),
+        }: null,
+        prodi: item.prodi ? {
+          ...item.prodi,
+          fakultas_id: item.prodi.fakultas_id.toString(),
         }: null,
       };
     });              
