@@ -34,6 +34,7 @@ interface ModulsEditProps<T = any> {
     formData: React.FC<{ form: UseFormReturn<any, any, any> }>[];
     title?: string;
     description?: string;
+    idLabel?: string;
 }
 
 
@@ -46,6 +47,7 @@ export default function TablesEdit({
     formSchema,
     resolver,
     id,
+    idLabel="id",
     formData,
     title = "Edit",
     description="Buat perubahan di sini. Klik simpan ketika sudah melakukan perubahan."
@@ -80,7 +82,7 @@ export default function TablesEdit({
                 toast.success("Modul berhasil diupdate.")
                 const updatedData = await response.json();
                 
-                setTableFromId(id, "tahun_ajaran_id", updatedData.data);
+                setTableFromId(id, idLabel, updatedData.data);
             }
 
 

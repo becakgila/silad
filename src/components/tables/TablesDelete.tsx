@@ -11,10 +11,11 @@ type Props = {
   OpenButton?: React.JSX.Element;
   modulId: string;
   api: string;
+  idLabel?: string;
 }
 
 
-const TableDelete = ({ OpenButton, modulId, api }: Props) => {
+const TableDelete = ({ OpenButton, modulId, api, idLabel="id" }: Props) => {
 
   const setTables = useTablesStore((state) => state.setTables)
   const tables = useTablesStore((state) => state.tables)
@@ -27,7 +28,7 @@ const TableDelete = ({ OpenButton, modulId, api }: Props) => {
         
         console.log(modulId, tables, res.success);
           
-        const updatedTables = tables.filter((table) => table.tahun_ajaran_id !== modulId);
+        const updatedTables = tables.filter((table) => table[idLabel] !== modulId);
         setTables(updatedTables);
   
         toast.success(res.message ?? 'Modul berhasil di hapus', {

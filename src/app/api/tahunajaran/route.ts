@@ -1,83 +1,107 @@
+import { tahun_ajaran_semester } from '@/generated/prisma';
 import prisma from '@/lib/prisma'
 import { NextRequest } from 'next/server';
 
 export async function GET(request: Request) {
   try {
-
     const { searchParams } = new URL(request.url);
 
-
-
-    const search = searchParams.get('search') || "";
-    const take: number = Number(searchParams.get('take')) || 10;
-    const page: number = Number(searchParams.get('page')) || 1;
-
+    const test = [tahun_ajaran_semester.gasal, tahun_ajaran_semester.genap];
+    const search = searchParams.get("search")?.trim() || "";
+    const take = Number(searchParams.get("take")) || 10;
+    const page = Number(searchParams.get("page")) || 1;
     const skip = (page - 1) * take;
 
-    const whereClause = {
-      OR: [
-        {
-          tahun_awal: {
-            contains: search,
-          }
-        },
-        {
-          tahun_akhir: {
-            contains: search,
-          }
-        },
-        // {
-        //   semester: {
-        //     contains: search,
-        //   }
-        // },
-        // {
-        //   start_date: {
-        //     contains: search,
-        //   }
-        // },
-        // {
-        //   end_date: {
-        //     contains: search,
-        //   }
-        // },
+    const semesterSearch = test.filter((t) => t.includes(search));
 
-      ]
+    // 🧩 Detect US-style date: MM/DD/YYYY or MM-DD-YYYY
+    const usDateRegex = /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/;
+    let mysqlDateLike = `%${search}%`;
+
+    const match = search.match(usDateRegex);
+    if (match) {
+      const [, month, day, year] = match;
+      // Convert MM/DD/YYYY → YYYY-MM-DD
+      const formatted = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+      mysqlDateLike = `%${formatted}%`;
+      console.log("Converted search date:", mysqlDateLike);
     }
 
-    const data = await prisma.tahun_ajaran.findMany({
-      take: take,
-      skip: skip,
-      where: whereClause,
-    });
+    // 🧱 Build dynamic WHERE clause
+    const semesterClause =
+      semesterSearch.length > 0
+        ? `OR semester IN (${semesterSearch.map(() => "?").join(", ")})`
+        : "";
+
+    const whereClause = `
+      WHERE
+        tahun_awal LIKE ? OR
+        tahun_akhir LIKE ? OR
+        CAST(start_date AS CHAR) LIKE ? OR
+        CAST(end_date AS CHAR) LIKE ?
+        ${semesterClause}
+    `;
+
+    const params = [
+      `%${search}%`,
+      `%${search}%`,
+      mysqlDateLike,
+      mysqlDateLike,
+      ...semesterSearch,
+    ];
+
+    // 🧮 Count
+    const countResult: any = await prisma.$queryRawUnsafe(
+      `SELECT COUNT(*) AS total FROM tahun_ajaran ${whereClause}`,
+      ...params
+    );
+    const total = countResult?.[0]?.total || 0;
+
+    // 📦 Data
+    const data: any = await prisma.$queryRawUnsafe(
+      `
+      SELECT *
+      FROM tahun_ajaran
+      ${whereClause}
+      ORDER BY start_date DESC
+      LIMIT ? OFFSET ?
+      `,
+      ...params,
+      take,
+      skip
+    );
 
     const serializedData = data.map((item: any) => ({
       ...item,
-      tahun_ajaran_id: item.tahun_ajaran_id.toString() // Convert BigInt to string,
-
+      tahun_ajaran_id: item.tahun_ajaran_id.toString(),
     }));
 
-    const dataCount = await prisma.tahun_ajaran.count({
-      where: whereClause,
-    });
-
-
-    return new Response(JSON.stringify({
-      message: "Route is working",
-      data: serializedData,
-      total: dataCount
-    }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        message: "Route is working",
+        total : Number(total),
+        data: serializedData,
+      }),
+      {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   } catch (error) {
-    console.error("Unable to connect to the database:", error);
-    return new Response(JSON.stringify({ message: String(error) }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    console.error("Error fetching tahun_ajaran:", error);
+    return new Response(
+      JSON.stringify({ message: String(error) }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      }
+    );
   }
 }
+
+
+
+
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const body = await request.json();

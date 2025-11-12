@@ -11,7 +11,7 @@ import listDataType from "@/types/listDataTable";
 
 interface UserTableProps {  
   api: string,
-  listData: listDataType[]
+  listData: listDataType[],  
 }
 
 export default function Tables ({ api, listData} : UserTableProps)  {
