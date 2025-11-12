@@ -14,17 +14,15 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Modul from "@/types/model/modul"
 import { FormEvent, useEffect, useState } from "react"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { Form, FormControl, FormField, FormLabel } from "@/components/ui/form"
-import * as z from "zod";
-import { useForm, Resolver, UseFormReturn } from "react-hook-form"
-import { toast } from "react-toastify"
-import { revalidatePath } from "next/cache"
-import { useRouter } from 'next/navigation';
-import userType from "@/types/model/users"
-import { useTablesStore } from "@/store/useTablesStore"
-import Select from "@/components/form/Select"
-import { ChevronDownIcon } from "lucide-react"
+
+
+import {
+    Table as TableUi,
+    TableCell,
+    TableHeader,
+    TableRow,
+    TableBody
+} from "@/components/ui/table";
 import Radio from "@/components/form/input/Radio"
 
 interface HakEditProps<T = any> {
@@ -47,26 +45,29 @@ export default function HakEdit({
     title = "Edit Hak Akses",
     description = "Buat perubahan di sini. Klik radio button untuk merubah Hak."
 }: Readonly<HakEditProps>) {
-    
+
     const [isOpen, setIsOpen] = useState<boolean>(false)
 
     const [option, setOption] = useState([])
 
-    const [selectedValue, setSelectedValue] = useState(0);
+    const [selectedValue, setSelectedValue] = useState("");
 
-    const handleRadioChange = (val: any) => {        
+    const handleRadioChange = (val: any) => {
+
+        console.log(val);
+        
 
         setSelectedValue(val)
     }
 
     const handleOptionsChange = async (val: any) => {
         const response = await fetch(`/api/hak?user_id=${id}&modul_id=${val}`, {
-                method: 'GET',                
-            })
+            method: 'GET',
+        })
 
-        const data = (await response.json()).data;                
+        const data = (await response.json()).data;
 
-        setSelectedValue(data?.level || 1)        
+        setSelectedValue(data?.level || 1)
     }
 
     async function moduleFetch() {
@@ -100,7 +101,7 @@ export default function HakEdit({
             <DialogTrigger asChild>
                 {IconButton}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] ">
+            <DialogContent className="sm:max-w-[720px]" >
                 {/* <Form > */}
                 <form className="gap-8 flex flex-col" >
                     <DialogHeader>
@@ -109,22 +110,78 @@ export default function HakEdit({
                             {description}
                         </DialogDescription>
                     </DialogHeader>
-                    <div className="grid gap-4">
+                    <div className="grid gap-4 overflow-scroll">
+                        <TableUi>
+                            {/* Table Header */}
+                            <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
+                                <TableRow>
+                                    <TableCell
+                                        isHeader
+                                        className="px-5 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
 
-                        {
-                            <div className="relative">
-                                <Select
-                                    options={option}
-                                    onChange={handleOptionsChange}
-                                    // onChange={handleSelectChange}
-                                    className="dark:bg-dark-900"
-                                />
-                                <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
-                                    <ChevronDownIcon />
-                                </span>
-                            </div>
+                                    >
+                                        {" "}
+                                    </TableCell>
 
-                        }
+
+                                    {
+                                        [1, 2, 3, 4].map((val: number) => (
+                                            <TableCell
+                                                key={val}
+                                                isHeader
+                                                className="px-5 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400"
+
+                                            >
+                                                level{" " + val}
+                                            </TableCell>))
+                                    }
+
+
+                                </TableRow>
+                            </TableHeader>
+
+                            <TableBody className="divide-y divide-gray-100 dark:divide-white/5">
+                                {option.map((order: any, idx) => (
+                                    <TableRow key={order.label ?? idx}>
+                                        <TableCell className="px-4 py-3 w-10 text-gray-500 text-center text-theme-sm dark:text-gray-400">
+                                            {order.label}
+                                        </TableCell>
+                                        {
+                                            [1, 2, 3, 4].map((val: number) => (
+                                                <TableCell key={val} className="px-4 py-3 text-gray-500 items-center text-center text-theme-sm dark:text-gray-400">
+                                                    <Radio
+                                                        id={`radio-${order.value}-${val}`}
+                                                        name={`group-${order.value}`}
+                                                        value={val.toString()}
+                                                        checked={selectedValue === val.toString()}
+                                                        onChange={handleRadioChange}
+                                                        className="flex justify-center "
+                                                        
+
+                                                    />
+                                                </TableCell>
+                                            ))
+                                        }
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </TableUi>
+
+
+
+                        {/* <div className="relative">
+                            <Select
+                                options={option}
+                                onChange={handleOptionsChange}
+                                // onChange={handleSelectChange}
+                                className="dark:bg-dark-900"
+                            />
+                            <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+                                <ChevronDownIcon />
+                            </span>
+                        </div>
+
+
 
                         <div className="flex flex-col mt-6 gap-8">
                             <Radio
@@ -163,7 +220,7 @@ export default function HakEdit({
                                 label="level 4"
                                 disabled={selectedValue === 0}
                             />
-                        </div>
+                        </div> */}
 
 
 
