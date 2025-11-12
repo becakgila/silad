@@ -92,6 +92,7 @@ const table: {
             formSchema={modulFormSchema}
             resolver={zodResolver(modulFormSchema)}
             id={table.modul_id}
+            idLabel="modul_id"
           />
 
 
@@ -103,6 +104,7 @@ const table: {
             </Button>)
           }
             modulId={table.modul_id}
+            idLabel="modul_id"
           />
         </TableCell>
       )
@@ -134,7 +136,7 @@ export default function BasicTables() {
             resolver: zodResolver(modulFormSchema)
           }
         } >
-          <Tables listData={table.listData} api={table.api} />
+          <Tables listData={table.listData} api={table.api}  />
         </ComponentCard>
       </div>
     </div>

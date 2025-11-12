@@ -11,13 +11,14 @@ import userType from "@/types/model/users";
 import ModulsSwitch from "@/components/tables/TablesSwitch";
 import TablesEdit from "@/components/tables/TablesEdit";
 import Button from "@/components/ui/button/Button";
-import { PencilIcon } from "lucide-react";
+import { BookIcon, PencilIcon } from "lucide-react";
 import TableDelete from "@/components/tables/TablesDelete";
 import { TrashBinIcon } from "@/icons";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import userModalForm from "@/components/tables/modal/userModalForm";
 import { useTablesStore } from "@/store/useTablesStore";
+import HakEdit from "@/components/tables/users/HakEdit";
 
 
 const api = "/api/users";
@@ -142,6 +143,18 @@ const table: {
             </Button>)
           }
             modulId={table.id}
+          />
+
+          <HakEdit id={table.id} IconButton={
+            (<Button size="sm" variant="primary"
+              
+              
+            >
+              <BookIcon />
+            </Button>)
+          }
+            
+
           />
         </TableCell>
       )

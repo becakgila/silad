@@ -8,10 +8,18 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
 
     const search = searchParams.get('search') || "";
-    const take: number = Number(searchParams.get('take')) || 10;
-    const page: number = Number(searchParams.get('page')) || 1;
 
-    const skip = (page - 1) * take;
+    // Parse pagination params. If not provided, keep undefined so Prisma returns all rows.
+    const takeParam = searchParams.get('take');
+    const pageParam = searchParams.get('page');
+
+    const take: number | undefined = takeParam ? Number(takeParam) : undefined;
+    const page: number | undefined = pageParam ? Number(pageParam) : undefined;
+
+    // Compute skip only when take is provided. If page is missing, default to page 1 (skip = 0).
+    const skip: number | undefined = (typeof take === 'number' && !isNaN(take))
+      ? ((page && !isNaN(page) && page > 0) ? (page - 1) * take : 0)
+      : undefined;
 
     const whereClause = {
       OR: [
@@ -41,14 +49,19 @@ export async function GET(request: NextRequest) {
       ]
     }
 
-    const data = await prisma.moduls.findMany({
-      orderBy: {
-        modul_urut: 'asc',
-      },
-      take: take,
-      skip: skip,
+    // Build findMany options and only include take/skip when take is a positive number.
+    const findManyOptions: any = {
+      orderBy: { modul_urut: 'asc' },
       where: whereClause,
-    });
+    };
+
+    if (typeof take === 'number' && !isNaN(take) && take > 0) {
+      findManyOptions.take = take;
+      // include skip (0 is valid) when take is provided
+      findManyOptions.skip = typeof skip === 'number' && !isNaN(skip) ? skip : 0;
+    }
+
+    const data = await prisma.moduls.findMany(findManyOptions);
 
     const dataCount = await prisma.moduls.count({
       where: whereClause,

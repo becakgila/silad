@@ -75,7 +75,8 @@ const table : {
                           formData={tahunAjaranModalForm}
                           formSchema={formSchema}
                           resolver={zodResolver(formSchema)}
-                          id={table.tahun_ajaran_id}                          
+                          id={table.tahun_ajaran_id}   
+                          idLabel="tahun_ajaran_id"                       
                         />
                         
 
@@ -87,6 +88,7 @@ const table : {
                             </Button>)
                         }
                             modulId={table.tahun_ajaran_id}
+                            idLabel="tahun_ajaran_id"
                         />
                     </TableCell>
       )
