@@ -1,6 +1,8 @@
 import { NextRequest } from "next/server";
 import prisma from '@/lib/prisma'
 import { moduls_modul_akses } from "@/generated/prisma";
+import { fa } from "zod/v4/locales";
+import { use } from "react";
 
 export async function GET(request: NextRequest) {
   try {
@@ -12,6 +14,8 @@ export async function GET(request: NextRequest) {
     // Parse pagination params. If not provided, keep undefined so Prisma returns all rows.
     const takeParam = searchParams.get('take');
     const pageParam = searchParams.get('page');
+
+    const userIdParam = searchParams.get('userId');
 
     const take: number | undefined = takeParam ? Number(takeParam) : undefined;
     const page: number | undefined = pageParam ? Number(pageParam) : undefined;
@@ -53,6 +57,13 @@ export async function GET(request: NextRequest) {
     const findManyOptions: any = {
       orderBy: { modul_urut: 'asc' },
       where: whereClause,
+      include: {
+        user_haks: userIdParam ? {
+          where: {
+            user_id: Number(userIdParam), // filter array of user_haks by user_id
+          },
+        } : false,
+      },
     };
 
     if (typeof take === 'number' && !isNaN(take) && take > 0) {
@@ -67,11 +78,24 @@ export async function GET(request: NextRequest) {
       where: whereClause,
     });
 
-    const serializedData = data.map((item: any) => ({
-      ...item,
-      modul_id: item.modul_id.toString() // Convert BigInt to string,
 
-    }));
+    const serializedData = data.map((item: any) => {
+
+      const serializedHaks = userIdParam ? {
+        user_haks: item.user_haks.map((hak: any) => ({
+          ...hak,
+          hakid: hak.hakid.toString(),
+          modul_id: hak.modul_id.toString(),
+        }))
+      } : {};
+
+      return ({
+        ...item,
+        modul_id: item.modul_id.toString(), // Convert BigInt to string,            
+        ...serializedHaks
+
+      })
+    });
 
     return new Response(JSON.stringify({
       message: "Route is working",
@@ -83,6 +107,9 @@ export async function GET(request: NextRequest) {
     });
   } catch (error) {
     // throw new Error(error instanceof Error ? error.message : "Unknown error");;
+
+    console.log(error);
+
 
     return new Response(JSON.stringify({ message: "Error fetching moduls", data: [], error: String(error) }), {
       status: 500,
@@ -100,7 +127,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const addModul = await prisma.moduls.create({
       data: {
         modul_induk: 0,
-        modul_aktif: "yes",        
+        modul_aktif: "yes",
         modul_akses: "Prodi",
         modul_newtab: "no",
         modul_id_sms: "255",
@@ -111,7 +138,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const serializedModul = {
       ...addModul,
       modul_id: addModul.modul_id.toString()
-    };    
+    };
 
 
 

@@ -80,8 +80,6 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
 
             <TablesSearch />
 
-            
-
 
 
 

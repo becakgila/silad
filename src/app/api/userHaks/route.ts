@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import prisma from '@/lib/prisma'
+import { create } from "domain";
 
 export async function GET(request: NextRequest) {
 	try {
@@ -50,3 +51,49 @@ export async function GET(request: NextRequest) {
 	}
 }
 
+export async function PATCH(request: NextRequest) {
+	try {
+		
+		const body = await request.json();
+		const {where, data} = body;
+
+		const getHak = await prisma.user_haks.findFirst({
+			where,
+		});
+
+		console.log(getHak, 'ini get hak sebelum update');
+		
+
+		const updatedHak = await prisma.user_haks.updateMany({
+			where: where,
+			data: {...data, updated_at: new Date(),},
+			
+		});	
+
+		if(updatedHak.count === 0){
+			const created= await prisma.user_haks.create({
+				data: {
+					...where,
+					...data,
+					created_at: new Date(),
+					updated_at: new Date(),
+				}
+			});
+
+			console.log(created);
+			
+		}
+
+		return new Response(JSON.stringify({ message: 'User hak updated', data: updatedHak }), {
+			status: 200,
+			headers: { 'Content-Type': 'application/json' },
+		});
+	} catch (error: unknown) {
+		console.log();
+		
+		return new Response(JSON.stringify({ message: 'Error updating user hak', error: String(error) }), {
+			status: 500,
+			headers: { 'Content-Type': 'application/json' },
+		});
+	}
+}

@@ -8,6 +8,7 @@ import {
 
 import TablesBody from "./TablesBody";
 import listDataType from "@/types/listDataTable";
+import { ArrowDown, ArrowUp, ChevronDown, ChevronUp } from "lucide-react";
 
 interface UserTableProps {  
   api: string,
@@ -39,7 +40,19 @@ export default function Tables ({ api, listData} : UserTableProps)  {
                     className="px-5 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400"
                     key={data.name}
                   >
-                    {data.name}
+                    <div className="flex items-center justify-between">
+
+                      <p>
+                        {data.name}
+                      </p>
+                      <button onClick={() => {
+                        console.log(`sort 1 ${data.name}`);
+                        
+                      }}>
+                        <ChevronUp size={10} strokeWidth={2} />
+                        <ChevronDown size={10} strokeWidth={2}  />
+                      </button>
+                    </div>
                   </TableCell>
                   ))
                 }
