@@ -76,6 +76,10 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
           </h3>
           <div className="flex gap-3.5 items-center">
             <TablesSearch />
+
+
+
+
           </div>
         </div>
         {desc && (

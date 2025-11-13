@@ -15,7 +15,7 @@ export default function TableBody({
     listData: listDataType[],
 }) {
 
-    const [loading, setLoading] =  useState(false);
+    const [loading, setLoading] =  useState(true);
     const tables = useTablesStore(state => state.tables);
     const searchModuls = useTablesStore(state => state.searchTables);
     const setModuls = useTablesStore(state => state.setTables);
@@ -68,11 +68,11 @@ export default function TableBody({
         fetchData().finally(() => setLoading(false));
     }, [searchModuls, takeModuls, pageModuls, pathname]);
 
-    loading && (<div>Loading...</div>);
+    ;
 
-    return (
+    return  (
         <TBody className="divide-y divide-gray-100 dark:divide-white/5">
-            {tables.map((order, idx) => (
+            {loading ? (<></>) : tables.map((order, idx) => (
                 <TableRow key={order.id ?? idx}>
                     <TableCell className="px-4 py-3 w-10 text-gray-500 text-center text-theme-sm dark:text-gray-400">
                         {idx + 1 + ((pageModuls! - 1) * takeModuls!)}                        
