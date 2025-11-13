@@ -3,7 +3,11 @@ export default interface mahasiswaType {
   password: string,
   nik: string,
   nama: string,
-  prodi: string,
+  prodi_id: string,
+  prodi: {
+    prodi_id: string,
+    prodi_name: string,
+  },
   angkatan: string,
   jenis_kelamin: string,
   tempat_lahir: string,

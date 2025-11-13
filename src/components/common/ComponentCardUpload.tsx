@@ -4,12 +4,13 @@ import TablesSearch from "../tables/TablesSearch";
 import TablesPagination from "../tables/TablesPagination";
 import { useTablesStore } from "@/store/useTablesStore";
 import Button from "../ui/button/Button";
-import { PlusIcon } from "lucide-react";
+import { PlusIcon, UserPlusIcon } from "lucide-react";
 import TablesAdd from "../tables/TablesAdd";
 import modulModalForm, { modulFormSchema } from "../tables/modal/modulModalForm";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
 import { Resolver, UseFormReturn } from "react-hook-form";
+import { useRouter } from "next/navigation";
 
 // Extract store selectors
 const useTablesPaginationState = () => {
@@ -26,7 +27,7 @@ const useTablesPaginationState = () => {
 
 
 
-interface ComponentCardProps {
+interface ComponentCardUploadProps {
   children: React.ReactNode;
   className?: string; // Additional custom classes for styling
   desc?: string; // Description text
@@ -36,19 +37,18 @@ interface ComponentCardProps {
     formSchema: z.ZodSchema<any>;
     resolver: Resolver<any, any, any> | undefined;
     formData: React.FC<{ form: UseFormReturn<any, any, any> }>[];
-  },
-  ButtonProp?: React.ReactNode;
+  }
 }
 
-const ComponentCard: React.FC<ComponentCardProps> = ({
+const ComponentCardUpload: React.FC<ComponentCardUploadProps> = ({
   children,
   className = "",
-  desc = "",  
+  desc = "",
   add,
-  ButtonProp,
 }) => {
   // Get pagination state from store
   const paginationState = useTablesPaginationState();
+  const router = useRouter();
 
   return (
     <div
@@ -57,7 +57,6 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
       {/* Card Header */}
       <div className="px-6 py-5">
         <div className="flex justify-between items-center">
-
           <h3 className="text-base font-medium text-gray-800 dark:text-white/90">
             {add &&
               <TablesAdd
@@ -72,7 +71,10 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
                 api={add.api}
               />
             }
-            {ButtonProp && ButtonProp }
+            <Button onClick={()=>router.push("/admin/mahasiswa/upload")} size="sm" variant="primary"
+                                className="bg-blue-light-950">
+                                Upload <UserPlusIcon />
+                              </Button>
           </h3>
           <div className="flex gap-3.5 items-center">
             <TablesSearch />
@@ -96,4 +98,4 @@ const ComponentCard: React.FC<ComponentCardProps> = ({
   );
 };
 
-export default ComponentCard;
+export default ComponentCardUpload;

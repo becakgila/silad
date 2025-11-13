@@ -1,4 +1,5 @@
 import prisma from '@/lib/prisma'
+import { includes } from 'zod';
 
 export async function GET(request: Request) {
   try {
@@ -14,38 +15,70 @@ export async function GET(request: Request) {
     const skip = (page - 1) * take;
 
     const whereClause = {
-      // OR: [
-        // {
-        //   modul_name: {
-        //     contains: search,
-        //   }
-        // },
-        // {
-        //   modul_url: {
-        //     contains: search,
-        //   }
-        // },
-        // {
-        //   modul_simbol: {
-        //     contains: search,
-        //   }
-        // },
-        // {
-        //   modul_akses: {
-        //     in: Object.values(moduls_modul_akses).filter(s =>
-        //       s.toLowerCase().includes(search)
-        //     ),
-        //   }
-        // },
-
-      // ]
+      OR: [
+        {
+          nim: {
+            contains: search,
+          }
+        },
+        {
+          nik: {
+            contains: search,
+          }
+        },
+        {
+          nama: {
+            contains: search,
+          }
+        },
+        {
+          angkatan: {
+            contains: search,
+          }
+        },
+        {
+          jalur_masuk: {
+            contains: search,
+          }
+        },
+        {
+          no_hp: {
+            contains: search,
+          }
+        },
+        {
+          email: {
+            contains: search,
+          }
+        },
+        {
+          prodi: {
+            prodi_name:{
+              contains: search,
+            }            
+          }
+        },
+      ]
     }
 
     const data = await prisma.mahasiswa.findMany({
       take: take,
       skip: skip,
       where: whereClause,
+      include:{
+        prodi: true,
+      }
     });
+
+    const serializedData = data.map((item: any) => {
+      return { 
+        ...item, 
+        prodi: item.prodi ? {
+          ...item.prodi,
+          fakultas_id: item.prodi.fakultas_id.toString(),
+        }: null,
+      };
+    });  
 
     const dataCount = await prisma.mahasiswa.count({
       where: whereClause,
@@ -54,7 +87,7 @@ export async function GET(request: Request) {
 
     return new Response(JSON.stringify({
       message: "Route is working",
-      data: data,
+      data: serializedData,
       total: dataCount
     }), {
       status: 200,

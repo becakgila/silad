@@ -10,7 +10,9 @@ import { TrashBinIcon } from "@/icons";
 import { useTablesStore } from "@/store/useTablesStore";
 import listDataType from "@/types/listDataTable";
 import mahasiswaType from "@/types/model/mahasiswa";
-import { usePathname } from "next/navigation";
+import { UserPlusIcon } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+
 import React, { useEffect } from "react";
 import z from "zod";
 
@@ -18,17 +20,17 @@ const api = "/api/mahasiswa";
 
 const formSchema = z.object({
 
-    modul_name: z.string().nonempty({ message: "Wajib Diisi!!!" }),
-    modul_url: z.string().nonempty({ message: "Wajib Diisi!!!" }),
-    modul_urut: z.string().refine(v => { let n = Number(v); return !Number.isNaN(n) }, {message: "Bukan angka!!!"}).refine(v => { let n = Number(v); return n > 0 }, {message: "Harus lebih dari 0!!!"})    ,
-    modul_simbol: z.string().nonempty({ message: "Wajib Diisi!!!" }),
-    modul_akses: z.string().nonempty({ message: "Wajib Diisi!!!" }),
+  modul_name: z.string().nonempty({ message: "Wajib Diisi!!!" }),
+  modul_url: z.string().nonempty({ message: "Wajib Diisi!!!" }),
+  modul_urut: z.string().refine(v => { let n = Number(v); return !Number.isNaN(n) }, { message: "Bukan angka!!!" }).refine(v => { let n = Number(v); return n > 0 }, { message: "Harus lebih dari 0!!!" }),
+  modul_simbol: z.string().nonempty({ message: "Wajib Diisi!!!" }),
+  modul_akses: z.string().nonempty({ message: "Wajib Diisi!!!" }),
 })
 
-const table : {  
+const table: {
   api: string,
   listData: listDataType<mahasiswaType>[]
-} = {  
+} = {
   api,
   listData: [
     {
@@ -51,12 +53,12 @@ const table : {
       name: "PRODI",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.prodi || '-'}
+          {table.prodi?.prodi_name || '-'}
         </TableCell>
       )
     },
     {
-      name: "ANGLKATAN",
+      name: "ANGKATAN",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.angkatan || '-'}
@@ -68,7 +70,7 @@ const table : {
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.jenis_kelamin || '-'}
-        </TableCell>          
+        </TableCell>
       )
     },
     {
@@ -76,88 +78,88 @@ const table : {
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.tempat_lahir || '-'}
-        </TableCell>        
+        </TableCell>
       )
     },
-     {
+    {
       name: "TANGGAL LAHIR",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.tanggal_lahir ? new Date(table.tanggal_lahir).toLocaleDateString() : "-"  }
-        </TableCell>        
+          {table.tanggal_lahir ? new Date(table.tanggal_lahir).toLocaleDateString() : "-"}
+        </TableCell>
       )
     },
-     {
+    {
       name: "AGAMA",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.agama || '-'}
-        </TableCell>        
+        </TableCell>
       )
     },
-     {
+    {
       name: "HP",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.no_hp || '-'}
-        </TableCell>        
+        </TableCell>
       )
     },
-     {
+    {
       name: "JALUR MASUK",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.jalur_masuk || '-'}
-        </TableCell>        
+        </TableCell>
       )
     },
-     {
+    {
       name: "ALAMAT",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.alamat || '-'}
-        </TableCell>        
+        </TableCell>
       )
     },
-     {
+    {
       name: "PROVINSI",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.provinsi || '-'}
-        </TableCell>        
+        </TableCell>
       )
     },
     {
       name: "Aksi",
       component: ({ table }) => (
-        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">                      
-                        
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">
 
-                        <TableDelete api={api} OpenButton={
-                            (<Button size="sm" variant="primary"
-                                className="bg-red-500"
-                            >
-                                <TrashBinIcon />
-                            </Button>)
-                        }
-                            modulId={table.nim}
-                        />
-                    </TableCell>
+
+          <TableDelete api={api} OpenButton={
+            (<Button size="sm" variant="primary"
+              className="bg-red-500"
+            >
+              <TrashBinIcon />
+            </Button>)
+          }
+            modulId={table.nim}
+          />
+        </TableCell>
       )
     },
-    
-    
+
+
   ]
 
 }
 
 export default function BasicTables() {
-  
+
   const setLastPath = useTablesStore(state => state.setLastPath);
   const pathname = usePathname();
-  
+  const route = useRouter();
   useEffect(() => {
-    
+
     setLastPath(pathname);
   }, [pathname]);
 
@@ -165,7 +167,12 @@ export default function BasicTables() {
     <div>
       <PageBreadcrumb pageTitle="Data Mahasiswa" />
       <div className="space-y-6">
-        <ComponentCard api={table.api} >
+        <ComponentCard api={table.api} ButtonProp={
+          <Button onClick={() => route.push("/admin/mahasiswa/upload")} size="sm" variant="primary"
+            >
+            Import <UserPlusIcon />
+          </Button>
+        }>
           <Tables listData={table.listData} api={table.api} />
         </ComponentCard>
       </div>

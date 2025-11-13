@@ -30,10 +30,6 @@ const formSchema = z.object({
   email: z.string().nonempty({ message: "Wajib Diisi!!!" }),
   phone: z.string().nullable(),
   level: z.string(),
-  // modul_url: z.string().nonempty({ message: "Wajib Diisi!!!" }),
-  // modul_urut: z.string().refine(v => { let n = Number(v); return !Number.isNaN(n) }, {message: "Bukan angka!!!"}).refine(v => { let n = Number(v); return n > 0 }, {message: "Harus lebih dari 0!!!"})    ,
-  // modul_simbol: z.string().nonempty({ message: "Wajib Diisi!!!" }),
-  // modul_akses: z.string().nonempty({ message: "Wajib Diisi!!!" }),
 })
 
 
@@ -77,7 +73,7 @@ const table: {
       )
     },
     {
-      name: "Jurusan",
+      name: "Prodi",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.prodi?.prodi_name || '-'}
