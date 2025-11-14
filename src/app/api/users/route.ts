@@ -6,11 +6,14 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
 
-
-
     const search = searchParams.get('search') || "";
     const take: number = Number(searchParams.get('take')) || 10;
     const page: number = Number(searchParams.get('page')) || 1;
+    const sortColumn = searchParams.get('sortColumn') || "";
+    const sortDirection = searchParams.get('sortDirection') || "asc";
+
+    console.log(sortColumn, sortDirection);
+    
 
     const skip = (page - 1) * take;
 
@@ -60,6 +63,7 @@ export async function GET(request: Request) {
         fakultas: true, // Include the fakultas relation
         prodi: true, // Include the fakultas relation
       },
+      orderBy: sortColumn ? { [sortColumn]: sortDirection as 'asc' | 'desc' } : { id: 'asc' },
     });
     
     const serializedData = data.map((item: any) => {
@@ -81,6 +85,9 @@ export async function GET(request: Request) {
     const dataCount = await prisma.users.count({
       where: whereClause,
     });    
+
+    console.log(serializedData);
+    
 
     return new Response(JSON.stringify({
       message: "Route is working",
