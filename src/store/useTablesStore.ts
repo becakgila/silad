@@ -11,9 +11,14 @@ interface tableState<T = any> {
     setTablesPage: (page: number) => void;
     tablesTotal: number;
     setTablesTotal: (total: number) => void;
-    setTablesDefault: () => void;
     lastPath: string;
     setLastPath: (path: string) => void;
+    tablesSort: {
+        column: string;
+        direction: 'asc' | 'desc';
+    } | null;
+    setTablesSort: (table:{column: string, direction: 'asc' | 'desc'} | null) => void;
+    setTablesDefault: () => void;
     setTableFromId: (id: string | number, idTable: string | number, table: T) => void;
 }
 
@@ -41,6 +46,11 @@ export const useTablesStore = create<tableState<any>>((set) => ({
             })
         });
     },
+    tablesSort: null,
+    setTablesSort: (table: {
+        column: string;
+        direction: 'asc' | 'desc';
+    }) => set({ tablesSort: table }),
     setTablesDefault: () => set({
         tables: [],
         searchTables: '',
@@ -48,6 +58,7 @@ export const useTablesStore = create<tableState<any>>((set) => ({
         tablesPage: 1,
         tablesTotal: 0,
         lastPath: '',
+        tablesSort: null,
     }),
     setTableFromId: (id: string | number, idTable="id", tableUpdate) => set((state) => ({
         tables: state.tables.map(table => table[idTable] === id ? { ...table ,...tableUpdate } : table)

@@ -20,7 +20,6 @@ import userModalForm from "@/components/tables/modal/userModalForm";
 import { useTablesStore } from "@/store/useTablesStore";
 import HakEdit from "@/components/tables/users/HakEdit";
 
-
 const api = "/api/users";
 
 const formSchema = z.object({
@@ -42,6 +41,7 @@ const table: {
   listData: [
     {
       name: "Nama",
+      tableName: "name",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.name || "-"}
@@ -50,6 +50,7 @@ const table: {
     },
     {
       name: "Nip",
+      tableName: "nips",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.nips || '-'}
@@ -58,6 +59,7 @@ const table: {
     },
     {
       name: "Email",
+      tableName: "email",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.email || '-'}
@@ -66,6 +68,7 @@ const table: {
     },
     {
       name: "Fakultas",
+      tableName: "fakultas",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.fakultas?.fakultas_name || '-'}
@@ -74,6 +77,7 @@ const table: {
     },
     {
       name: "Prodi",
+      tableName: "prodi",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.prodi?.prodi_name || '-'}
@@ -82,6 +86,7 @@ const table: {
     },
     {
       name: "No Hp",
+      tableName: "phone",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.phone || '-'}
@@ -90,12 +95,14 @@ const table: {
     },
     {
       name: "Status",
+      tableName: "status",
       component: ({ table }) => (
         <ModulsSwitch api={api} defaultChecked={table.status === 'yes'} modulId={table.id} field="status" />
       )
     },    
     {
       name: "Created At",
+      tableName: "created_at",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.created_at ? new Date(table.created_at).toLocaleDateString() : "-"}
@@ -104,6 +111,7 @@ const table: {
     },
     {
       name: "Updated At",
+      tableName: "updated_at",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.updated_at ? new Date(table.updated_at).toLocaleDateString() : "-"}

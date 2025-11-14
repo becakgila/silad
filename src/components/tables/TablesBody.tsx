@@ -23,6 +23,7 @@ export default function TableBody({
     const pageModuls = useTablesStore(state => state.tablesPage);    
     const setModulsTotal = useTablesStore(state => state.setTablesTotal);
     const setLastPath = useTablesStore(state => state.setLastPath);
+    const tablesSort = useTablesStore(state => state.tablesSort);
     const pathname = usePathname();
 
     useEffect(() => {
@@ -41,7 +42,9 @@ export default function TableBody({
                 const params = new URLSearchParams({
                     search: searchModuls,
                     take: (takeModuls?.toString() || '10'),
-                    page: currentPage.toString()
+                    page: currentPage.toString(),
+                    sortColumn: tablesSort?.column || '',
+                    sortDirection: tablesSort?.direction || '',
                 });
     
                 const res = await fetch(`${api}?${params.toString()}`, {
@@ -59,14 +62,12 @@ export default function TableBody({
                 setModulsTotal(resJson.total);
             }catch(e){
                 setModuls([]);
-                setModulsTotal(0);
-
-                console.log(e);
+                setModulsTotal(0);                
             }
         }
 
         fetchData().finally(() => setLoading(false));
-    }, [searchModuls, takeModuls, pageModuls, pathname]);
+    }, [searchModuls, takeModuls, pageModuls, pathname, tablesSort]);
 
     ;
 
