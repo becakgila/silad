@@ -113,7 +113,7 @@ export default function BasicTables() {
 
   return (
     <div>
-      <PageBreadcrumb pageTitle="Pengaturan Moduls" />
+      <PageBreadcrumb pageTitle="Pengaturan Prodi" />
       <div className="space-y-6">
         <ComponentCard api={table.api} add={
           {
