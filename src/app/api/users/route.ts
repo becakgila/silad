@@ -12,7 +12,15 @@ export async function GET(request: Request) {
     const sortColumn = searchParams.get('sortColumn') || "";
     const sortDirection = searchParams.get('sortDirection') || "asc";
 
-    console.log(sortColumn, sortDirection);
+    const orderClause: any = sortColumn ? sortColumn.split('.').length > 1 ? {
+      [sortColumn.split('.')[0]]: {
+        [sortColumn.split('.')[1]]: sortDirection as 'asc' | 'desc'
+      }
+    } : {
+      [sortColumn]: sortDirection as 'asc' | 'desc'
+    } : {
+      id: 'asc'
+    };
     
 
     const skip = (page - 1) * take;
@@ -63,7 +71,7 @@ export async function GET(request: Request) {
         fakultas: true, // Include the fakultas relation
         prodi: true, // Include the fakultas relation
       },
-      orderBy: sortColumn ? { [sortColumn]: sortDirection as 'asc' | 'desc' } : { id: 'asc' },
+      orderBy: orderClause,
     });
     
     const serializedData = data.map((item: any) => {
@@ -86,7 +94,7 @@ export async function GET(request: Request) {
       where: whereClause,
     });    
 
-    console.log(serializedData);
+    // console.log(serializedData);
     
 
     return new Response(JSON.stringify({

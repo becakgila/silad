@@ -47,10 +47,7 @@ export const useTablesStore = create<tableState<any>>((set) => ({
         });
     },
     tablesSort: null,
-    setTablesSort: (table: {
-        column: string;
-        direction: 'asc' | 'desc';
-    }) => set({ tablesSort: table }),
+    setTablesSort: (table) => set({ tablesSort: table }),
     setTablesDefault: () => set({
         tables: [],
         searchTables: '',

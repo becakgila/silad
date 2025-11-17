@@ -5,7 +5,6 @@ import { useTablesStore } from "@/store/useTablesStore";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import listDataType from "@/types/listDataTable";
-import { ca } from "zod/v4/locales";
 
 export default function TableBody({
     api,

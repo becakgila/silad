@@ -68,7 +68,7 @@ const table: {
     },
     {
       name: "Fakultas",
-      tableName: "fakultas",
+      tableName: "fakultas.fakultas_name",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.fakultas?.fakultas_name || '-'}
@@ -77,7 +77,7 @@ const table: {
     },
     {
       name: "Prodi",
-      tableName: "prodi",
+      tableName: "prodi.prodi_name",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.prodi?.prodi_name || '-'}
@@ -175,7 +175,14 @@ export default function BasicTables() {
     <div>
       <PageBreadcrumb pageTitle="Users" />
       <div className="space-y-6">
-        <ComponentCard api={table.api}>
+        <ComponentCard api={table.api} add={
+          {
+            api: table.api,
+            formData: userModalForm,
+            formSchema: formSchema,
+            resolver: zodResolver(formSchema)
+          }
+        }>
           <UsersTable api={table.api} listData={table.listData} />
         </ComponentCard>
       </div>

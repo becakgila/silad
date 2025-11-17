@@ -1,10 +1,8 @@
 import prisma from '@/lib/prisma'
 import { NextRequest } from 'next/server';
 type UrlParams =  { 
-
   params : {
-    id : string;
-    
+    id : string;    
   }
 }
 
@@ -49,9 +47,11 @@ export async function PATCH(request: NextRequest, { params } : { params: { id: s
 
     const serializedUser = {
       ...updatedUser,
-      id: updatedUser.id.toString()
+      id: updatedUser.id.toString(),
+      fakultas_id: updatedUser.fakultas_id ? updatedUser.fakultas_id.toString() : null,
     };    
 
+    // console.log(serializedUser);
     
 
     return new Response(JSON.stringify({ 

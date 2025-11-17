@@ -104,7 +104,7 @@ export default function TablesEdit({
             <DialogTrigger asChild>
                 {IconButton}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] ">
+            <DialogContent className="sm:max-w-[425px] sm:max-h-[720px] overflow-auto ">
                 <Form {...form} >
                     <form onSubmit={form.handleSubmit(onSubmit)} className="gap-8 flex flex-col" >
                         <DialogHeader>
