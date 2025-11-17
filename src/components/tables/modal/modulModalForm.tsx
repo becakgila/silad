@@ -1,9 +1,11 @@
 import { FormControl, FormField, FormLabel } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { Table } from "lucide-react"
+import { ChevronDownIcon, Table } from "lucide-react"
 import { UseFormReturn } from "react-hook-form"
 import TableFormField from "../TableFormField"
 import z from "zod"
+import Select from "@/components/form/Select"
+import { moduls_modul_akses } from "@/generated/prisma"
 
 const modulFormSchema = z.object({
 
@@ -20,6 +22,7 @@ const modulModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
       <Input
         id={field.name}
         {...field}
+        value={field.value || ""}
       />
     )}
     />
@@ -29,6 +32,7 @@ const modulModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
       <Input
         id={field.name}
         {...field}
+        value={field.value || ""}
       />
     )}
     />
@@ -38,6 +42,7 @@ const modulModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
       <Input
         id={field.name}
         {...field}
+        value={field.value || ""}
       />
     )}
     />
@@ -47,18 +52,37 @@ const modulModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
       <Input
         id={field.name}
         {...field}
+        value={field.value || ""}
       />
     )}
     />
   ),
   ({ form }) => (
+    
     <TableFormField form={form} name="modul_akses" label="Akses" InputComponent={({ field }) => (
-      <Input
-        id={field.name}
-        {...field}
-      />
+      
+      <div className="relative">
+           <Select
+            options={
+              (Object.keys(moduls_modul_akses) as Array<keyof typeof moduls_modul_akses>).map(key => ({
+                label: key,
+                value: key,
+              }))
+              
+            }
+            {...field}
+            
+            defaultValue={field.value}
+            // onChange={handleSelectChange}
+            className="dark:bg-dark-900"
+          />
+          <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+              <ChevronDownIcon/>
+            </span>
+         </div>
     )}
-    />
+    />    
+    
   ),
  
 ]

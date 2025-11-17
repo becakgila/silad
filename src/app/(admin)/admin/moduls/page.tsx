@@ -114,7 +114,6 @@ const table: {
 
 export default function BasicTables() {
 
-
   const setTableDefault = useTablesStore(state => state.setTablesDefault);
   const setLastPath = useTablesStore(state => state.setLastPath);
   const pathname = usePathname();
