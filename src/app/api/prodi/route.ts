@@ -1,47 +1,74 @@
+import { prodi_prodi_jenjang } from '@/generated/prisma';
 import prisma from '@/lib/prisma'
 import { log } from 'console';
 import { NextRequest } from 'next/server';
 import { includes } from 'zod';
 
+// Function to generate prodi ID
+function generateProdiId(): string {
+  const timestamp = Date.now().toString(36);
+  const randomStr = Math.random().toString(36).substring(2, 8);
+  return `PRODI-${timestamp}-${randomStr}`.toUpperCase();
+}
+
 export async function GET(request: Request) {
-  try {    
+  try {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || "";
     const take: number = Number(searchParams.get('take')) || 10;
     const page: number = Number(searchParams.get('page')) || 1;
     const skip = (page - 1) * take;
-    
-        const whereClause = {
-          OR: [
-            {
-              prodi_name: {
-                contains: search,
-              }
-            },
-    
-          ]
+
+    const whereClause = {
+      OR: [
+        {
+          prodi_name: {
+            contains: search,
+          }
+        },
+        {
+          prodi_akreditasi: {
+            contains: search,
+          }
+        },
+        {
+          fakultas: {
+            fakultas_name: {
+              contains: search,
+            }
+          }
+        },
+        {
+          prodi_jenjang: {
+            in: Object.values(prodi_prodi_jenjang).filter(s =>
+                          s.toLowerCase().includes(search)
+                        ),
+          }
         }
+
+      ]
+    }
 
     const data = await prisma.prodi.findMany({
       take: take,
       skip: skip,
       where: whereClause,
       include: {
-        fakultas:true
+        fakultas: true
       }
     });
-    
+
     const serializedData = data.map((item: any) => {
       return {
         ...item,
         fakultas_id: item.fakultas_id.toString(),
         fakultas: {
           ...item.fakultas,
-          fakultas_id:item.fakultas.fakultas_id.toString(),
+          fakultas_id: item.fakultas.fakultas_id.toString(),
         }
       };
     });
-    console.log(serializedData)
+    // console.log(serializedData)
     const dataCount = await prisma.prodi.count({
       where: whereClause,
     });
@@ -62,19 +89,17 @@ export async function GET(request: Request) {
     });
   }
 }
+
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const body = await request.json();
 
-     
     const check = await prisma.prodi.findFirst({
-      where: { 
+      where: {
         prodi_name: body.prodi_name,
       }
     })
 
-    console.log(check, body);
-    
 
     if (check) {
       return new Response(JSON.stringify({ message: "prodi sudah ada di database" }), {
@@ -85,17 +110,19 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
 
 
+    const prodiId = body.prodi_id || generateProdiId();
+
     const addData = await prisma.prodi.create({
       data: {
-        prodi_name: body.prodi_name,
+        prodi_id: prodiId,
         ...body
       }
     });
 
     const serializedModul = {
       ...addData,
-      prodi_id: addData.prodi_id.toString()
-    };    
+      fakultas_id: addData.fakultas_id.toString()
+    };
 
 
 
