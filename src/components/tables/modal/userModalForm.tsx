@@ -61,6 +61,7 @@ const userModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
            <Select
             options={[
               { value: 'administrator', label: 'Administrator' },
+              { value: 'fakultas', label: 'Fakultas' },
               { value: 'prodi', label: 'Prodi' },
             ]}
             {...field}
@@ -79,6 +80,7 @@ const userModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
   ({ form }) => {
     const [fakultasOptions, setFakultasOptions] = useState<FakultasOption[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const level = form.watch('level');
 
     useEffect(() => {
       const fetchFakultas = async () => {
@@ -106,9 +108,10 @@ const userModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
           <Select
             options={isLoading ? [] : fakultasOptions}
             {...field}
-            defaultValue={field.value}
+            defaultValue={level == "administrator" ? "10":field.value}
             placeholder={isLoading ? "Loading..." : "Select Fakultas"}
             className="dark:bg-dark-900"
+            disabled={isLoading || !level || level == "administrator" }
           />
           <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
             <ChevronDownIcon/>
@@ -122,6 +125,7 @@ const userModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
     const [prodiOptions, setProdiOptions] = useState<ProdiOption[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const fakultasId = form.watch('fakultas_id');
+    const level = form.watch('level');
 
     useEffect(() => {
       const fetchProdi = async () => {
@@ -148,7 +152,7 @@ const userModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
       };
 
       fetchProdi();
-    }, [fakultasId]);
+    }, [fakultasId]);    
 
     return (
       <TableFormField form={form} name="prodi_id" label="Prodi" InputComponent={({ field }) => (
@@ -157,10 +161,10 @@ const userModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
             
             options={isLoading ? [] : prodiOptions}
             {...field}
-            defaultValue={field.value}
+            defaultValue={level == "administrator" ? "521": level == "fakultas" ? "521": field.value}
             placeholder={isLoading ? "Loading..." : "Select Prodi"}
             className="dark:bg-dark-900"
-            disabled={isLoading || !fakultasId}
+            disabled={isLoading || !level || level == "administrator" || level == "fakultas" || !fakultasId }
             
           />
           <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
