@@ -16,7 +16,7 @@ model users {
   email             String       @unique(map: "users_email_unique") @db.VarChar(255)
   phone             String?      @db.VarChar(200)
   level             String       @db.VarChar(255)  
-  fakultas_id       BigInt?      @db.UnsignedBigInt
+  fakultas_id       BigInt?      @db.BigInt
   prodi_id          String?      @db.VarChar(255)
   status            users_status @default(no)
   email_verified_at DateTime?    @db.Timestamp(0)
@@ -146,4 +146,42 @@ enum prodi_prodi_jenjang {
 enum tahun_ajaran_semester {
   gasal
   genap
+}
+
+model layanan {
+  layanan_id      String                @id @default(uuid())
+  Layanan_jenis   String                @db.VarChar(255)
+  layanan_lvl     layanan_lvl           @default(prodi)
+  dokumens        dokumen[]
+}
+
+enum layanan_lvl {
+  prodi
+  rektorat
+}
+
+model dokumen{
+  dokumen_id      String                @id @default(uuid())  
+  dokumen_name    String                @db.VarChar(255)
+  dokumen_size    Int                   @db.Int()
+  dokumen_type    String                @db.VarChar(255)
+  layanan_id      String                @default(uuid())
+  layanan         layanan               @relation(fields: [layanan_id],references: [layanan_id])
+}
+
+model ajuan {
+  ajuan_id        String                @id @default(uuid())
+  tahun_ajaran_id BigInt?               @db.UnsignedBigInt
+  nim             String                @db.VarChar(255)
+  layanan_id      String                @default(uuid())
+  status          status_layanan        @default(process)
+  created_at      DateTime?             @db.Timestamp(0)
+  updated_at      DateTime?             @db.Timestamp(0)
+}
+
+
+enum status_layanan {
+  reject
+  process
+  done
 }

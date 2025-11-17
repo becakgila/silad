@@ -1,4 +1,5 @@
 import prisma from '@/lib/prisma'
+import { create } from 'domain';
 import { includes } from 'zod';
 
 export async function GET(request: Request) {
@@ -70,15 +71,19 @@ export async function GET(request: Request) {
       }
     });
 
+    
+    
     const serializedData = data.map((item: any) => {
       return { 
-        ...item, 
-        prodi: item.prodi ? {
+        
+        ...item,
+        prodi: {
           ...item.prodi,
-          fakultas_id: item.prodi.fakultas_id.toString(),
-        }: null,
+          fakultas_id: item.prodi.fakultas_id.toString()
+        }
       };
     });  
+    console.log(serializedData);
 
     const dataCount = await prisma.mahasiswa.count({
       where: whereClause,
@@ -95,6 +100,32 @@ export async function GET(request: Request) {
     });
   } catch (error) {
     console.error("Unable to connect to the database:", error);
+    return new Response(JSON.stringify({ message: String(error) }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+}
+
+export async function PUT(request: Request) {
+  const { nim, ...updateData } = await request.json();
+  try {
+
+    const updatedMahasiswa = await prisma.mahasiswa.upsert({
+      where: { nim },
+      create: { nim, ...updateData },
+      update: { ...updateData },
+    });
+    return new Response(JSON.stringify({
+      message: "Mahasiswa updated successfully",
+      data: updatedMahasiswa
+    }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+  catch (error) {
+    console.error("Error updating mahasiswa:", error);
     return new Response(JSON.stringify({ message: String(error) }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

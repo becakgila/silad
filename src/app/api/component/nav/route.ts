@@ -23,7 +23,9 @@ export async function GET(request: NextRequest) {
     const data = await prisma.moduls.findMany({
       where: {
         modul_id: { in: auth.map((a : any) => a.modul_id)},
-        modul_aktif: 'yes'
+        modul_aktif: 'yes',
+        modul_akses: 'Administrator'
+        
       },
       orderBy: {
         modul_urut: 'asc', 
