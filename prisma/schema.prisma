@@ -150,7 +150,7 @@ enum tahun_ajaran_semester {
 
 model layanan {
   layanan_id      String                @id @default(uuid())
-  Layanan_jenis   String                @db.VarChar(255)
+  layanan_jenis   String                @db.VarChar(255)
   layanan_lvl     layanan_lvl           @default(prodi)
   dokumens        dokumen[]
 }

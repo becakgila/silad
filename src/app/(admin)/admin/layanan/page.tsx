@@ -2,7 +2,7 @@
 
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import prodiModalForm, { prodiFormSchema } from "@/components/tables/modal/prodiModalForm";
+import layananModalForm, { layananFormSchema } from "@/components/tables/modal/layananModalForm";
 import Tables from "@/components/tables/Tables";
 import TableDelete from "@/components/tables/TablesDelete";
 import TablesEdit from "@/components/tables/TablesEdit";
@@ -10,54 +10,41 @@ import TablesSwitch from "@/components/tables/TablesSwitch";
 import Button from "@/components/ui/button/Button";
 
 import { TableCell } from "@/components/ui/table";
+import { layanan } from "@/generated/prisma";
 import { TrashBinIcon } from "@/icons";
 import { useTablesStore } from "@/store/useTablesStore";
 
 import listDataType from "@/types/listDataTable";
-import prodiType from "@/types/model/prodi";
+import fakultasType from "@/types/model/fakultas";
+import layananType from "@/types/model/layanan";
+import modulType from "@/types/model/modul";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PencilIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import React, { use, useEffect } from "react";
 
 
-const api = "/api/prodi";
+const api = "/api/layanan";
 
 const table: {
   api: string,
-  listData: listDataType<prodiType>[]
+  listData: listDataType<layananType>[]
 } = {
   api,
   listData: [
     {
-      name: "Nama",
+      name: "Jenis Layanan",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.prodi_name || "-"}
+          {table.layanan_jenis || "-"}
         </TableCell>
       )
     },
-    {
-      name: "Jenjang",
+     {
+      name: "Petugas Layanan",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.prodi_jenjang || '-'}
-        </TableCell>
-      )
-    },
-    {
-      name: "Akreditasi",
-      component: ({ table }) => (
-        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.prodi_akreditasi || '-'}
-        </TableCell>
-      )
-    },
-    {
-      name: "fakultas",
-      component: ({ table }) => (
-        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.fakultas.fakultas_name || '-'}
+          {table.layanan_lvl || "-"}
         </TableCell>
       )
     },
@@ -75,11 +62,11 @@ const table: {
               </Button>
             )}
             data={table}
-            formData={prodiModalForm}
-            formSchema={prodiFormSchema}
-            resolver={zodResolver(prodiFormSchema)}
-            id={table.prodi_id}
-            idLabel="prodi_id"
+            formData={layananModalForm}
+            formSchema={layananFormSchema}
+            resolver={zodResolver(layananFormSchema)}
+            id={table.layanan_id}
+            idLabel="layanan_id"
           />
 
 
@@ -90,8 +77,8 @@ const table: {
               <TrashBinIcon />
             </Button>)
           }
-            modulId={table.prodi_id}
-            idLabel="prodi_id"
+            modulId={table.layanan_id}
+            idLabel="layanan_id"
           />
         </TableCell>
       )
@@ -113,14 +100,14 @@ export default function BasicTables() {
 
   return (
     <div>
-      <PageBreadcrumb pageTitle="Pengaturan Program Studi" />
+      <PageBreadcrumb pageTitle="Pengaturan Layanan Akademik" />
       <div className="space-y-6">
         <ComponentCard api={table.api} add={
           {
             api: table.api,
-            formData: prodiModalForm,
-            formSchema: prodiFormSchema,
-            resolver: zodResolver(prodiFormSchema)
+            formData: layananModalForm,
+            formSchema: layananFormSchema,
+            resolver: zodResolver(layananFormSchema)
           }
         } >
           <Tables listData={table.listData} api={table.api}  />
