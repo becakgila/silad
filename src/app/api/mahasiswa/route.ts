@@ -71,15 +71,19 @@ export async function GET(request: Request) {
       }
     });
 
+    
+    
     const serializedData = data.map((item: any) => {
       return { 
-        ...item, 
-        prodi: item.prodi ? {
+        
+        ...item,
+        prodi: {
           ...item.prodi,
-          fakultas_id: item.prodi.fakultas_id.toString(),
-        }: null,
+          fakultas_id: item.prodi.fakultas_id.toString()
+        }
       };
     });  
+    console.log(serializedData);
 
     const dataCount = await prisma.mahasiswa.count({
       where: whereClause,
