@@ -35,6 +35,7 @@ const table: {
   listData: [
     {
       name: "NIM",
+      tableName: "nim",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.nim || "-"}
@@ -43,6 +44,7 @@ const table: {
     },
     {
       name: "NAMA",
+      tableName: "nama",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.nama || '-'}
@@ -51,6 +53,7 @@ const table: {
     },
     {
       name: "PRODI",
+      tableName: "prodi_id",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.prodi?.prodi_name || '-'}
@@ -59,6 +62,7 @@ const table: {
     },
     {
       name: "ANGKATAN",
+      tableName: "angkatan",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.angkatan || '-'}
@@ -67,6 +71,7 @@ const table: {
     },
     {
       name: "JENIS KELAMIN",
+      tableName: "jenis_kelamin",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.jenis_kelamin || '-'}
@@ -75,6 +80,7 @@ const table: {
     },
     {
       name: "TEMPAT LAHIR",
+      tableName: "tempat_lahir",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.tempat_lahir || '-'}
@@ -83,14 +89,16 @@ const table: {
     },
     {
       name: "TANGGAL LAHIR",
+      tableName: "tanggal_lahir",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.tanggal_lahir ? new Date(table.tanggal_lahir).toLocaleDateString() : "-"}
+          {table.tanggal_lahir ? new Date(table.tanggal_lahir).toLocaleDateString('id-ID'): "-"}
         </TableCell>
       )
     },
     {
       name: "AGAMA",
+      tableName: "agama",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.agama || '-'}
@@ -99,6 +107,7 @@ const table: {
     },
     {
       name: "HP",
+      tableName: "no_hp",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.no_hp || '-'}
@@ -107,6 +116,7 @@ const table: {
     },
     {
       name: "JALUR MASUK",
+      tableName: "jalur_masuk",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.jalur_masuk || '-'}
@@ -115,6 +125,7 @@ const table: {
     },
     {
       name: "ALAMAT",
+      tableName: "alamat",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.alamat || '-'}
@@ -123,6 +134,7 @@ const table: {
     },
     {
       name: "PROVINSI",
+      tableName: "provinsi",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.provinsi || '-'}
@@ -170,7 +182,7 @@ export default function BasicTables() {
         <ComponentCard api={table.api} ButtonProp={
           <Button onClick={() => route.push("/admin/mahasiswa/upload")} size="sm" variant="primary"
             >
-            Import <UserPlusIcon />
+            TAMBAH <UserPlusIcon />
           </Button>
         }>
           <Tables listData={table.listData} api={table.api} />

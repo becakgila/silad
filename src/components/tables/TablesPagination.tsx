@@ -26,6 +26,7 @@ export default function TablesPagination({
     { value: "30", label: "30" },
     { value: "40", label: "40" },
     { value: "50", label: "50" },
+    { value: "1000", label: "1000" },
     { value: "semua", label: "Semua" },
   ]; 
   
