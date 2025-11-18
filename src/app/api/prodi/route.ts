@@ -20,9 +20,6 @@ export async function GET(request: Request) {
     const page: number = Number(searchParams.get('page')) || 0;
     const skip = (page - 1) * take;
 
-
-
-
     const whereClause = {
       ...(fakultas_id ?{
         fakultas_id
