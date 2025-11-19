@@ -53,7 +53,7 @@ const TableDelete = ({ OpenButton, modulId, api, idLabel="id" }: Props) => {
         <AlertDialogHeader>
           <AlertDialogTitle>Apakah kamu yakin?</AlertDialogTitle>
           <AlertDialogDescription>
-            Aksi ini tidak bisa di batalkan . Ini akan menghapus modul terkait
+            Aksi ini tidak bisa di batalkan . Ini akan menghapus data terkait
             dan akan menghapus data dari servers.
           </AlertDialogDescription>
         </AlertDialogHeader>

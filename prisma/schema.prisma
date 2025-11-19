@@ -165,7 +165,8 @@ model dokumen{
   dokumen_name    String                @db.VarChar(255)
   dokumen_size    Int                   @db.Int()
   dokumen_type    String                @db.VarChar(255)
-  layanan_id      String                @default(uuid())
+  dokumen_template String               @db.VarChar(255)
+  layanan_id      String                @db.VarChar(191)
   layanan         layanan               @relation(fields: [layanan_id],references: [layanan_id])
 }
 
@@ -173,7 +174,7 @@ model ajuan {
   ajuan_id        String                @id @default(uuid())
   tahun_ajaran_id BigInt?               @db.UnsignedBigInt
   nim             String                @db.VarChar(255)
-  layanan_id      String                @default(uuid())
+  layanan_id      String                @db.VarChar(191)
   status          status_layanan        @default(process)
   created_at      DateTime?             @db.Timestamp(0)
   updated_at      DateTime?             @db.Timestamp(0)

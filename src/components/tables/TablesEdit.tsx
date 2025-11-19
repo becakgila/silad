@@ -68,18 +68,46 @@ export default function TablesEdit({
     async function onSubmit(values: z.infer<typeof formSchema>) {
 
         try {
-            setIsLoading(true)
+            setIsLoading(true)                        
 
-            console.log(values, 'ini val');
-            
+            // Detect files in values and use FormData when present
+            const valuesObj: Record<string, any> = values as any;
+            const hasFile = Object.values(valuesObj).some(
+                (v) => v instanceof File || (typeof FileList !== 'undefined' && v instanceof FileList)
+            );
+
+            let body: BodyInit;
+            const headers: Record<string, string> = {};
+
+            if (hasFile) {
+                const formData = new FormData();
+                for (const [k, v] of Object.entries(valuesObj)) {
+                    if (v instanceof File) {
+                        formData.append(k, v);
+                    } else if (typeof FileList !== 'undefined' && v instanceof FileList) {
+                        if (v.length > 0) formData.append(k, v[0]);
+                    } else if (v === undefined || v === null) {
+                        formData.append(k, "");
+                    } else if (typeof v === 'object') {
+                        formData.append(k, JSON.stringify(v));
+                    } else {
+                        formData.append(k, String(v));
+                    }
+                }
+                body = formData;
+            } else {
+                body = JSON.stringify(valuesObj);
+                headers['Content-Type'] = 'application/json';
+            }
 
             const response = await fetch(`${api}/${id}`, {
                 method: 'PATCH',
-                body: JSON.stringify(values),
+                body,
+                headers: Object.keys(headers).length ? headers : undefined,
             })
 
             if (response.status === 200) {
-                toast.success("Modul berhasil diupdate.")
+                toast.success("data berhasil diupdate.")
                 const updatedData = await response.json();
                 
                 setTableFromId(id, idLabel, updatedData.data);
@@ -87,7 +115,7 @@ export default function TablesEdit({
 
 
 
-            console.log(response);
+            
 
         } catch (error) {
             // Handle error if necessary
@@ -138,7 +166,7 @@ export default function TablesEdit({
                                 <Button disabled={isLoading} variant="outline">Batal</Button>
                             </DialogClose>
                             {/* <Button type="submit" disabled={isLoading}>{isLoading ? "Loading..." : "Simpan Perubahan"}</Button> */}
-                            <Button type="submit" >Simpan Perubahan</Button>
+                            <Button type="submit" disabled={isLoading} >Simpan Perubahan</Button>
                         </DialogFooter>
                     </form>
                 </Form>

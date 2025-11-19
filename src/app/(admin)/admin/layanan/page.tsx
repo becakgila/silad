@@ -30,6 +30,7 @@ import React, { use, useEffect } from "react";
 
 
 const api = "/api/layanan";
+const apiDokumen = "/api/dokumen"
 
 const table: {
   api: string,
@@ -59,6 +60,10 @@ const table: {
       component: ({ table }) => {
         const [isOpen, setIsOpen] = React.useState(false)
 
+        useEffect(() => {
+          console.log(table.dokumens);
+        }, [])
+
         return (
           <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
             <Collapsible
@@ -71,16 +76,40 @@ const table: {
           @peduarte starred 3 repositories
         </h4> */}
                 <div></div>
-                <CollapsibleTrigger asChild>
-                  <button className="size-8">
-                    {isOpen ? <ChevronDown /> : <ChevronsUpDown />}
-                    <span className="sr-only">Toggle</span>
-                  </button>
-                </CollapsibleTrigger>
+                {
+                  table.dokumens?.length > 1 && (
+                    <CollapsibleTrigger asChild>
+                      <button className="size-8">
+                        {isOpen ? <ChevronDown /> : <ChevronsUpDown />}
+                        <span className="sr-only">Toggle</span>
+                      </button>
+                    </CollapsibleTrigger>
+                  )
+                }
+
               </div>
               {
-                table.dokumens[0] && (<div className="rounded-md border px-4 py-2 font-mono text-sm">
-                  {table.dokumens[0].dokumen_name}
+                table.dokumens?.length > 0 && (<div className="rounded-md border px-4 py-2 font-mono text-sm flex justify-between">
+                  <div>
+                    {table.dokumens[0].dokumen_name} <br /> Maksimal Size {table.dokumens[0].dokumen_size} MB<br /> Tipe File {table.dokumens[0].dokumen_type}
+                  </div>
+
+                  <div>
+                    <TablesEdit
+                      api={apiDokumen}
+                      IconButton={(
+                        <p className="cursor-pointer text-green-500 underline">Edit</p>
+                      )}
+                      data={table.dokumens[0]}
+                      formData={dokumenModalForm}
+                      formSchema={dokumenFormSchema}
+                      resolver={zodResolver(dokumenFormSchema)}
+                      id={table.dokumens[0].dokumen_id}
+                      idLabel="dokumen_id"
+                    />
+                    <TableDelete api={apiDokumen} modulId={table.dokumens[0].dokumen_id} OpenButton={
+                      <p className="cursor-pointer text-red-500 underline">Delete</p>} />
+                  </div>
                 </div>)
               }
 
@@ -88,9 +117,31 @@ const table: {
 
               <CollapsibleContent className="flex flex-col gap-2">
                 {
-                  table.dokumens.slice(1).map(val => (
-                    <div className="rounded-md border px-4 py-2 font-mono text-sm">
-                      {val.dokumen_name}
+                  table.dokumens?.slice(1).map(val => (
+                    <div key={val.dokumen_id} className="rounded-md border px-4 py-2 font-mono text-sm flex justify-between">
+                      <div>
+
+                        {val.dokumen_name}
+                        <br /> Maksimal Size {val.dokumen_size} MB<br /> Tipe File {val.dokumen_type}
+                      </div>
+                      <div>
+                        <TablesEdit
+                          api={apiDokumen}
+                          IconButton={(
+                            <p className="cursor-pointer text-green-500 underline">Edit</p>
+                          )}
+                          data={val}
+                          formData={dokumenModalForm}
+                          formSchema={dokumenFormSchema}
+                          resolver={zodResolver(dokumenFormSchema)}
+                          id={val.dokumen_id}
+                          idLabel="dokumen_id"
+                        />
+
+                        <TableDelete api={apiDokumen} modulId={val.dokumen_id} OpenButton={
+                          <p className="cursor-pointer text-red-500 underline">Delete</p>
+                        } />
+                      </div>
                     </div>
                   ))
                 }
@@ -144,7 +195,7 @@ const table: {
             formData={dokumenModalForm}
             formSchema={dokumenFormSchema}
             resolver={zodResolver(dokumenFormSchema)}
-            api={`/api/dokumen?layanan_id=${table.layanan_id}`}
+            api={`${apiDokumen}?layanan_id=${table.layanan_id}`}
 
           />
         </TableCell>
