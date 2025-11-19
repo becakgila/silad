@@ -11,6 +11,9 @@ export async function GET(request: NextRequest) {
       secret: process.env.NEXTAUTH_SECRET
     });    
 
+    console.log(token);
+    
+
     const auth = await prisma.user_haks.findMany({
       where: {
         user_id: parseInt(token!.id as string),

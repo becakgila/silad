@@ -14,50 +14,66 @@ import { TrashBinIcon } from "@/icons";
 import { useTablesStore } from "@/store/useTablesStore";
 
 import listDataType from "@/types/listDataTable";
-import prodiType from "@/types/model/prodi";
+import ajuanType from "@/types/model/ajuan";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PencilIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import React, { use, useEffect } from "react";
 
 
-const api = "/api/prodi";
+const api = "/api/pengajuan";
 
 const table: {
   api: string,
-  listData: listDataType<prodiType>[]
+  listData: listDataType<ajuanType>[]
 } = {
   api,
   listData: [
     {
+      name: "Tahun Ajaran",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.tahun_ajaran.tahun_awal+"/"+table.tahun_ajaran.tahun_akhir+" "+table.tahun_ajaran.semester || "-"}
+        </TableCell>
+      )
+    },
+    {
+      name: "Nim",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.nim || "-"}
+        </TableCell>
+      )
+    },
+    {
       name: "Nama",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.prodi_name || "-"}
+          {table.mahasiswa.nama || "-"}
         </TableCell>
       )
     },
     {
-      name: "Jenjang",
+      name: "Prodi",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.prodi_jenjang || '-'}
+          {table.mahasiswa.prodi.prodi_name || "-"}
         </TableCell>
       )
     },
     {
-      name: "Akreditasi",
+      name: "Layanan",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.prodi_akreditasi || '-'}
+          {table.layanan.layanan_jenis || "-"}
         </TableCell>
       )
     },
     {
-      name: "fakultas",
+      name: "Status",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.fakultas.fakultas_name || '-'}
+          {table.status || "-"}
         </TableCell>
       )
     },
@@ -78,8 +94,8 @@ const table: {
             formData={prodiModalForm}
             formSchema={prodiFormSchema}
             resolver={zodResolver(prodiFormSchema)}
-            id={table.prodi_id}
-            idLabel="prodi_id"
+            id={table.ajuan_id}
+            idLabel="ajuan_id"
           />
 
 
@@ -90,8 +106,8 @@ const table: {
               <TrashBinIcon />
             </Button>)
           }
-            modulId={table.prodi_id}
-            idLabel="prodi_id"
+            modulId={table.ajuan_id}
+            idLabel="ajuan_id"
           />
         </TableCell>
       )
@@ -113,16 +129,9 @@ export default function BasicTables() {
 
   return (
     <div>
-      <PageBreadcrumb pageTitle="Pengaturan Program Studi" />
+      <PageBreadcrumb pageTitle="Riwayat Pengajuan Layanan Akademik" />
       <div className="space-y-6">
-        <ComponentCard api={table.api} add={
-          {
-            api: table.api,
-            formData: prodiModalForm,
-            formSchema: prodiFormSchema,
-            resolver: zodResolver(prodiFormSchema)
-          }
-        } >
+        <ComponentCard api={table.api} >
           <Tables listData={table.listData} api={table.api}  />
         </ComponentCard>
       </div>
