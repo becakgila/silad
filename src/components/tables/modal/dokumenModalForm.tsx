@@ -9,10 +9,10 @@ import FileInput from "@/components/form/input/FileInput"
 
 const dokumenFormSchema = z.object({
 
-    dokumen_name: z.string().nonempty({ message: "Wajib Diisi!!!" }).default(""),
-    dokumen_type: z.string().nonempty({ message: "Wajib Diisi!!!" }).default(""),
+    dokumen_name: z.string("Wajib Diisi!!!").nonempty({ message: "Wajib Diisi!!!" }),
+    dokumen_type: z.string("Wajib Diisi!!!").nonempty({ message: "Wajib Diisi!!!" }),
     dokumen_size: z.union([
-      z.string().nonempty("Wajib Diisi!!!").refine((s) => /^\d+(?:\.\d+)?$/.test(s), { message: "Harus berupa angka" }),
+      z.string("Wajib Diisi!!!").nonempty("Wajib Diisi!!!").refine((s) => /^\d+(?:\.\d+)?$/.test(s), { message: "Harus berupa angka" }),
       z.number()
     ])
   .transform(val => String(val)),
@@ -23,11 +23,13 @@ const dokumenFormSchema = z.object({
 const dokumenModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
   ({ form }) => (
     <TableFormField form={form} name="dokumen_name" label="Nama Dokumen" InputComponent={({ field }) => (
+      field ? 
       <Input
         id={field.name}
         {...field}
-        value={field.value ?? ""}
-      />
+        
+        value={String(field.value ?? "")}
+      /> : <></>
       
     )}
     />
@@ -36,8 +38,12 @@ const dokumenModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
     <TableFormField form={form} name="dokumen_size" label="Size File Maksimal Dokumen (MB)" InputComponent={({ field }) => (
       <Input
         id={field.name}
+        
+        
         {...field}
+
         value={String(field.value ?? "")}
+
       />
       
     )}
@@ -48,7 +54,7 @@ const dokumenModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
       <Input
         id={field.name}
         {...field}
-        value={field.value ?? ""}
+        value={String(field.value ?? "")}
       />
       
     )}

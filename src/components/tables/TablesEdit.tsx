@@ -35,10 +35,8 @@ interface ModulsEditProps<T = any> {
     title?: string;
     description?: string;
     idLabel?: string;
+    refreshState?: (data:any)=>void;
 }
-
-
-
 
 export default function TablesEdit({
     IconButton,
@@ -50,6 +48,7 @@ export default function TablesEdit({
     idLabel="id",
     formData,
     title = "Edit",
+    refreshState,
     description="Buat perubahan di sini. Klik simpan ketika sudah melakukan perubahan."
 }: Readonly<ModulsEditProps>) {
 
@@ -67,7 +66,7 @@ export default function TablesEdit({
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
 
-        try {
+        try {   
             setIsLoading(true)                        
 
             // Detect files in values and use FormData when present
@@ -109,8 +108,16 @@ export default function TablesEdit({
             if (response.status === 200) {
                 toast.success("data berhasil diupdate.")
                 const updatedData = await response.json();
+
+                if(refreshState){
+
+                    refreshState(updatedData.data)
+
+                }else{
+
+                    setTableFromId(id, idLabel, updatedData.data);
+                }
                 
-                setTableFromId(id, idLabel, updatedData.data);
             }
 
 

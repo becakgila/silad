@@ -19,6 +19,7 @@ import { TrashBinIcon } from "@/icons";
 import { useTablesStore } from "@/store/useTablesStore";
 
 import listDataType from "@/types/listDataTable";
+import dokumenType from "@/types/model/dokumen";
 import fakultasType from "@/types/model/fakultas";
 import layananType from "@/types/model/layanan";
 import modulType from "@/types/model/modul";
@@ -60,9 +61,7 @@ const table: {
       component: ({ table }) => {
         const [isOpen, setIsOpen] = React.useState(false)
 
-        useEffect(() => {
-          console.log(table.dokumens);
-        }, [])
+        const { tables, setTables } = useTablesStore(state => state);
 
         return (
           <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
@@ -106,8 +105,22 @@ const table: {
                       resolver={zodResolver(dokumenFormSchema)}
                       id={table.dokumens[0].dokumen_id}
                       idLabel="dokumen_id"
+                      refreshState={(data) => {
+                        setTables(tables.map(tab => ({
+                        ...tab,
+                        dokumens: tab.dokumens.map((dokumen: dokumenType) => dokumen.dokumen_id === table.dokumens[0].dokumen_id ? {
+                          ...dokumen,
+                          ...data
+                        } : dokumen)
+                      })))
+                      }}
                     />
-                    <TableDelete api={apiDokumen} modulId={table.dokumens[0].dokumen_id} OpenButton={
+                    <TableDelete refreshState={() => {
+                      setTables(tables.map(tab => ({
+                        ...tab,
+                        dokumens: tab.dokumens.filter((dokumen: dokumenType) => dokumen.dokumen_id != table.dokumens[0].dokumen_id)
+                      })))
+                    }} api={apiDokumen} modulId={table.dokumens[0].dokumen_id} OpenButton={
                       <p className="cursor-pointer text-red-500 underline">Delete</p>} />
                   </div>
                 </div>)
@@ -136,9 +149,25 @@ const table: {
                           resolver={zodResolver(dokumenFormSchema)}
                           id={val.dokumen_id}
                           idLabel="dokumen_id"
+                          refreshState={(data) => {
+                        setTables(tables.map(tab => ({
+                        ...tab,
+                        dokumens: tab.dokumens.map((dokumen: dokumenType) => dokumen.dokumen_id === val.dokumen_id ? {
+                          ...dokumen,
+                          ...data
+                        } : dokumen)
+                      })))
+                      }}
                         />
 
-                        <TableDelete api={apiDokumen} modulId={val.dokumen_id} OpenButton={
+                        <TableDelete 
+                          refreshState={() => {
+                            setTables(tables.map(tab => ({
+                              ...tab,
+                              dokumens: tab.dokumens.filter((dokumen: dokumenType) => dokumen.dokumen_id != val.dokumen_id)
+                            })))
+                          }}
+                        api={apiDokumen} modulId={val.dokumen_id} OpenButton={
                           <p className="cursor-pointer text-red-500 underline">Delete</p>
                         } />
                       </div>
@@ -154,7 +183,11 @@ const table: {
     },
     {
       name: "Aksi",
-      component: ({ table }) => (
+      component: ({ table }) => { 
+
+        const { tables, setTables } = useTablesStore(state => state);
+        
+        return (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">
           <TablesEdit
             api={api}
@@ -192,6 +225,15 @@ const table: {
             </Button>
           )}
 
+          refreshState={
+            (data) => {
+                setTables(tables.map(tab => table.layanan_id == tab.layanan_id ? ({
+                              ...tab,
+                              dokumens: [...tab.dokumens, data]
+                            }) : tab))
+            }
+          }
+
             formData={dokumenModalForm}
             formSchema={dokumenFormSchema}
             resolver={zodResolver(dokumenFormSchema)}
@@ -199,7 +241,7 @@ const table: {
 
           />
         </TableCell>
-      )
+      )}
     },
   ]
 }

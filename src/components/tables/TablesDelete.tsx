@@ -12,10 +12,11 @@ type Props = {
   modulId: string;
   api: string;
   idLabel?: string;
+  refreshState?: () => void;
 }
 
 
-const TableDelete = ({ OpenButton, modulId, api, idLabel="id" }: Props) => {
+const TableDelete = ({ OpenButton, modulId, api, idLabel="id", refreshState }: Props) => {
 
   const setTables = useTablesStore((state) => state.setTables)
   const tables = useTablesStore((state) => state.tables)
@@ -24,14 +25,18 @@ const TableDelete = ({ OpenButton, modulId, api, idLabel="id" }: Props) => {
     try {
       const res = await onConfirmAction.default({modulId, api})
 
-      if (res) {
-        
-        console.log(modulId, tables, res.success);
+      if (res) {                
+
+        if(refreshState){
+          refreshState()
+        }else{
           
-        const updatedTables = tables.filter((table) => table[idLabel] !== modulId);
-        setTables(updatedTables);
+          const updatedTables = tables.filter((table) => table[idLabel] !== modulId);
+          setTables(updatedTables);
+        }
+          
   
-        toast.success(res.message ?? 'Modul berhasil di hapus', {
+        toast.success(res.message ?? 'Data berhasil di hapus', {
           position: "top-right",
           autoClose: 5000,
           hideProgressBar: false,
@@ -40,7 +45,7 @@ const TableDelete = ({ OpenButton, modulId, api, idLabel="id" }: Props) => {
 
 
     } catch (error) {
-      console.error('An error occurred while deleting the modul', error);
+      console.error('An error occurred while deleting the Data', error);
     }
   }
 
