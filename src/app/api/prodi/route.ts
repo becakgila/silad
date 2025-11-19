@@ -15,11 +15,15 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || "";
-    const take: number = Number(searchParams.get('take')) || 10;
-    const page: number = Number(searchParams.get('page')) || 1;
+    const fakultas_id = searchParams.get('fakultas_id') || "";
+    const take: number = Number(searchParams.get('take')) || 0;
+    const page: number = Number(searchParams.get('page')) || 0;
     const skip = (page - 1) * take;
 
     const whereClause = {
+      ...(fakultas_id ?{
+        fakultas_id
+      } : {}),
       OR: [
         {
           prodi_name: {
@@ -45,13 +49,16 @@ export async function GET(request: Request) {
                         ),
           }
         }
-
       ]
     }
 
-    const data = await prisma.prodi.findMany({
+    const pagination = take ? {
       take: take,
       skip: skip,
+    } : {}
+
+    const data = await prisma.prodi.findMany({
+      ...pagination,
       where: whereClause,
       include: {
         fakultas: true

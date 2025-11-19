@@ -25,13 +25,15 @@ export async function GET(request: Request) {
       skip: skip,
       where: whereClause,
     });
+
+    
     
     const serializedData = data.map((item: any) => {
       return {
         ...item,
         fakultas_id: item.fakultas_id.toString(),
       };
-    });
+    });    
 
     const dataCount = await prisma.fakultas.count({
       where: whereClause,

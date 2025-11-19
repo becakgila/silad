@@ -7,6 +7,8 @@ import { UseFormReturn } from "react-hook-form"
 import TableFormField from "../TableFormField"
 import Select from "@/components/form/Select"
 import { useEffect, useState } from "react"
+import fakultasType from "@/types/model/fakultas"
+import prodiType from "@/types/model/prodi"
 
 interface FakultasOption {
   value: string;
@@ -90,7 +92,11 @@ const userModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
           });
           const result = await response.json();
           if (result.data) {
-            setFakultasOptions(result.data);
+            const option : FakultasOption[] = result.data.map((val : fakultasType) => ({
+              value: val.fakultas_id,
+              label: val.fakultas_name
+            }))
+            setFakultasOptions(option);
           }
         } catch (error) {
           console.error('Failed to fetch fakultas:', error);
@@ -130,8 +136,7 @@ const userModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
     useEffect(() => {
       const fetchProdi = async () => {
         try {
-          setIsLoading(true);
-          console.log(fakultasId, 'fakultas id in user modal form');
+          setIsLoading(true);          
           
           const url = fakultasId 
             ? `/api/prodi?fakultas_id=${fakultasId}`
@@ -140,9 +145,12 @@ const userModalForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
           const response = await fetch(url);
           const result = await response.json();
           if (result.data) {
-            console.log(result.data);
+            const option : ProdiOption[] = result.data.map((val : prodiType) => ({
+              value: val.prodi_id,
+              label: val.prodi_name
+            }))                        
             
-            setProdiOptions(result.data);
+            setProdiOptions(option);
           }
         } catch (error) {
           console.error('Failed to fetch prodi:', error);

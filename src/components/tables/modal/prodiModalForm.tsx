@@ -7,6 +7,7 @@ import z from "zod"
 import Select from "@/components/form/Select"
 import { useEffect, useState } from "react"
 import { prodi_prodi_jenjang } from "@/generated/prisma"
+import fakultasType from "@/types/model/fakultas"
 
 interface OptionType {
   value: string;
@@ -30,12 +31,16 @@ const prodiModulForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
     useEffect(() => {
       const fetchFakultas = async () => {
         try {
-          const response = await fetch('/api/fakultas',{
-            cache: 'force-cache'
-          });
-          const result = await response.json();
+          const response = await fetch('/api/fakultas');
+          const result = await response.json();          
+          
           if (result.data) {
-            setFakultasOptions(result.data);
+            const arrOption : OptionType[] = result.data.map((data: fakultasType) => ({
+              value: data.fakultas_id,
+              label: data.fakultas_name
+            }))            
+            
+            setFakultasOptions(arrOption);
           }
         } catch (error) {
           console.error('Failed to fetch fakultas:', error);

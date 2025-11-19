@@ -16,7 +16,7 @@ export async function GET(request: Request) {
                 contains: search,
               }
             },
-    
+            
           ]
         }
 
@@ -24,9 +24,10 @@ export async function GET(request: Request) {
       take: take,
       skip: skip,
       where: whereClause,
-    });
-    
-    console.log(data)
+      include: {
+        dokumens: true
+      }
+    });        
 
     const serializedData = data.map((item: any) => {
       return {
@@ -65,9 +66,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
         layanan_jenis: body.layanan_jenis,
         layanan_lvl: body.layanan_lvl,
       }
-    })
-
-    console.log(check, body);
+    })   
     
 
     if (check) {
@@ -118,6 +117,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     });
   }
 }
+
 export async function PUT(request: Request) {
   const { layanan_id, ...updateData } = await request.json();
   try {
