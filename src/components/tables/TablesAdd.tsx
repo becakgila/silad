@@ -32,6 +32,7 @@ interface ModulsEditProps<T = any> {
     formData: React.FC<{ form: UseFormReturn<any, any, any> }>[];
     title?: string;
     description?: string;
+    refreshState?: (data : any)=>void;
 }
 
 
@@ -44,7 +45,8 @@ export default function TablesAdd({
     resolver,    
     formData,
     title = "Tambah",
-    description="Buat penambahan data di sini. Klik simpan ketika sudah melakukan penambahan."
+    description="Buat penambahan data di sini. Klik simpan ketika sudah melakukan penambahan.",
+    refreshState
 }: Readonly<ModulsEditProps>) {
 
     const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -114,7 +116,12 @@ export default function TablesAdd({
             if (response.status === 200) {
                 const res = await response.json();
                 toast.success("berhasil menambah.")
-                setTables([...tables, res.data]);
+                if(refreshState){
+                    refreshState(res.data)
+                }else{
+
+                    setTables([...tables, res.data]);
+                }
                 form.reset();
             } else if (response.status === 400) {
                 const res = await response.json();
@@ -129,7 +136,7 @@ export default function TablesAdd({
             // Handle error if necessary
             console.error(error)
         } finally {
-            router.refresh()
+            
             setIsOpen(false);
             setIsLoading(false);
         }
