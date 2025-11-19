@@ -83,6 +83,7 @@ model mahasiswa {
   kecamatan     String   @db.VarChar(100)
 
   prodi         prodi?   @relation("MahasiswaProdi", fields: [prodi_id], references: [prodi_id])
+  ajuan         ajuan[]   @relation("MahasiswaAjuan")
 }
 
 model prodi {
@@ -109,6 +110,7 @@ model tahun_ajaran {
   semester        tahun_ajaran_semester @default(gasal)
   created_at      DateTime?             @db.Timestamp(0)
   updated_at      DateTime?             @db.Timestamp(0)
+  ajuan           ajuan[]
 }
 
 enum users_status {
@@ -153,6 +155,7 @@ model layanan {
   layanan_jenis   String                @db.VarChar(255)
   layanan_lvl     layanan_lvl           @default(prodi)
   dokumens        dokumen[]
+  ajuan           ajuan[]
 }
 
 enum layanan_lvl {
@@ -161,12 +164,14 @@ enum layanan_lvl {
 }
 
 model dokumen{
-  dokumen_id      String                @id @default(uuid())  
-  dokumen_name    String                @db.VarChar(255)
-  dokumen_size    Int                   @db.Int()
-  dokumen_type    String                @db.VarChar(255)
-  layanan_id      String                @default(uuid())
-  layanan         layanan               @relation(fields: [layanan_id],references: [layanan_id])
+  dokumen_id        String                @id @default(uuid())  
+  dokumen_name      String                @db.VarChar(255)
+  dokumen_size      Int                   @db.Int()
+  dokumen_type      String                @db.VarChar(255)
+  dokumen_template  String                @db.VarChar(255)
+  layanan_id        String                @default(uuid())
+  layanan           layanan               @relation(fields: [layanan_id],references: [layanan_id])
+  ajuan_dok         ajuan_dok[]
 }
 
 model ajuan {
@@ -177,6 +182,10 @@ model ajuan {
   status          status_layanan        @default(process)
   created_at      DateTime?             @db.Timestamp(0)
   updated_at      DateTime?             @db.Timestamp(0)
+  tahun_ajaran    tahun_ajaran?         @relation(fields: [tahun_ajaran_id], references: [tahun_ajaran_id])
+  layanan         layanan               @relation(fields: [layanan_id], references: [layanan_id])
+  mahasiswa       mahasiswa             @relation("MahasiswaAjuan", fields: [nim], references: [nim])
+  ajuan_dok       ajuan_dok[]
 }
 
 
@@ -185,3 +194,13 @@ enum status_layanan {
   process
   done
 }
+
+model ajuan_dok {
+  ajuan_id        String                @default(uuid())
+  dokumen_id      String                @default(uuid())
+  dokumen_url     String                @db.VarChar(255)
+  ajuan           ajuan                 @relation(fields: [ajuan_id], references: [ajuan_id])
+  dokumen         dokumen               @relation(fields: [dokumen_id], references: [dokumen_id])
+
+  @@id([ajuan_id, dokumen_id])
+} 

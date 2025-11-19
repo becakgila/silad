@@ -1,46 +1,98 @@
+import { prodi_prodi_jenjang } from '@/generated/prisma';
 import prisma from '@/lib/prisma'
+import { log } from 'console';
 import { NextRequest } from 'next/server';
+import { includes } from 'zod';
+
+// Function to generate prodi ID
+function generateProdiId(): string {
+  const timestamp = Date.now().toString(36);
+  const randomStr = Math.random().toString(36).substring(2, 8);
+  return `PRODI-${timestamp}-${randomStr}`.toUpperCase();
+}
 
 export async function GET(request: Request) {
-  try {    
+  try {
     const { searchParams } = new URL(request.url);
     const search = searchParams.get('search') || "";
     const take: number = Number(searchParams.get('take')) || 10;
     const page: number = Number(searchParams.get('page')) || 1;
     const skip = (page - 1) * take;
-    
-        const whereClause = {
-          OR: [
-            {
-              layanan_jenis: {
+
+    const whereClause = {
+      OR: [
+        {
+          nim: {
+            contains: search,
+          }
+        },
+        {
+          mahasiswa: {
+            nama: {
+              contains: search,
+            }
+          }
+        },
+        {
+          mahasiswa: {
+            prodi: {
+              prodi_name:{
                 contains: search,
               }
-            },
-    
-          ]
-        }
+            }
+          }
+        },
+        {
+          layanan: {
+            layanan_jenis:{
+              contains: search,
+            }
+          }
+        },
 
-    const data = await prisma.layanan.findMany({
+      ]
+    }
+
+    const data = await prisma.ajuan.findMany({
       take: take,
       skip: skip,
       where: whereClause,
+      include: {
+        mahasiswa: {
+          include: {
+            prodi: true,
+          }
+        },
+        layanan: true,
+        tahun_ajaran:true
+      }
     });
-    
     console.log(data)
-
     const serializedData = data.map((item: any) => {
+      // console.log(item.mahasiswa.prodi)
       return {
         ...item,
-        layanan_id: item.layanan_id.toString(),
+        tahun_ajaran_id: item.tahun_ajaran_id.toString(),
+        tahun_ajaran: {
+          ...item.tahun_ajaran,
+          tahun_ajaran_id: item.tahun_ajaran.tahun_ajaran_id.toString(),
+        }
+        , mahasiswa: {
+          ...item.mahasiswa,
+          prodi:{
+            ...item.mahasiswa.prodi,
+            fakultas_id : item.mahasiswa.prodi.fakultas_id.toString()
+
+          }
+        }
       };
     });
-
-    const dataCount = await prisma.layanan.count({
+    const dataCount = await prisma.ajuan.count({
       where: whereClause,
     });
 
     return new Response(JSON.stringify({
-      message: "layanan retrieved successfully",
+      message: "prodi retrieved successfully",
       data: serializedData,
       total: dataCount
     }), {
@@ -48,30 +100,27 @@ export async function GET(request: Request) {
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Unable to fetch layanan:", error);
+    console.error("Unable to fetch prodi:", error);
     return new Response(JSON.stringify({ message: String(error) }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
   }
 }
+
 export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const body = await request.json();
 
-     
-    const check = await prisma.layanan.findFirst({
-      where: { 
-        layanan_jenis: body.layanan_jenis,
-        layanan_lvl: body.layanan_lvl,
+    const check = await prisma.ajuan.findFirst({
+      where: {
+        prodi_name: body.prodi_name,
       }
     })
 
-    console.log(check, body);
-    
 
     if (check) {
-      return new Response(JSON.stringify({ message: "layanan sudah ada di database" }), {
+      return new Response(JSON.stringify({ message: "prodi sudah ada di database" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
@@ -79,18 +128,19 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
 
 
-    const addData = await prisma.layanan.create({
+    const prodiId = body.prodi_id || generateProdiId();
+
+    const addData = await prisma.ajuan.create({
       data: {
-        layanan_jenis: body.layanan_jenis,
-        layanan_lvl: body.layanan_lvl,
+        prodi_id: prodiId,
         ...body
       }
     });
 
     const serializedModul = {
       ...addData,
-      layanan_id: addData.layanan_id.toString()
-    };    
+      fakultas_id: addData.fakultas_id.toString()
+    };
 
 
 
@@ -119,24 +169,24 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   }
 }
 export async function PUT(request: Request) {
-  const { layanan_id, ...updateData } = await request.json();
+  const { prodi_id, ...updateData } = await request.json();
   try {
 
-    const updatedlayanan = await prisma.layanan.upsert({
-      where: { layanan_id },
-      create: { layanan_id, ...updateData },
+    const updatedprodi = await prisma.ajuan.upsert({
+      where: { prodi_id },
+      create: { prodi_id, ...updateData },
       update: { ...updateData },
     });
     return new Response(JSON.stringify({
-      message: "layanan updated successfully",
-      data: updatedlayanan
+      message: "prodi updated successfully",
+      data: updatedprodi
     }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   }
   catch (error) {
-    console.error("Error updating layanan:", error);
+    console.error("Error updating prodi:", error);
     return new Response(JSON.stringify({ message: String(error) }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
