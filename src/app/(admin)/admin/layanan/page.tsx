@@ -228,9 +228,9 @@ const table: {
           refreshState={
             (data) => {
                 setTables(tables.map(tab => table.layanan_id == tab.layanan_id ? ({
-                              ...tab,
-                              dokumens: [...tab.dokumens, data]
-                            }) : tab))
+                    ...tab,
+                    dokumens: [...tab.dokumens, data]
+                  }) : tab))
             }
           }
 

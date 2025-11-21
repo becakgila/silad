@@ -196,8 +196,8 @@ enum status_layanan {
 }
 
 model ajuan_dok {
-  ajuan_id        String                @default(uuid())
-  dokumen_id      String                @default(uuid())
+  ajuan_id        String                @db.VarChar(191)
+  dokumen_id      String                @db.VarChar(191)
   dokumen_url     String                @db.VarChar(255)
   ajuan           ajuan                 @relation(fields: [ajuan_id], references: [ajuan_id])
   dokumen         dokumen               @relation(fields: [dokumen_id], references: [dokumen_id])

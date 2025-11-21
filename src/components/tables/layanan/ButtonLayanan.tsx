@@ -13,7 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Modul from "@/types/model/modul"
-import { FormEvent, useEffect, useRef, useState } from "react"
+import { FormEvent, FormEventHandler, useEffect, useRef, useState } from "react"
 import Button from "@/components/ui/button/Button";
 
 
@@ -62,9 +62,41 @@ export default function LayananUpload({
 
         } catch (error: unknown) {
 
-
+            console.log(error);
+            
 
         }
+
+    }
+
+    const uploadDokumen : FormEventHandler<HTMLInputElement> = async (e) =>{
+
+        
+
+        const selectedFile = e.currentTarget.files![0];
+
+        const formData = new FormData();
+        formData.append('file', selectedFile, selectedFile.name);
+        formData.append('id', id.toString())
+
+        const res = await fetch('/api/ajuanDok', {
+            method: "POST",
+            body: formData
+        });
+
+        if(res.ok){
+
+            const data = await res.json(); 
+
+            console.log(data);
+
+        }else{
+            console.log("error upload ajuan dok");
+            
+        }
+
+        
+        
 
     }
 
@@ -109,10 +141,11 @@ export default function LayananUpload({
                                         </Link>
                                         <Button asChild onClick={() => {
                                             document.getElementById(`input-${data.dokumen_id}`)?.click()
-                                                                                      
                                         }}  size="sm" variant="primary"
                                             className="bg-brand-500" >
-                                                <input type="file" id={`input-${data.dokumen_id}`} hidden/>
+                                                <input 
+                                                onInput={uploadDokumen} 
+                                                type="file" id={`input-${data.dokumen_id}`} hidden/>
 
                                             <Paperclip />
                                         </Button>

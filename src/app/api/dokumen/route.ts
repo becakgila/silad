@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server';
 import fs from 'node:fs'
 import path from 'node:path'
 
-export async function GET(request: Request){
+export async function GET(request: NextRequest){
 
     const { searchParams } = new URL(request.url);
 
