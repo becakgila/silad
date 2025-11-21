@@ -3,5 +3,6 @@ export default interface dokumenType {
   dokumen_name:string;
   dokumen_size: number;
   dokumen_type: string;
+  dokumen_template: string;
   layanan_id: string;
 }

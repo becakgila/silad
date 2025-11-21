@@ -2,6 +2,7 @@
 
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
+import LayananUpload from "@/components/tables/layanan/ButtonLayanan";
 import prodiModalForm, { prodiFormSchema } from "@/components/tables/modal/prodiModalForm";
 import Tables from "@/components/tables/Tables";
 import TableDelete from "@/components/tables/TablesDelete";
@@ -16,7 +17,7 @@ import { useTablesStore } from "@/store/useTablesStore";
 import listDataType from "@/types/listDataTable";
 import ajuanType from "@/types/model/ajuan";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PencilIcon } from "lucide-react";
+import { PencilIcon, Upload } from "lucide-react";
 import { usePathname } from "next/navigation";
 import React, { use, useEffect } from "react";
 
@@ -33,7 +34,7 @@ const table: {
       name: "Tahun Ajaran",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.tahun_ajaran.tahun_awal+"/"+table.tahun_ajaran.tahun_akhir+" "+table.tahun_ajaran.semester || "-"}
+          {table.tahun_ajaran.tahun_awal + "/" + table.tahun_ajaran.tahun_akhir + " " + table.tahun_ajaran.semester || "-"}
         </TableCell>
       )
     },
@@ -98,7 +99,6 @@ const table: {
             idLabel="ajuan_id"
           />
 
-
           <TableDelete api={api} OpenButton={
             (<Button size="sm" variant="primary"
               className="bg-red-500"
@@ -108,6 +108,19 @@ const table: {
           }
             modulId={table.ajuan_id}
             idLabel="ajuan_id"
+          />
+
+          <LayananUpload
+            id={table.layanan.layanan_id}
+            IconButton={
+              (
+                <Button size="sm" variant="primary"
+                  className="bg-brand-500"
+                >
+                  <Upload />
+                </Button>
+              )
+            }
           />
         </TableCell>
       )
@@ -132,7 +145,7 @@ export default function BasicTables() {
       <PageBreadcrumb pageTitle="Riwayat Pengajuan Layanan Akademik" />
       <div className="space-y-6">
         <ComponentCard api={table.api} >
-          <Tables listData={table.listData} api={table.api}  />
+          <Tables listData={table.listData} api={table.api} />
         </ComponentCard>
       </div>
     </div>
