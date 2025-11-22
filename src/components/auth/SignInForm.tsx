@@ -7,7 +7,7 @@ import { ChevronLeftIcon, EyeCloseIcon, EyeIcon } from "@/icons";
 import Link from "next/link";
 import React, { FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
-  import { useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { toast } from "react-toastify";
 
 export default function SignInForm() {
@@ -16,27 +16,27 @@ export default function SignInForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-   const router = useRouter();
+  const router = useRouter();
 
-    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const res = await signIn("credentials", {
       redirect: false,
       email,
-      password,            
-    });                
+      password,
+    });
 
-    if (res?.status === 401 || res?.error) {      
+    if (res?.status === 401 || res?.error) {
       toast.error(`Login Gagal: ${res?.error || 'Unknown error'}`);
-    }else {           
-      router.push('/admin/');      
+    } else {
+      router.push('/admin/');
     }
   };
 
   return (
     <div className="flex flex-col flex-1 lg:w-1/2 w-full">
-      
+
       <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
         <div>
           <div className="mb-5 sm:mb-8">
@@ -48,8 +48,8 @@ export default function SignInForm() {
             </p>
           </div>
           <div>
-            
-            
+
+
             <form onSubmit={handleSubmit}>
               <div className="space-y-6">
                 <div>

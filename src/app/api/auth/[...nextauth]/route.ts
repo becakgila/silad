@@ -19,12 +19,15 @@ export const runtime = 'nodejs';
 const handlers = NextAuth({
   providers: [
     CredentialsProvider({
+      id: "Credentials",
       name: "Credentials",
       credentials: {
         email: { label: "email", type: "text" },
         password: { label: "password", type: "password" },
       },
       async authorize(credentials) {
+        console.log(credentials);
+        
         
         try {
           if (!credentials?.email || !credentials?.password) {
@@ -55,6 +58,7 @@ const handlers = NextAuth({
       },
     }),
     CredentialsProvider({
+      id: "CredentialsMhs",
       name: "CredentialsMhs",
       credentials: {
         nim: { label: "nim", type: "text" },
@@ -63,6 +67,10 @@ const handlers = NextAuth({
       async authorize(credentials) {
         
         try {
+
+          
+          
+
           if (!credentials?.nim || !credentials?.password) {
             throw new Error("Please enter an nim and password");
           }
