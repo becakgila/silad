@@ -27,16 +27,16 @@ import {
 import Radio from "@/components/form/input/Radio"
 import { log } from "console"
 import dokumenType from "@/types/model/dokumen"
-import { Eye, Paperclip } from "lucide-react"
+import { CheckCheck, Eye, Paperclip } from "lucide-react"
 import Link from "next/link"
 import { buttonVariants } from "@/components/ui/button"
+import { toast } from "react-toastify"
 
 interface HakEditProps<T = any> {
     IconButton: React.JSX.Element,
     id: string | number;
     title?: string;
     description?: string;
-
 }
 
 
@@ -49,54 +49,70 @@ export default function LayananUpload({
 
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [dokumen, setDokumen] = useState<dokumenType[]>([])
+    const [isLoading, setIsLoading] = useState<boolean>(false)
 
     async function dokumenFetch() {
 
         try {
 
+            setIsLoading(true)
+
             const res = await fetch(`/api/dokumen?layanan_id=${id}`)
 
-            const data = (await res.json()).data
+            const data = (await res.json().finally(() => {
+                setIsLoading(false)
+            })).data
 
             setDokumen(data)
+            console.log(data, "dokumen");
+
 
         } catch (error: unknown) {
 
             console.log(error);
-            
 
         }
 
     }
 
-    const uploadDokumen : FormEventHandler<HTMLInputElement> = async (e) =>{
-
-        
+    const uploadDokumen = async (e: FormEvent<HTMLInputElement>, dokumen_id: string, update: boolean) => {
 
         const selectedFile = e.currentTarget.files![0];
+        const inputElement = e.currentTarget;
 
         const formData = new FormData();
         formData.append('file', selectedFile, selectedFile.name);
-        formData.append('id', id.toString())
+        formData.append('ajuan_id', id.toString())
+        formData.append('dokumen_id', dokumen_id.toString())
 
-        const res = await fetch('/api/ajuanDok', {
-            method: "POST",
-            body: formData
-        });
+        try {
+            const res = await fetch('/api/ajuanDok', {
+                method: update ? "PATCH" :"POST",
+                body: formData
+            });
 
-        if(res.ok){
+            if (res.ok) {
 
-            const data = await res.json(); 
+                const resData = await res.json();
 
-            console.log(data);
+                const data = resData.data
 
-        }else{
-            console.log("error upload ajuan dok");
-            
+                setDokumen((prevState) => {                
+
+                    return prevState.map(val => val.dokumen_id === dokumen_id ? {
+                        ...val,
+                        ajuan_dok: data
+                    } : val )
+                })                                
+
+                toast.success(resData.message)
+
+            } else {
+                console.log("error upload ajuan dok");
+            }
+        } finally {
+            inputElement.value = '';
         }
-
-        
-        
 
     }
 
@@ -121,42 +137,60 @@ export default function LayananUpload({
                     <div className="grid gap-4 overflow-y-auto">
 
                         {dokumen.map(data => {
-                            
+
                             // const inputRef = useRef(null);
 
                             return (
-                            <div key={data.dokumen_id}>
-                                <div className="flex justify-between items-center">
+                                <div key={data.dokumen_id}>
+                                    <div className="flex justify-between items-center">
 
-                                    <div>
+                                        <div>
+                                            {
+                                                data.ajuan_dok ? (
+                                                    <>
+                                                    <Link className="flex gap-2 items-center" href={data.ajuan_dok.dokumen_url} target="_blank">
 
-                                        {data.dokumen_name}
+                                                        <p className="text-green-600">
+                                                            {data.dokumen_name}
+                                                        </p>
+                                                        <div>
+                                                            <CheckCheck className="text-green-600" size={18} />
+                                                        </div>
+                                                    </Link>
+                                                    </>
+                                                ) : (<p >
+                                                    {data.dokumen_name}
+                                                </p>)
+                                            }
+
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <Link href={data.dokumen_template} target="_blank">
+                                                <Button size="sm" variant="primary"
+                                                    className="bg-green-600" asChild>
+                                                    <Eye />
+                                                </Button> 
+                                            </Link>
+                                            <Button asChild onClick={() => {
+                                                document.getElementById(`input-${data.dokumen_id}`)?.click()
+                                            }} size="sm" variant="primary"
+                                                className="bg-brand-500" >
+                                                <input
+                                                    onInput={(e) => uploadDokumen(e, data.dokumen_id, Boolean(data.ajuan_dok) )}
+                                                    type="file" id={`input-${data.dokumen_id}`}
+                                                    hidden />
+
+                                                <Paperclip />
+                                            </Button>
+                                        </div>
                                     </div>
-                                    <div className="flex gap-2">
-                                        <Link href={data.dokumen_template}  target="_blank">
-                                            <Button size="sm" variant="primary"
-                                            className="bg-green-600" asChild>
-                                                <Eye />
-                                            </Button>                                                                                                                                         
-                                        </Link>
-                                        <Button asChild onClick={() => {
-                                            document.getElementById(`input-${data.dokumen_id}`)?.click()
-                                        }}  size="sm" variant="primary"
-                                            className="bg-brand-500" >
-                                                <input 
-                                                onInput={uploadDokumen} 
-                                                type="file" id={`input-${data.dokumen_id}`} hidden/>
 
-                                            <Paperclip />
-                                        </Button>
-                                    </div>
+                                    <hr className="mt-3.5" />
+
                                 </div>
+                            )
+                        })}
 
-                                <hr className="mt-3.5" />
-
-                            </div>
-                        )})}
-                        
                     </div>
 
                 </form>

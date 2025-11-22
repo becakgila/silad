@@ -18,6 +18,7 @@ import listDataType from "@/types/listDataTable";
 import ajuanType from "@/types/model/ajuan";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PencilIcon, Upload } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import React, { use, useEffect } from "react";
 
@@ -80,7 +81,23 @@ const table: {
     },
     {
       name: "Aksi",
-      component: ({ table }) => (
+      component: ({ table }) => {
+        const { data: session } = useSession()
+
+        async function fetchUser() {
+          
+          const fetchData = await fetch(`/api/users/${session?.user.id}`);
+
+          const data = await fetchData.json()          
+
+        }
+        
+        useEffect(() => {          
+          
+          fetchUser() 
+        }, [])
+        
+        return(
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">
           <TablesEdit
             api={api}
@@ -123,7 +140,7 @@ const table: {
             }
           />
         </TableCell>
-      )
+      )}
     },
   ]
 }

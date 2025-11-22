@@ -75,6 +75,7 @@ const handlers = NextAuth({
     async session({ session, token }) {
       if (session.user) {
         (session.user as any).level = token.level;
+        (session.user as any).id = token.id;
       }
       return session;
     }
