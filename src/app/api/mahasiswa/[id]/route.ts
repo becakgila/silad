@@ -3,20 +3,21 @@ import { NextRequest } from 'next/server';
 type UrlParams =  { 
 
   params : {
-    id : string;
-    
+    nim : string;    
   }
 }
 
 export async function GET(request: Request, { params } : UrlParams) {
   try {        
     
-    const {id} = params;
+    const {nim} = params;
 
 
   // Prisma `mahasiswa.id` is a BigInt in the schema; convert the incoming id to BigInt
-  const uid = BigInt(id as unknown as string);
-  const data = await prisma.mahasiswa.findUnique({ where: { id: uid } })
+  // const uid = BigInt(nim as unknown as string);
+  const data = await prisma.mahasiswa.findUnique({ where: { nim: nim } })
+
+  console.log(data)
 
     return new Response(JSON.stringify({ message: data }), {
       status: 200,

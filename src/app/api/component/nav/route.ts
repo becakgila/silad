@@ -9,7 +9,9 @@ export async function GET(request: NextRequest) {
     const token = await getToken({ 
       req: request,
       secret: process.env.NEXTAUTH_SECRET
-    });        
+    });    
+
+    // console.log(token);
     
 
     const auth = await prisma.user_haks.findMany({
