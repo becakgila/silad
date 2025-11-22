@@ -13,6 +13,7 @@ export async function middleware(req: NextRequest) {
 
 
   if (
+    pathname === '/' ||
     pathname.startsWith('/_next') ||
     pathname.startsWith('/static') ||
     pathname.startsWith('/public') ||
@@ -30,8 +31,7 @@ export async function middleware(req: NextRequest) {
 
 
   if (authPaths.has(pathname)) {
-    if (token) {
-    
+    if (token) {    
       console.log('Redirecting authenticated user from auth page to home');
       return NextResponse.redirect(new URL('/', req.url));
     }
