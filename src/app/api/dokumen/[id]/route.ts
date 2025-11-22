@@ -141,3 +141,8 @@ export async function DELETE(request: NextRequest, { params } : { params: { id: 
     });
   }
 }
+
+
+// export async function GET(request: NextRequest,){
+
+// }

@@ -3,7 +3,7 @@ import { NextRequest } from 'next/server';
 import fs from 'node:fs'
 import path from 'node:path'
 
-export async function GET(request: Request){
+export async function GET(request: NextRequest){
 
     const { searchParams } = new URL(request.url);
 
@@ -12,7 +12,10 @@ export async function GET(request: Request){
     const whereClause = layanan_id ? { layanan: { layanan_id } } : {}
 
     const data = await prisma.dokumen.findMany({
-        where: whereClause
+        where: whereClause,
+        include: {
+          ajuan_dok: true
+        }
     });
 
     return new Response(
@@ -87,12 +90,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       layanan_id
     }
 
-    if (savedRelativePath) createData.dokumen_template = savedRelativePath
-
-    // connect to layanan relation by layanan_id
-    // if (layanan_id) {
-    //   createData.layanan = { connect: { layanan_id } }
-    // }
+    if (savedRelativePath) createData.dokumen_template = savedRelativePath    
 
     const addData = await prisma.dokumen.create({ data: createData })
 

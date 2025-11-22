@@ -171,7 +171,7 @@ model dokumen{
   dokumen_template  String                @db.VarChar(255)
   layanan_id        String                @db.VarChar(191)
   layanan           layanan               @relation(fields: [layanan_id],references: [layanan_id])
-  ajuan_dok         ajuan_dok[]
+  ajuan_dok         ajuan_dok?            
 }
 
 model ajuan {

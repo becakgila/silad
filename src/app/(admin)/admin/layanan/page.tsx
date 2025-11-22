@@ -26,6 +26,7 @@ import modulType from "@/types/model/modul";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Collapsible } from "@radix-ui/react-collapsible";
 import { ChevronDown, ChevronsDown, ChevronsUpDown, NotebookText, PencilIcon } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import React, { use, useEffect } from "react";
 
@@ -185,7 +186,7 @@ const table: {
       name: "Aksi",
       component: ({ table }) => { 
 
-        const { tables, setTables } = useTablesStore(state => state);
+        const { tables, setTables } = useTablesStore(state => state);                
         
         return (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">
@@ -228,9 +229,9 @@ const table: {
           refreshState={
             (data) => {
                 setTables(tables.map(tab => table.layanan_id == tab.layanan_id ? ({
-                              ...tab,
-                              dokumens: [...tab.dokumens, data]
-                            }) : tab))
+                    ...tab,
+                    dokumens: [...tab.dokumens, data]
+                  }) : tab))
             }
           }
 
@@ -260,6 +261,7 @@ export default function BasicTables() {
 
   return (
     <div>
+      
       <PageBreadcrumb pageTitle="Pengaturan Layanan Akademik" />
       <div className="space-y-6">
         <ComponentCard api={table.api} add={

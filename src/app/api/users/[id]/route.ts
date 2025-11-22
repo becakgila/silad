@@ -9,14 +9,20 @@ type UrlParams =  {
 export async function GET(request: Request, { params } : UrlParams) {
   try {        
     
-    const {id} = params;
-
+    const {id} = await params;
 
   // Prisma `users.id` is a BigInt in the schema; convert the incoming id to BigInt
   const uid = BigInt(id as unknown as string);
   const data = await prisma.users.findUnique({ where: { id: uid } })
 
-    return new Response(JSON.stringify({ message: data }), {
+  const serialized = {
+    ...data,
+    
+    id: data.id.toString(),
+      fakultas_id: data.fakultas_id ? data.fakultas_id.toString() : null,
+  }
+
+    return new Response(JSON.stringify({ message: serialized }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
@@ -49,10 +55,7 @@ export async function PATCH(request: NextRequest, { params } : { params: { id: s
       ...updatedUser,
       id: updatedUser.id.toString(),
       fakultas_id: updatedUser.fakultas_id ? updatedUser.fakultas_id.toString() : null,
-    };    
-
-    // console.log(serializedUser);
-    
+    };        
 
     return new Response(JSON.stringify({ 
         message: "User updated successfully",

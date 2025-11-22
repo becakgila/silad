@@ -67,9 +67,9 @@ export async function GET(request: Request) {
         tahun_ajaran:true
       }
     });
-    console.log(data)
+    
     const serializedData = data.map((item: any) => {
-      // console.log(item.mahasiswa.prodi)
+    
       return {
         ...item,
         tahun_ajaran_id: item.tahun_ajaran_id.toString(),
