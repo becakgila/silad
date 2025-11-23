@@ -19,7 +19,7 @@ export const runtime = 'nodejs';
 const handlers = NextAuth({
   providers: [
     CredentialsProvider({
-      id: "Credentials",
+      
       name: "Credentials",
       credentials: {
         email: { label: "email", type: "text" },
