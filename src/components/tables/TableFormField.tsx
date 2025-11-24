@@ -7,7 +7,7 @@ interface TableFormFieldProps {
         field: ControllerRenderProps<FieldValues, string>;
     }>;
     name: string;
-    label: string;
+    label?: string;
 }
 
 const TableFormField : React.FC<TableFormFieldProps> = ({form, InputComponent, name, label}) => {
@@ -19,7 +19,8 @@ const TableFormField : React.FC<TableFormFieldProps> = ({form, InputComponent, n
         render={({ field }) => (
           <div className="grid gap-3">
             <div className="flex flex-row justify-between">
-              <FormLabel htmlFor={field.name} >{label}</FormLabel>
+              {label && <FormLabel htmlFor={field.name} >{label}</FormLabel> }
+              
               {form.formState.errors[field.name] && (
                 <div className="text-red-600 text-[0.6rem]">
                   {form.formState.errors[field.name]!.message as string}
