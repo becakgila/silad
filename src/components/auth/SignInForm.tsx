@@ -21,7 +21,7 @@ export default function SignInForm() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    const res = await signIn("credentials", {
+    const res = await signIn("Credentials", {
       redirect: false,
       email,
       password,

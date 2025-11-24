@@ -11,10 +11,10 @@ export async function GET(request: NextRequest) {
       secret: process.env.NEXTAUTH_SECRET
     });    
 
-    // console.log(token);
+    console.log(token);
     
 
-    const auth = await prisma.user_haks.findMany({
+    const auth =  await prisma.user_haks.findMany({
       where: {
         user_id: parseInt(token!.id as string),
         NOT: {
@@ -23,17 +23,27 @@ export async function GET(request: NextRequest) {
       },
     });    
 
+    const checkModulId = (token as any).level === 'mahasiswa'? {} : {
+      modul_id: { in: auth.map((a : any) => a.modul_id)},
+    }
+
+    // console.log(auth, 'user hak');
+    
+
     const data = await prisma.moduls.findMany({
       where: {
-        modul_id: { in: auth.map((a : any) => a.modul_id)},
+        ...checkModulId,
         modul_aktif: 'yes',
-        modul_akses: 'Administrator'
+        modul_akses: (token as any).level === 'mahasiswa' ? 'Pengguna' :'Administrator'
         
       },
       orderBy: {
         modul_urut: 'asc', 
       }
     });
+
+    console.log(data);
+    
             
     const serializedData = data.map((item: any) => ({
       ...item,
