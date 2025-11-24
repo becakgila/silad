@@ -100,7 +100,7 @@ export default function ButtonPengajuanPreview({
                                         </div>
                                         <div className="flex gap-2">
                                             {
-                                                data.ajuan_dok ? <Link href={data.ajuan_dok.dokumen_url} target="_blank">
+                                                data.ajuan_dok ? <Link href={data?.ajuan_dok?.dokumen_url} target="_blank">
                                                     <Button size="sm" variant="primary"
                                                         className="bg-green-600" asChild>
                                                         <Eye />

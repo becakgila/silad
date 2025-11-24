@@ -1,36 +1,6 @@
+import { NextRequest } from "next/server";
 import prisma from '@/lib/prisma'
-import { NextRequest } from 'next/server';
-type UrlParams =  { 
 
-  params : {
-    nim : string;    
-  }
-}
-
-export async function GET(request: Request, { params } : UrlParams) {
-  try {        
-    
-    const {nim} = params;
-
-
-  // Prisma `mahasiswa.id` is a BigInt in the schema; convert the incoming id to BigInt
-  // const uid = BigInt(nim as unknown as string);
-  const data = await prisma.mahasiswa.findUnique({ where: { nim: nim } })
-
-  // console.log(data)
-
-    return new Response(JSON.stringify({ message: data }), {
-      status: 200,
-      headers: { "Content-Type": "application/json" },
-    });
-  } catch (error ) {
-    console.error("Unable to connect to the database:", error);
-     return new Response(JSON.stringify({ message: error }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
-  }
-}
 
 export async function PATCH(request: NextRequest, { params } : { params: { id: string } }) {
   try {
@@ -38,26 +8,26 @@ export async function PATCH(request: NextRequest, { params } : { params: { id: s
     const id = (await params).id;    
 
     if (!id) {
-      return new Response(JSON.stringify({ message: "userId is required" }), {
+      return new Response(JSON.stringify({ message: "id params is required" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }    
-    const updatedUser = await prisma.mahasiswa.update({
-      where: { id: BigInt(id) },
+    const updatedModul = await prisma.prodi.update({
+      where: { prodi_id: id },
       data: body
     });
 
-    const serializedUser = {
-      ...updatedUser,
-      id: updatedUser.id.toString()
+    const serializedModul = {
+      ...updatedModul,
+      fakultas_id: updatedModul.fakultas_id.toString()
     };    
 
     
 
     return new Response(JSON.stringify({ 
-        message: "User updated successfully",
-        data: serializedUser
+        message: "Modul update successfully",
+        data: serializedModul
     }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -67,7 +37,7 @@ export async function PATCH(request: NextRequest, { params } : { params: { id: s
 
       console.log(error);
       
-      return new Response(JSON.stringify({ message: "Error updating User", error: error.message }), {
+      return new Response(JSON.stringify({ message: "Error updating modul", error: error.message }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
       });
@@ -84,17 +54,16 @@ export async function DELETE(request: NextRequest, { params } : { params: { id: 
   try {
     const id = (await params).id;
     if (!id) {
-      return new Response(JSON.stringify({ message: "User ID is required" }), {
+      return new Response(JSON.stringify({ message: "id is required" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     } 
-    await prisma.mahasiswa.delete({
-      where: { id: BigInt(id) }
+    await prisma.prodi.delete({
+      where: { prodi_id: id }
     }); 
-
     return new Response(JSON.stringify({ 
-        message: "User deleted successfully"        
+        message: "prodi deleted successfully"        
     }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
@@ -102,7 +71,7 @@ export async function DELETE(request: NextRequest, { params } : { params: { id: 
   } catch (error : unknown) {
     if (error instanceof Error) {
       console.log(error);
-      return new Response(JSON.stringify({ message: "Error deleting User", error: error.message }), {
+      return new Response(JSON.stringify({ message: "Error deleting prodi", error: error.message }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
       });
