@@ -11,6 +11,8 @@ export async function GET(request: NextRequest){
 
     const whereClause = layanan_id ? { layanan: { layanan_id } } : {}
 
+
+
     const data = await prisma.dokumen.findMany({
         where: whereClause,
         include: {
@@ -103,7 +105,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   } catch (error: unknown) {
     if (error instanceof Error) {
 
-      console.log(error);
+      console.log(error.message);
 
       return new Response(JSON.stringify({ message: "Error added data", error: error.message }), {
         status: 500,

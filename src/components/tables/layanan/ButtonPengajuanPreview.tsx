@@ -43,7 +43,7 @@ export default function ButtonPengajuanPreview({
         try {
 
             setIsLoading(true)
-
+                                
             const res = await fetch(`/api/dokumen?layanan_id=${id}`)
 
             const data = (await res.json().finally(() => {

@@ -31,6 +31,7 @@ import { CheckCheck, Eye, Paperclip } from "lucide-react"
 import Link from "next/link"
 import { buttonVariants } from "@/components/ui/button"
 import { toast } from "react-toastify"
+import TableFormField from "../TableFormField"
 
 interface HakEditProps<T = any> {
     IconButton: React.JSX.Element,
@@ -40,7 +41,7 @@ interface HakEditProps<T = any> {
 }
 
 
-export default function LayananUpload({
+export default function PengajuanUpload({
     IconButton,
     id,
     title = "Upload Layanan File",
@@ -87,7 +88,7 @@ export default function LayananUpload({
 
         try {
             const res = await fetch('/api/ajuanDok', {
-                method: update ? "PATCH" :"POST",
+                method: update ? "PATCH" : "POST",
                 body: formData
             });
 
@@ -97,13 +98,13 @@ export default function LayananUpload({
 
                 const data = resData.data
 
-                setDokumen((prevState) => {                
+                setDokumen((prevState) => {
 
                     return prevState.map(val => val.dokumen_id === dokumen_id ? {
                         ...val,
                         ajuan_dok: data
-                    } : val )
-                })                                
+                    } : val)
+                })
 
                 toast.success(resData.message)
 
@@ -136,60 +137,17 @@ export default function LayananUpload({
                     </DialogHeader>
                     <div className="grid gap-4 overflow-y-auto">
 
-                        {dokumen.map(data => {
-
-                            // const inputRef = useRef(null);
-
-                            return (
-                                <div key={data.dokumen_id}>
-                                    <div className="flex justify-between items-center">
-
-                                        <div>
-                                            {
-                                                data.ajuan_dok ? (
-                                                    <>
-                                                    <Link className="flex gap-2 items-center" href={data.ajuan_dok.dokumen_url} target="_blank">
-
-                                                        <p className="text-green-600">
-                                                            {data.dokumen_name}
-                                                        </p>
-                                                        <div>
-                                                            <CheckCheck className="text-green-600" size={18} />
-                                                        </div>
-                                                    </Link>
-                                                    </>
-                                                ) : (<p >
-                                                    {data.dokumen_name}
-                                                </p>)
-                                            }
-
-                                        </div>
-                                        <div className="flex gap-2">
-                                            <Link href={data.dokumen_template} target="_blank">
-                                                <Button size="sm" variant="primary"
-                                                    className="bg-green-600" asChild>
-                                                    <Eye />
-                                                </Button> 
-                                            </Link>
-                                            <Button asChild onClick={() => {
-                                                document.getElementById(`input-${data.dokumen_id}`)?.click()
-                                            }} size="sm" variant="primary"
-                                                className="bg-brand-500" >
-                                                <input
-                                                    onInput={(e) => uploadDokumen(e, data.dokumen_id, Boolean(data.ajuan_dok) )}
-                                                    type="file" id={`input-${data.dokumen_id}`}
-                                                    hidden />
-
-                                                <Paperclip />
-                                            </Button>
-                                        </div>
-                                    </div>
-
-                                    <hr className="mt-3.5" />
-
-                                </div>
-                            )
-                        })}
+                        
+                            <input
+                                type="file"
+                                // id={field.name}
+                                // name={field.name}
+                                // onBlur={field.onBlur}
+                                // ref={field.ref}
+                                // onChange={(e) => field.onChange(e.target.files?.[0] ?? undefined)}
+                                className={`focus:border-ring-brand-300 h-11 w-full overflow-hidden rounded-lg border border-gray-300 bg-transparent text-sm text-gray-500 shadow-theme-xs transition-colors file:mr-5 file:border-collapse file:cursor-pointer file:rounded-l-lg file:border-0 file:border-r file:border-solid file:border-gray-200 file:bg-gray-50 file:py-3 file:pl-3.5 file:pr-3 file:text-sm file:text-gray-700 placeholder:text-gray-400 hover:file:bg-gray-100 focus:outline-hidden focus:file:ring-brand-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400 dark:text-white/90 dark:file:border-gray-800 dark:file:bg-white/[0.03] dark:file:text-gray-400 dark:placeholder:text-gray-400 `}
+                            />
+                        
 
                     </div>
 

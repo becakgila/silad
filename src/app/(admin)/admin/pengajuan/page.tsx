@@ -2,9 +2,9 @@
 
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import LayananUpload from "@/components/tables/layanan/ButtonLayanan";
+import PengajuanUpload from "@/components/tables/layanan/ButtonPengajuanUpload";
 import prodiModalForm, { prodiFormSchema } from "@/components/tables/modal/prodiModalForm";
-import ButtonPengajuanPreview from "@/components/tables/pengajuan/ButtonPengajuanPreview";
+import ButtonPengajuanPreview from "@/components/tables/layanan/ButtonPengajuanPreview";
 import Tables from "@/components/tables/Tables";
 import TableDelete from "@/components/tables/TablesDelete";
 import TablesEdit from "@/components/tables/TablesEdit";
@@ -109,8 +109,8 @@ const table: {
       component: ({ table }) => {
         const { data: session } = useSession()
 
-        async function fetchUser() {
-          
+        async function fetchUser() {                    
+
         const fetchData = await fetch(`/api/users/${session?.user.id}`);
 
         const data = await fetchData.json()          
@@ -152,7 +152,7 @@ const table: {
             idLabel="ajuan_id"
           />
 
-          <LayananUpload
+          <PengajuanUpload
             id={table.layanan.layanan_id}
             IconButton={
               (
