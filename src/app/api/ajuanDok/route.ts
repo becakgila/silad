@@ -14,39 +14,68 @@ export async function POST(req: NextRequest) {
 
   const formData = await req.formData();
 
-  const file = formData.get('file') as File | null;
-  const ajuan_id = formData.get('ajuan_id')?.toString();
-  const dokumen_id = formData.get('dokumen_id')?.toString();
+  const files = formData.getAll('files') as Blob[];
+  const idDocument = formData.getAll('id_document') as Blob[];
+  const idAjuan = formData.get('ajuan_id')
 
-  let savedFilename: string | null = null;
-  let savedRelativePath: string | null = null;
-  let detectedFileSize: number | null = null;
+  const data = files.map((val, i) => ({
+    document_id: idDocument[i],
+    file: val as File,
+  }))
 
-  if (file && typeof file.arrayBuffer === 'function') {
-    const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'ajuanDok')
-    await fs.promises.mkdir(uploadsDir, { recursive: true })
+  const listAjuanDok = []
 
-    const originalName = path.basename(file.name || 'uploaded')
-    const safeName = originalName.replace(/[^a-zA-Z0-9.\-_]/g, '_')
-    const filename = `${Date.now()}-${safeName}`
-    const filePath = path.join(uploadsDir, filename)
+  console.log(data[0].file.name);
 
-    const buffer = Buffer.from(await file.arrayBuffer())
-    await fs.promises.writeFile(filePath, buffer)
 
-    savedFilename = filename
-    savedRelativePath = `/uploads/ajuanDok/${filename}`
-    detectedFileSize = buffer.length
+  // const ajuan_id = formData.get('ajuan_id')?.toString();
+  // const dokumen_id = formData.get('dokumen_id')?.toString();
+
+  for (const val of data) {
+
+    let savedFilename: string | null = null;
+    let savedRelativePath: string | null = null;
+    let detectedFileSize: number | null = null;
+
+    if (val.file && typeof val.file.arrayBuffer === 'function') {
+      const uploadsDir = path.join(process.cwd(), 'public', 'uploads', 'ajuanDok')
+      await fs.promises.mkdir(uploadsDir, { recursive: true })
+
+      const originalName = path.basename(val.file.name || 'uploaded')
+      const safeName = originalName.replace(/[^a-zA-Z0-9.\-_]/g, '_')
+      const filename = `${Date.now()}-${safeName}`
+      const filePath = path.join(uploadsDir, filename)
+
+      const buffer = Buffer.from(await val.file.arrayBuffer())
+      await fs.promises.writeFile(filePath, buffer)
+
+      savedFilename = filename
+      savedRelativePath = `/uploads/ajuanDok/${filename}`
+      detectedFileSize = buffer.length
+    }
+
+    const createData: any = {
+      ajuan_id: idAjuan,
+      dokumen_id : val.document_id,
+    }
+
+    if (savedRelativePath) createData.dokumen_url = savedRelativePath
+
+    listAjuanDok.push(createData) 
+
+    // const addData = await prisma.ajuan_dok.create({ data: createData })
+    
   }
 
-  const createData: any = {
-    ajuan_id,
-    dokumen_id,
-  }
+  console.log(listAjuanDok);
+  
 
-  if (savedRelativePath) createData.dokumen_url = savedRelativePath
+  const addData = await prisma.ajuan_dok.createMany({
+    data: listAjuanDok
+  })
 
-  const addData = await prisma.ajuan_dok.create({ data: createData })
+  console.log(addData);
+  
 
   const serialized = { ...addData }
 
@@ -62,18 +91,18 @@ export async function PATCH(req: NextRequest) {
 
   const file = formData.get('file') as File | null;
   const ajuan_id = formData.get('ajuan_id')?.toString();
-  const dokumen_id = formData.get('dokumen_id')?.toString();  
+  const dokumen_id = formData.get('dokumen_id')?.toString();
 
-  const check : ajuanDokType = await prisma.ajuan_dok.findFirst({
+  const check: ajuanDokType = await prisma.ajuan_dok.findFirst({
     where: {
       ajuan_id,
       dokumen_id
     }
   })
 
-  if(!check){
+  if (!check) {
     return new Response(JSON.stringify(
-      {        
+      {
         message: "data tidak ada di database"
       }
     ))
@@ -100,29 +129,29 @@ export async function PATCH(req: NextRequest) {
     detectedFileSize = buffer.length
 
     if (check.dokumen_url) {
-            try {
-              const prevPath = path.join(process.cwd(), 'public', check.dokumen_url.replace(/^\//, ''));
-              if (prevPath !== filePath) {
-                await fs.promises.unlink(prevPath).catch(() => {});
-              }
-            } catch (e) {
-              // ignore unlink errors
-            }
-  }
+      try {
+        const prevPath = path.join(process.cwd(), 'public', check.dokumen_url.replace(/^\//, ''));
+        if (prevPath !== filePath) {
+          await fs.promises.unlink(prevPath).catch(() => { });
+        }
+      } catch (e) {
+        // ignore unlink errors
+      }
+    }
   }
 
   const updateData: any = {
-    
+
   }
 
   if (savedRelativePath) updateData.dokumen_url = savedRelativePath
 
-  const updatedData = await prisma.ajuan_dok.update({ 
+  const updatedData = await prisma.ajuan_dok.update({
     where: {
       ajuan_id,
       dokumen_id
     },
-    data: updateData 
+    data: updateData
   })
 
   const serialized = { ...updatedData }

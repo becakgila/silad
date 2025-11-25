@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
       secret: process.env.NEXTAUTH_SECRET
     });    
 
-    console.log(token);
+    // console.log(token);
     
 
     const auth =  await prisma.user_haks.findMany({
@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
       }
     });
 
-    console.log(data);
+    // console.log(data);
     
             
     const serializedData = data.map((item: any) => ({

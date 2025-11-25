@@ -196,6 +196,7 @@ enum status_layanan {
 }
 
 model ajuan_dok {
+  ajuan_dok_id    String                @id @default(uuid())
   ajuan_id        String                @db.VarChar(191)
   dokumen_id      String                @db.VarChar(191) @unique
   dokumen_url     String                @db.VarChar(255)
