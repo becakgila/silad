@@ -107,14 +107,7 @@ const table: {
     {
       name: "Aksi",
       component: ({ table }) => {
-        // const { data: session } = useSession();
-        // async function fetchUser() {
-        //   const fetchData = await fetch(`/api/mahasiswa/${session?.user.id}`);
-        //   const data = await fetchData.json()
-        // }
-        // useEffect(() => {
-        //   fetchUser()
-        // }, [])
+        
 
         return (
           <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">
@@ -146,18 +139,7 @@ const table: {
               idLabel="ajuan_id"
             />
 
-            <LayananUpload
-              id={table.layanan.layanan_id}
-              IconButton={
-                (
-                  <Button size="sm" variant="primary"
-                    className="bg-brand-500"
-                  >
-                    <Upload />
-                  </Button>
-                )
-              }
-            />
+            
           </TableCell>
         )
       }

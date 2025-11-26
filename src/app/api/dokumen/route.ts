@@ -12,6 +12,8 @@ export async function GET(request: NextRequest){
     const whereClause = layanan_id ? { layanan: { layanan_id } } : {}
 
 
+  
+
 
     const data = await prisma.dokumen.findMany({
         where: whereClause,

@@ -170,6 +170,7 @@ model dokumen{
   dokumen_type      String                @db.VarChar(255)
   dokumen_template  String                @db.VarChar(255)
   layanan_id        String                @db.VarChar(191)
+  optional          Boolean               @default(false)
   layanan           layanan               @relation(fields: [layanan_id],references: [layanan_id])
   ajuan_dok         ajuan_dok?            
 }

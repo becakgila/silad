@@ -7,5 +7,6 @@ export default interface dokumenType {
   dokumen_type: string;
   dokumen_template: string;
   layanan_id: string;
+  optional: boolean;
   ajuan_dok: ajuanDokType
 }

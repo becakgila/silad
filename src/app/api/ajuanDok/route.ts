@@ -25,12 +25,6 @@ export async function POST(req: NextRequest) {
 
   const listAjuanDok = []
 
-  console.log(data[0].file.name);
-
-
-  // const ajuan_id = formData.get('ajuan_id')?.toString();
-  // const dokumen_id = formData.get('dokumen_id')?.toString();
-
   for (const val of data) {
 
     let savedFilename: string | null = null;
@@ -62,21 +56,13 @@ export async function POST(req: NextRequest) {
     if (savedRelativePath) createData.dokumen_url = savedRelativePath
 
     listAjuanDok.push(createData) 
-
-    // const addData = await prisma.ajuan_dok.create({ data: createData })
     
-  }
-
-  console.log(listAjuanDok);
-  
+  }  
 
   const addData = await prisma.ajuan_dok.createMany({
     data: listAjuanDok
   })
-
-  console.log(addData);
   
-
   const serialized = { ...addData }
 
   return new Response(JSON.stringify({
