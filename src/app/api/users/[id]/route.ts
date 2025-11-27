@@ -1,51 +1,51 @@
 import prisma from '@/lib/prisma'
 import { NextRequest } from 'next/server';
-type UrlParams =  { 
-  params : {
-    id : string;    
+type UrlParams = {
+  params: {
+    id: string;
   }
 }
 
-export async function GET(request: Request, { params } : UrlParams) {
-  try {        
-    
-    const {id} = await params;
+export async function GET(request: Request, { params }: UrlParams) {
+  try {
 
-  // Prisma `users.id` is a BigInt in the schema; convert the incoming id to BigInt
-  const uid = BigInt(id as unknown as string);
-  const data = await prisma.users.findUnique({ where: { id: uid } })
+    const { id } = await params;
 
-  const serialized = {
-    ...data,
-    
-    id: data.id.toString(),
+    // Prisma `users.id` is a BigInt in the schema; convert the incoming id to BigInt
+    const uid = BigInt(id as unknown as string);
+    const data = await prisma.users.findUnique({ where: { id: uid } })    
+  
+    const serialized = {
+      ...data,
+
+      id: data.id.toString(),
       fakultas_id: data.fakultas_id ? data.fakultas_id.toString() : null,
-  }
+    }
 
-    return new Response(JSON.stringify({ message: serialized }), {
+    return new Response(JSON.stringify({ message: "success mendapatkan data user",data: serialized }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
-  } catch (error ) {
+  } catch (error) {
     console.error("Unable to connect to the database:", error);
-     return new Response(JSON.stringify({ message: error }), {
+    return new Response(JSON.stringify({ message: error }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
   }
 }
 
-export async function PATCH(request: NextRequest, { params } : { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const body = await request.json();    
-    const id = (await params).id;    
+    const body = await request.json();
+    const id = (await params).id;
 
     if (!id) {
       return new Response(JSON.stringify({ message: "userId is required" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
-    }    
+    }
     const updatedUser = await prisma.users.update({
       where: { id: BigInt(id) },
       data: body
@@ -55,20 +55,20 @@ export async function PATCH(request: NextRequest, { params } : { params: { id: s
       ...updatedUser,
       id: updatedUser.id.toString(),
       fakultas_id: updatedUser.fakultas_id ? updatedUser.fakultas_id.toString() : null,
-    };        
+    };
 
-    return new Response(JSON.stringify({ 
-        message: "User updated successfully",
-        data: serializedUser
+    return new Response(JSON.stringify({
+      message: "User updated successfully",
+      data: serializedUser
     }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
-    });    
-  } catch (error : unknown) {
-    if (error instanceof Error) {      
+    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
 
       console.log(error);
-      
+
       return new Response(JSON.stringify({ message: "Error updating User", error: error.message }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
@@ -82,7 +82,7 @@ export async function PATCH(request: NextRequest, { params } : { params: { id: s
   }
 }
 
-export async function DELETE(request: NextRequest, { params } : { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const id = (await params).id;
     if (!id) {
@@ -90,18 +90,18 @@ export async function DELETE(request: NextRequest, { params } : { params: { id: 
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
-    } 
+    }
     await prisma.users.delete({
       where: { id: BigInt(id) }
-    }); 
+    });
 
-    return new Response(JSON.stringify({ 
-        message: "User deleted successfully"        
+    return new Response(JSON.stringify({
+      message: "User deleted successfully"
     }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
-    });    
-  } catch (error : unknown) {
+    });
+  } catch (error: unknown) {
     if (error instanceof Error) {
       console.log(error);
       return new Response(JSON.stringify({ message: "Error deleting User", error: error.message }), {

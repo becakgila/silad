@@ -1,13 +1,12 @@
+import prodiType from "./prodi";
+
 export default interface mahasiswaType {
   nim: string,
   password: string,
   nik: string,
   nama: string,
   prodi_id: string,
-  prodi: {
-    prodi_id: string,
-    prodi_name: string,
-  },
+  prodi: prodiType,
   angkatan: string,
   jenis_kelamin: string,
   tempat_lahir: string,

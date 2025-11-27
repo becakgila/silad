@@ -1,3 +1,6 @@
+import fakultasType from "./fakultas";
+import prodiType from "./prodi";
+
 export default interface userType {
   id: string,
   name: string,
@@ -6,14 +9,8 @@ export default interface userType {
   phone: string,
   level: string,
   fakultas_id: string,
-  fakultas: {
-    fakultas_id: string,
-    fakultas_name: string,
-  },
-  prodi: {
-    prodi_id: string,
-    prodi_name: string,
-  },
+  fakultas: fakultasType,
+  prodi: prodiType,
   prodi_id: string,
   status: string,
   email_verified_at: string,

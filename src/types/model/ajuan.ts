@@ -1,3 +1,5 @@
+import layananType from "./layanan"
+
 export default interface ajuanType {
   ajuan_id: string,
   nim: string,
@@ -8,10 +10,7 @@ export default interface ajuanType {
       semester:     string,
   },
   status: string,
-  layanan: {
-    layanan_id: string,
-    layanan_jenis: string,
-  },
+  layanan: layananType,
   mahasiswa:{
     nim:string,
     nama:string,

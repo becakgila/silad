@@ -21,7 +21,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { FileSearch, PencilIcon, Upload } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
-import React, { use, useEffect } from "react";
+import React, { use, useEffect, useState } from "react";
+import userType from "@/types/model/users";
+import ajuanStatusType from "@/types/model/ajuanStatus";
+import { toast } from "react-toastify";
 
 
 const api = "/api/pengajuan";
@@ -82,10 +85,10 @@ const table: {
     },
     {
       name: "Preview",
-      component: ({table}) => {
+      component: ({ table }) => {
 
-        return(<TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          
+        return (<TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+
           {/* <p>test</p> */}
           <ButtonPengajuanPreview
             id={table.layanan.layanan_id}
@@ -107,65 +110,121 @@ const table: {
     {
       name: "Aksi",
       component: ({ table }) => {
-        const { data: session } = useSession()
+        const { data: session, status } = useSession()
+        const [progress, setProgressState] = useState("prodi");
+        const [user, setUserState] = useState<userType>()
 
-        async function fetchUser() {                    
+        async function fetchUser() {
+          // const { data: session } = await useSession()
 
-        const fetchData = await fetch(`/api/users/${session?.user.id}`);
+          try {
+            const user = await session?.user;
+            const fetchData = await fetch(`/api/users/${user?.id}`);
+            const data = await fetchData.json();            
+            
+            setUserState(data.data)
+          } catch (error) {
 
-        const data = await fetchData.json()          
+            const err = error as Error;
+
+            toast.error(`gagal fetch data user!!! ${err.message}`,)
+
+          }
+
 
         }
-        
-        useEffect(() => {          
-          
-          fetchUser() 
-        }, [])
-        
-        return(
-        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">
-          <TablesEdit
-            api={api}
-            IconButton={(
-              <Button size="sm" variant="primary"
-                className="bg-green-600"
-              >
-                <PencilIcon />
-              </Button>
-            )}
-            data={table}
-            formData={prodiModalForm}
-            formSchema={prodiFormSchema}
-            resolver={zodResolver(prodiFormSchema)}
-            id={table.ajuan_id}
-            idLabel="ajuan_id"
-          />
 
-          <TableDelete api={api} OpenButton={
-            (<Button size="sm" variant="primary"
-              className="bg-red-500"
-            >
-              <TrashBinIcon />
-            </Button>)
+        async function fetchStatus() {
+
+          try {            
+            
+            const fetchData = await fetch(`/api/ajuanStatus?ajuan_id=${table.ajuan_id}`)
+
+            if (fetchData.ok) {
+              const data = await fetchData.json();              
+
+              if (data.data.length !== 0) {
+                const progress = (data.data.at(-1) as ajuanStatusType).progress;                
+                
+                setProgressState(progress === 1 ? 'fakultas' : 'administrator')
+              }
+
+            }
+
+
+          } catch (error) {
+
           }
-            modulId={table.ajuan_id}
-            idLabel="ajuan_id"
-          />
 
-          <PengajuanUpload
-            id={table.layanan.layanan_id}
-            IconButton={
-              (
+
+
+        }
+
+        useEffect(() => {
+          if (status !== "authenticated") return
+
+          fetchUser()
+          fetchStatus()
+        }, [status])
+
+        useEffect(() => {
+          // console.log(userState?.level, progressState);
+          
+        }, [user, progress])
+
+        return (
+          <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">
+            <TablesEdit
+              api={api}
+              IconButton={(
                 <Button size="sm" variant="primary"
-                  className="bg-brand-500"
+                  className="bg-green-600"
                 >
-                  <Upload />
+                  <PencilIcon />
                 </Button>
+              )}
+              data={table}
+              formData={prodiModalForm}
+              formSchema={prodiFormSchema}
+              resolver={zodResolver(prodiFormSchema)}
+              id={table.ajuan_id}
+              idLabel="ajuan_id"
+            />
+
+            <TableDelete api={api} OpenButton={
+              (<Button size="sm" variant="primary"
+                className="bg-red-500"
+              >
+                <TrashBinIcon />
+              </Button>)
+            }
+              modulId={table.ajuan_id}
+              idLabel="ajuan_id"
+            />
+            {
+              user?.level.toLowerCase() === progress && user?.prodi_id === table.mahasiswa.prodi_id && (
+                <PengajuanUpload
+                  id={table.ajuan_id}
+                  onSubmitFinish={(progress) => {                    
+                    
+                    setProgressState(progress === 1 ? 'fakultas' : 'administrator')
+                  }}
+                  progress={progress === 'prodi' ? 1 : progress === "fakultas"? 2 : 3}
+                  IconButton={
+                    (
+                      <Button size="sm" variant="primary"
+                        className="bg-brand-500"
+                      >
+                        <Upload />
+                      </Button>
+                    )
+                  }
+                />
               )
             }
-          />
-        </TableCell>
-      )}
+          </TableCell>
+        )
+      }
     },
   ]
 }

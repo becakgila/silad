@@ -10,22 +10,24 @@ datasource db {
 }
 
 model users {
-  id                BigInt       @id @default(autoincrement()) @db.UnsignedBigInt
-  name              String       @db.VarChar(255)
-  nips              String?      @db.VarChar(255)
-  email             String       @unique(map: "users_email_unique") @db.VarChar(255)
-  phone             String?      @db.VarChar(200)
-  level             String       @db.VarChar(255)  
-  fakultas_id       BigInt?      @db.BigInt
-  prodi_id          String?      @db.VarChar(255)
-  status            users_status @default(no)
-  email_verified_at DateTime?    @db.Timestamp(0)
-  password          String       @db.VarChar(255)
-  remember_token    String?      @db.VarChar(100)
-  created_at        DateTime?    @db.Timestamp(0)
-  updated_at        DateTime?    @db.Timestamp(0)
-  prodi             prodi?       @relation("UserProdi", fields: [prodi_id], references: [prodi_id])
-  fakultas          fakultas?    @relation("UserFakultas", fields: [fakultas_id], references: [fakultas_id])
+  id                       BigInt         @id @default(autoincrement()) @db.UnsignedBigInt
+  name                     String         @db.VarChar(255)
+  nips                     String?        @db.VarChar(255)
+  email                    String         @unique(map: "users_email_unique") @db.VarChar(255)
+  phone                    String?        @db.VarChar(200)
+  level                    String         @db.VarChar(255)
+  fakultas_id              BigInt?        @db.BigInt
+  prodi_id                 String?        @db.VarChar(255)
+  status                   users_status   @default(no)
+  email_verified_at        DateTime?      @db.Timestamp(0)
+  password                 String         @db.VarChar(255)
+  remember_token           String?        @db.VarChar(100)
+  created_at               DateTime?      @db.Timestamp(0)
+  updated_at               DateTime?      @db.Timestamp(0)
+  prodi                    prodi?         @relation("UserProdi", fields: [prodi_id], references: [prodi_id])
+  fakultas                 fakultas?      @relation("UserFakultas", fields: [fakultas_id], references: [fakultas_id])
+  ajuanStatus              ajuan_status[] @relation("UserAjuanStatus")
+  
 }
 
 model user_haks {
@@ -35,7 +37,7 @@ model user_haks {
   level      Int
   created_at DateTime? @db.Timestamp(0)
   updated_at DateTime? @db.Timestamp(0)
-  modul          moduls?    @relation("User_haksModuls", fields: [modul_id], references: [modul_id])
+  modul      moduls?   @relation("User_haksModuls", fields: [modul_id], references: [modul_id])
 }
 
 model moduls {
@@ -51,14 +53,14 @@ model moduls {
   modul_id_sms String              @db.VarChar(255)
   created_at   DateTime?           @db.Timestamp(0)
   updated_at   DateTime?           @db.Timestamp(0)
-  user_haks    user_haks[]        @relation("User_haksModuls")
+  user_haks    user_haks[]         @relation("User_haksModuls")
 }
 
 model fakultas {
   users         users[]   @relation("UserFakultas")
   prodis        prodi[]   @relation("ProdiFakultas")
   fakultas_id   BigInt    @id @unique(map: "fakultas_fakultas_id_unique") @default(autoincrement()) @db.UnsignedBigInt
-  fakultas_name String    @db.VarChar(255)  
+  fakultas_name String    @db.VarChar(255)
   created_at    DateTime? @db.Timestamp(0)
   updated_at    DateTime? @db.Timestamp(0)
 }
@@ -82,8 +84,8 @@ model mahasiswa {
   kota          String   @db.VarChar(100)
   kecamatan     String   @db.VarChar(100)
 
-  prodi         prodi?   @relation("MahasiswaProdi", fields: [prodi_id], references: [prodi_id])
-  ajuan         ajuan[]   @relation("MahasiswaAjuan")
+  prodi prodi?  @relation("MahasiswaProdi", fields: [prodi_id], references: [prodi_id])
+  ajuan ajuan[] @relation("MahasiswaAjuan")
 }
 
 model prodi {
@@ -95,9 +97,10 @@ model prodi {
   created_at       DateTime?           @db.Timestamp(0)
   updated_at       DateTime?           @db.Timestamp(0)
 
-  fakultas         fakultas?           @relation("ProdiFakultas", fields: [fakultas_id], references: [fakultas_id])
-  users            users[]             @relation("UserProdi")
-  mahasiswa        mahasiswa[]         @relation("MahasiswaProdi")
+  fakultas  fakultas?   @relation("ProdiFakultas", fields: [fakultas_id], references: [fakultas_id])
+  users     users[]     @relation("UserProdi")
+  mahasiswa mahasiswa[] @relation("MahasiswaProdi")
+
   @@index([fakultas_id], map: "fakultas_id")
 }
 
@@ -151,11 +154,11 @@ enum tahun_ajaran_semester {
 }
 
 model layanan {
-  layanan_id      String                @id @default(uuid())
-  layanan_jenis   String                @db.VarChar(255)
-  layanan_lvl     layanan_lvl           @default(prodi)
-  dokumens        dokumen[]
-  ajuan           ajuan[]
+  layanan_id    String      @id @default(uuid())
+  layanan_jenis String      @db.VarChar(255)
+  layanan_lvl   layanan_lvl @default(prodi)
+  dokumens      dokumen[]
+  ajuan         ajuan[]
 }
 
 enum layanan_lvl {
@@ -163,32 +166,31 @@ enum layanan_lvl {
   rektorat
 }
 
-model dokumen{
-  dokumen_id        String                @id @default(uuid())  
-  dokumen_name      String                @db.VarChar(255)
-  dokumen_size      Int                   @db.Int()
-  dokumen_type      String                @db.VarChar(255)
-  dokumen_template  String                @db.VarChar(255)
-  layanan_id        String                @db.VarChar(191)
-  optional          Boolean               @default(false)
-  layanan           layanan               @relation(fields: [layanan_id],references: [layanan_id])
-  ajuan_dok         ajuan_dok?            
+model dokumen {
+  dokumen_id       String     @id @default(uuid())
+  dokumen_name     String     @db.VarChar(255)
+  dokumen_size     Int        @db.Int()
+  dokumen_type     String     @db.VarChar(255)
+  dokumen_template String     @db.VarChar(255)
+  layanan_id       String     @db.VarChar(191)
+  optional         Boolean    @default(false)
+  layanan          layanan    @relation(fields: [layanan_id], references: [layanan_id])
+  ajuan_dok        ajuan_dok?
 }
 
 model ajuan {
-  ajuan_id        String                @id @default(uuid())
-  tahun_ajaran_id BigInt?               @db.UnsignedBigInt
-  nim             String                @db.VarChar(255)
-  layanan_id      String                @db.VarChar(191)
-  status          status_layanan        @default(process)
-  created_at      DateTime?             @db.Timestamp(0)
-  updated_at      DateTime?             @db.Timestamp(0)
-  tahun_ajaran    tahun_ajaran?         @relation(fields: [tahun_ajaran_id], references: [tahun_ajaran_id])
-  layanan         layanan               @relation(fields: [layanan_id], references: [layanan_id])
-  mahasiswa       mahasiswa             @relation("MahasiswaAjuan", fields: [nim], references: [nim])
+  ajuan_id        String         @id @default(uuid())
+  tahun_ajaran_id BigInt?        @db.UnsignedBigInt
+  nim             String         @db.VarChar(255)
+  layanan_id      String         @db.VarChar(191)
+  status          status_layanan @default(process)
+  created_at      DateTime?      @db.Timestamp(0)
+  updated_at      DateTime?      @db.Timestamp(0)
+  tahun_ajaran    tahun_ajaran?  @relation(fields: [tahun_ajaran_id], references: [tahun_ajaran_id])
+  layanan         layanan        @relation(fields: [layanan_id], references: [layanan_id])
+  mahasiswa       mahasiswa      @relation("MahasiswaAjuan", fields: [nim], references: [nim])
   ajuan_dok       ajuan_dok[]
 }
-
 
 enum status_layanan {
   reject
@@ -197,10 +199,20 @@ enum status_layanan {
 }
 
 model ajuan_dok {
-  ajuan_dok_id    String                @id @default(uuid())
-  ajuan_id        String                @db.VarChar(191)
-  dokumen_id      String                @db.VarChar(191) @unique
-  dokumen_url     String                @db.VarChar(255)
-  ajuan           ajuan                 @relation(fields: [ajuan_id], references: [ajuan_id])
-  dokumen         dokumen               @relation(fields: [dokumen_id], references: [dokumen_id])
-} 
+  ajuan_dok_id String  @id @default(uuid())
+  ajuan_id     String  @db.VarChar(191)
+  dokumen_id   String  @unique @db.VarChar(191)
+  dokumen_url  String  @db.VarChar(255)
+  ajuan        ajuan   @relation(fields: [ajuan_id], references: [ajuan_id])
+  dokumen      dokumen @relation(fields: [dokumen_id], references: [dokumen_id])
+}
+
+model ajuan_status {
+  ajuan_status_id String  @id @default(uuid())
+  ajuan_id        String  @db.VarChar(191)
+  user_id         BigInt? @db.UnsignedBigInt
+  progress        Int     @default(1) @db.Int()
+  dok_url         String  @db.VarChar(255)
+  users           users?  @relation("UserAjuanStatus",fields: [user_id], references: [id])  
+  
+}
