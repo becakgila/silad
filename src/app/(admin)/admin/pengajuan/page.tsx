@@ -113,6 +113,13 @@ const table: {
         const { data: session, status } = useSession()
         const [progress, setProgressState] = useState("prodi");
         const [user, setUserState] = useState<userType>()
+        const [uploadView, setUploadView] = useState<boolean>(false)
+
+        const progressNumber = {
+          prodi : 1,
+          fakultas : 2,
+
+        }
 
         async function fetchUser() {
           // const { data: session } = await useSession()
@@ -144,21 +151,23 @@ const table: {
               const data = await fetchData.json();              
 
               if (data.data.length !== 0) {
-                const progress = (data.data.at(-1) as ajuanStatusType).progress;                
+                const progress = (data.data.at(-1) as ajuanStatusType).progress;
                 
                 setProgressState(progress === 1 ? 'fakultas' : 'administrator')
+
+                
               }
 
             }
 
 
           } catch (error) {
-
+              console.log(error);
+              
           }
-
-
-
         }
+
+
 
         useEffect(() => {
           if (status !== "authenticated") return
@@ -168,8 +177,15 @@ const table: {
         }, [status])
 
         useEffect(() => {
-          // console.log(userState?.level, progressState);
           
+          // let test = progressNumber[table.layanan.layanan_lvl]
+
+          
+
+          // if( > 1  ){
+
+          //         setUploadView(progress < 1)
+          // }
         }, [user, progress])
 
         return (
@@ -202,14 +218,16 @@ const table: {
               idLabel="ajuan_id"
             />
             {
-              user?.level.toLowerCase() === progress && user?.prodi_id === table.mahasiswa.prodi_id && (
+              
+              // user?.level.toLowerCase() === progress && user?.prodi_id === table.mahasiswa.prodi_id && (
+              uploadView && (
                 <PengajuanUpload
                   id={table.ajuan_id}
                   onSubmitFinish={(progress) => {                    
                     
                     setProgressState(progress === 1 ? 'fakultas' : 'administrator')
                   }}
-                  progress={progress === 'prodi' ? 1 : progress === "fakultas"? 2 : 3}
+                  progress={progress === 'prodi' ? 1 : (progress === "fakultas") ? 2 : 3}
                   IconButton={
                     (
                       <Button size="sm" variant="primary"

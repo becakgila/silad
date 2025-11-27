@@ -20,11 +20,7 @@ export async function GET(request: NextRequest) {
 
         const serialized = data.map((data) => ({
             ...data,
-            user_id: data.user_id.toString(),
-            //   users: data.users(user => ({
-            //     ...user,
-            //     user
-            //   }))
+            user_id: data.user_id.toString(),            
         }))
 
         console.log(serialized);
