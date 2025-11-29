@@ -1,4 +1,5 @@
 import layananType from "./layanan"
+import mahasiswaType from "./mahasiswa"
 
 export default interface ajuanType {
   ajuan_id: string,
@@ -11,13 +12,5 @@ export default interface ajuanType {
   },
   status: string,
   layanan: layananType,
-  mahasiswa:{
-    nim:string,
-    nama:string,
-    prodi_id:string,
-    prodi:{
-      prodi_id:string,
-      prodi_name:string
-    }
-  }
+  mahasiswa: mahasiswaType
 }

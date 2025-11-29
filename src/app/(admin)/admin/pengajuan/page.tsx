@@ -115,10 +115,10 @@ const table: {
         const [user, setUserState] = useState<userType>()
         const [uploadView, setUploadView] = useState<boolean>(false)
 
-        const progressNumber = {
+        const progressNumber: any = {
           prodi : 1,
           fakultas : 2,
-
+          rektorat : 3
         }
 
         async function fetchUser() {
@@ -151,15 +151,11 @@ const table: {
               const data = await fetchData.json();              
 
               if (data.data.length !== 0) {
-                const progress = (data.data.at(-1) as ajuanStatusType).progress;
+                const progress = (data.data.at(0) as ajuanStatusType).progress;                
                 
-                setProgressState(progress === 1 ? 'fakultas' : 'administrator')
-
-                
+                setProgressState(progress === 1 ? 'fakultas' : progress === 2 ? 'administrator' : 'selesai')                
               }
-
             }
-
 
           } catch (error) {
               console.log(error);
@@ -178,14 +174,23 @@ const table: {
 
         useEffect(() => {
           
-          // let test = progressNumber[table.layanan.layanan_lvl]
+          const layanan_lvl = progressNumber[table.layanan.layanan_lvl]
+          const progress_lvl = progressNumber[progress]          
 
+          if( (layanan_lvl < progress_lvl) && (user?.level.toLowerCase() !== progress)) return          
+
+          console.log(progress);
           
+          
+          if(progress === "prodi") {
+            setUploadView(user?.prodi_id === table.mahasiswa.prodi_id)
+          }
 
-          // if( > 1  ){
-
-          //         setUploadView(progress < 1)
-          // }
+          if (progress === "fakultas") {
+            setUploadView(user?.fakultas_id === table.mahasiswa.prodi.fakultas_id)
+          }
+                    
+          
         }, [user, progress])
 
         return (

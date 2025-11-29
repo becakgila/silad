@@ -1,21 +1,25 @@
 import prisma from '@/lib/prisma'
 import { create } from 'domain';
+import { getToken } from 'next-auth/jwt';
+import { NextRequest } from 'next/server';
 import { includes } from 'zod';
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
 
     const { searchParams } = new URL(request.url);
-
-
 
     const search = searchParams.get('search') || "";
     const take: number = Number(searchParams.get('take')) || 10;
     const page: number = Number(searchParams.get('page')) || 1;
 
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+    
+    const user_id : bigint = BigInt(token?.id as string); 
+
     const skip = (page - 1) * take;
 
-    const whereClause = {
+    const whereClause : any = {
       OR: [
         {
           nim: {
@@ -60,6 +64,10 @@ export async function GET(request: Request) {
           }
         },
       ]
+    }
+
+    if((token?.level as string).toLowerCase() === "fakultas"){
+      const user = await prisma.users.findUnique()
     }
 
     const data = await prisma.mahasiswa.findMany({

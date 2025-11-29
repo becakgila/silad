@@ -1,7 +1,9 @@
 import prisma from '@/lib/prisma'
 import { id } from 'zod/v4/locales';
+import { getToken } from "next-auth/jwt";
+import { NextRequest } from 'next/server';
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
   try {
 
     const { searchParams } = new URL(request.url);
@@ -11,6 +13,10 @@ export async function GET(request: Request) {
     const page: number = Number(searchParams.get('page')) || 1;
     const sortColumn = searchParams.get('sortColumn') || "";
     const sortDirection = searchParams.get('sortDirection') || "asc";
+
+    const token = await getToken({ req: request, secret: process.env.NEXTAUTH_SECRET });
+
+    const user_id : bigint = BigInt(token?.id as string);                
 
     const orderClause: any = sortColumn ? sortColumn.split('.').length > 1 ? {
       [sortColumn.split('.')[0]]: {
@@ -61,7 +67,7 @@ export async function GET(request: Request) {
       //   // },
 
       ]
-    }
+    }    
 
     const data = await prisma.users.findMany({
       take: take,
