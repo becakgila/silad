@@ -123,8 +123,7 @@ const AppSidebar: React.FC<AppSidebarProps> = ({ example = false }) => {
   
   const [navItemsState, setNavItemsState] = useState<NavItem[]>(example ? navItems : []);
   useEffect(() => {
-    console.log(session?.user.level);
-    // setPath(session?.user.level === "mahasiswa" ? "mahasiswa" : "admin");
+    
     
     const path = session?.user.level === "mahasiswa" ? "mahasiswa" : "admin";
 

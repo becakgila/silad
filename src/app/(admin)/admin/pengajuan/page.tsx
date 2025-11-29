@@ -118,14 +118,13 @@ const table: {
         const progressNumber: any = {
           prodi : 1,
           fakultas : 2,
-          rektorat : 3
+          administrator : 3
         }
 
-        async function fetchUser() {
-          // const { data: session } = await useSession()
+        async function fetchUser() {          
 
           try {
-            const user = await session?.user;
+            const user = session?.user;
             const fetchData = await fetch(`/api/users/${user?.id}`);
             const data = await fetchData.json();            
             
@@ -135,10 +134,7 @@ const table: {
             const err = error as Error;
 
             toast.error(`gagal fetch data user!!! ${err.message}`,)
-
           }
-
-
         }
 
         async function fetchStatus() {
@@ -175,12 +171,11 @@ const table: {
         useEffect(() => {
           
           const layanan_lvl = progressNumber[table.layanan.layanan_lvl]
-          const progress_lvl = progressNumber[progress]          
+          const progress_lvl = progressNumber[progress]                              
 
-          if( (layanan_lvl < progress_lvl) && (user?.level.toLowerCase() !== progress)) return          
+          if( (layanan_lvl < progress_lvl) ) return                              
 
-          console.log(progress);
-          
+          if (user?.level.toLowerCase() !== progress) return
           
           if(progress === "prodi") {
             setUploadView(user?.prodi_id === table.mahasiswa.prodi_id)
@@ -189,7 +184,6 @@ const table: {
           if (progress === "fakultas") {
             setUploadView(user?.fakultas_id === table.mahasiswa.prodi.fakultas_id)
           }
-                    
           
         }, [user, progress])
 
