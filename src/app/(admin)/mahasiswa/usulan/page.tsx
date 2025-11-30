@@ -2,7 +2,6 @@
 
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import LayananUpload from "@/components/tables/layanan/ButtonPengajuanUpload";
 import prodiModalForm, { prodiFormSchema } from "@/components/tables/modal/prodiModalForm";
 import ButtonPengajuanPreview from "@/components/tables/layanan/ButtonPengajuanPreview";
 import Tables from "@/components/tables/Tables";

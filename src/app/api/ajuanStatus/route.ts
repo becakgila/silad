@@ -11,10 +11,6 @@ export async function GET(request: NextRequest) {
         const { searchParams } = new URL(request.url);
 
         const ajuan_id = searchParams.get('ajuan_id') || "";
-        
-        
-
-        // Prisma `users.id` is a BigInt in the schema; convert the incoming id to BigInt
 
         const data: ajuanStatusType[] = await prisma.ajuan_status.findMany({ where: { ajuan_id } })
 

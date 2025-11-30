@@ -25,6 +25,7 @@ import React, { use, useEffect, useState } from "react";
 import userType from "@/types/model/users";
 import ajuanStatusType from "@/types/model/ajuanStatus";
 import { toast } from "react-toastify";
+import progressNumber from "@/variable/progressNumber";
 
 
 const api = "/api/pengajuan";
@@ -113,13 +114,7 @@ const table: {
         const { data: session, status } = useSession()
         const [progress, setProgressState] = useState("prodi");
         const [user, setUserState] = useState<userType>()
-        const [uploadView, setUploadView] = useState<boolean>(false)
-
-        const progressNumber: any = {
-          prodi : 1,
-          fakultas : 2,
-          administrator : 3
-        }
+        const [uploadView, setUploadView] = useState<boolean>(false)        
 
         async function fetchUser() {          
 
@@ -147,7 +142,7 @@ const table: {
               const data = await fetchData.json();              
 
               if (data.data.length !== 0) {
-                const progress = (data.data.at(0) as ajuanStatusType).progress;                
+                const progress = (data.data.at(-1) as ajuanStatusType).progress;                                                
                 
                 setProgressState(progress === 1 ? 'fakultas' : progress === 2 ? 'administrator' : 'selesai')                
               }
@@ -173,9 +168,11 @@ const table: {
           const layanan_lvl = progressNumber[table.layanan.layanan_lvl]
           const progress_lvl = progressNumber[progress]                              
 
-          if( (layanan_lvl < progress_lvl) ) return                              
-
-          if (user?.level.toLowerCase() !== progress) return
+          console.log(progress,'ini progress');
+          if( (layanan_lvl < progress_lvl) || user?.level.toLowerCase() !== progress){
+            setUploadView(false)
+            return
+          }          
           
           if(progress === "prodi") {
             setUploadView(user?.prodi_id === table.mahasiswa.prodi_id)
@@ -224,9 +221,13 @@ const table: {
                   id={table.ajuan_id}
                   onSubmitFinish={(progress) => {                    
                     
-                    setProgressState(progress === 1 ? 'fakultas' : 'administrator')
+                    const progressText : string = (Object.keys(progressNumber).find(k => progressNumber[k] === (progress+1)) as string)
+
+                    // console.log(progressText, 'ini progress text');                    
+
+                    setProgressState(progressText)
                   }}
-                  progress={progress === 'prodi' ? 1 : (progress === "fakultas") ? 2 : 3}
+                  progress={progressNumber[progress]}
                   IconButton={
                     (
                       <Button size="sm" variant="primary"
