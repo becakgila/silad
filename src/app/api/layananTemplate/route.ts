@@ -30,19 +30,25 @@ export async function POST(req: NextRequest) {
                 template_url: "",
                 layanan_id
             })
+
+            await prisma.layanan_template.deleteMany({
+                layanan_id
+            })
+        }else{
+
         }
 
-
-
-        const ajuanTemplate = prisma.ajuan_template.createMany({
-            data: [
-
-            ]
+        const layanan_template = await prisma.layanan_template.createMany({
+            data: dataInput
         })
 
-
+        console.log(layanan_template);
+        
+        // const serializeData = ajuanTemplate.map((val :any) => val)
+        
 
         return NextResponse.json({
+            data: [],
             message: "POST Layanan Template Berhasil!!!"
         })
     } catch (error) {

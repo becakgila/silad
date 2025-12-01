@@ -68,10 +68,16 @@ export default function ButtonLayananTemplate({
 
             formData.append('layanan_id', id.toString())
 
-            const req = fetch("/api/layananTemplate", {
+            const req = await fetch("/api/layananTemplate", {
                 body: formData,
                 method: "POST",
             })
+
+            if((await req).ok){
+                const dataJson = await (await req).json();
+                console.log(dataJson);
+                
+            }
 
         } catch (error) {
             console.log(error)
