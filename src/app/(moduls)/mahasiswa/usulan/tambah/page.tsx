@@ -113,11 +113,11 @@ export default function Page() {
 
   return (
     <div>
-      <PageBreadcrumb pageTitle="Upload Mahasiswa" />
+      <PageBreadcrumb pageTitle="Pengajuan Mahasiswa" />
       <div className="min-h-screen p-8 ">
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <h1 className="text-2xl font-bold mb-4">Upload File</h1>
+            <h1 className="text-2xl font-bold mb-4">Upload File: </h1>
             <div className="relative">
               <Select
                 onChange={(idAjuan) => {
@@ -143,7 +143,7 @@ export default function Page() {
             return (
               <div key={val.dokumen_id}>
                 <h1 className="text-2xl font-bold mb-4">
-                  Upload File {val.dokumen_name} {!val.optional && "*"}
+                  Upload File {val.dokumen_name} {!val.optional && <span className="mt-2 text-s text-red-600"> (* Wajib)</span>}
                 </h1>
                 <FileInput
                   accept=".pdf"
@@ -160,7 +160,7 @@ export default function Page() {
           })}
 
           <Button type="submit" size="sm" variant="primary">
-            Upload <PlusIcon />
+            Submit <PlusIcon />
           </Button>
         </form>
 
