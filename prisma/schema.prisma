@@ -10,24 +10,23 @@ datasource db {
 }
 
 model users {
-  id                       BigInt         @id @default(autoincrement()) @db.UnsignedBigInt
-  name                     String         @db.VarChar(255)
-  nips                     String?        @db.VarChar(255)
-  email                    String         @unique(map: "users_email_unique") @db.VarChar(255)
-  phone                    String?        @db.VarChar(200)
-  level                    String         @db.VarChar(255)
-  fakultas_id              BigInt?        @db.BigInt
-  prodi_id                 String?        @db.VarChar(255)
-  status                   users_status   @default(no)
-  email_verified_at        DateTime?      @db.Timestamp(0)
-  password                 String         @db.VarChar(255)
-  remember_token           String?        @db.VarChar(100)
-  created_at               DateTime?      @db.Timestamp(0)
-  updated_at               DateTime?      @db.Timestamp(0)
-  prodi                    prodi?         @relation("UserProdi", fields: [prodi_id], references: [prodi_id])
-  fakultas                 fakultas?      @relation("UserFakultas", fields: [fakultas_id], references: [fakultas_id])
-  ajuanStatus              ajuan_status[] @relation("UserAjuanStatus")
-  
+  id                BigInt         @id @default(autoincrement()) @db.UnsignedBigInt
+  name              String         @db.VarChar(255)
+  nips              String?        @db.VarChar(255)
+  email             String         @unique(map: "users_email_unique") @db.VarChar(255)
+  phone             String?        @db.VarChar(200)
+  level             String         @db.VarChar(255)
+  fakultas_id       BigInt?        @db.BigInt
+  prodi_id          String?        @db.VarChar(255)
+  status            users_status   @default(no)
+  email_verified_at DateTime?      @db.Timestamp(0)
+  password          String         @db.VarChar(255)
+  remember_token    String?        @db.VarChar(100)
+  created_at        DateTime?      @db.Timestamp(0)
+  updated_at        DateTime?      @db.Timestamp(0)
+  prodi             prodi?         @relation("UserProdi", fields: [prodi_id], references: [prodi_id])
+  fakultas          fakultas?      @relation("UserFakultas", fields: [fakultas_id], references: [fakultas_id])
+  ajuanStatus       ajuan_status[] @relation("UserAjuanStatus")
 }
 
 model user_haks {
@@ -154,11 +153,12 @@ enum tahun_ajaran_semester {
 }
 
 model layanan {
-  layanan_id    String      @id @default(uuid())
-  layanan_jenis String      @db.VarChar(255)
-  layanan_lvl   layanan_lvl @default(prodi)
-  dokumens      dokumen[]
-  ajuan         ajuan[]
+  layanan_id       String             @id @default(uuid())
+  layanan_jenis    String             @db.VarChar(255)
+  layanan_lvl      layanan_lvl        @default(prodi)
+  dokumens         dokumen[]
+  ajuan            ajuan[]
+  layananTemplates layanan_template[]
 }
 
 enum layanan_lvl {
@@ -213,6 +213,13 @@ model ajuan_status {
   user_id         BigInt? @db.UnsignedBigInt
   progress        Int     @default(1) @db.Int()
   dok_url         String  @db.VarChar(255)
-  users           users?  @relation("UserAjuanStatus",fields: [user_id], references: [id])  
-  
+  users           users?  @relation("UserAjuanStatus", fields: [user_id], references: [id])
+}
+
+model layanan_template {
+  layanan_template_id String  @id @default(uuid())
+  template_name       String  @db.VarChar(10)
+  template_url        String  @db.VarChar(255)
+  layanan_id          String  @db.VarChar(191)
+  layanan             layanan @relation(fields: [layanan_id], references: [layanan_id])
 }

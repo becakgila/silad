@@ -3,7 +3,7 @@
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import prodiModalForm, { prodiFormSchema } from "@/components/tables/modal/prodiModalForm";
-import ButtonPengajuanPreview from "@/components/tables/layanan/ButtonPengajuanPreview";
+import ButtonPengajuanPreview from "@/components/tables/pengajuan/ButtonPengajuanPreview";
 import Tables from "@/components/tables/Tables";
 import TableDelete from "@/components/tables/TablesDelete";
 import TablesEdit from "@/components/tables/TablesEdit";

@@ -66,9 +66,9 @@ export async function GET(request: NextRequest) {
       ]
     }
 
-    if((token?.level as string).toLowerCase() === "fakultas"){
-      const user = await prisma.users.findUnique()
-    }
+    // if((token?.level as string).toLowerCase() === "fakultas"){
+    //   const user = await prisma.users.findUnique()
+    // }
 
     const data = await prisma.mahasiswa.findMany({
       take: take,

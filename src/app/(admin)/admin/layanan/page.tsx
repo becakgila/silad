@@ -2,6 +2,7 @@
 
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
+import ButtonLayananTemplate from "@/components/tables/layanan/ButtonLayananTemplate";
 import dokumenModalForm, { dokumenFormSchema } from "@/components/tables/modal/dokumenModalForm";
 import layananModalForm, { layananFormSchema } from "@/components/tables/modal/layananModalForm";
 import Tables from "@/components/tables/Tables";
@@ -25,7 +26,7 @@ import layananType from "@/types/model/layanan";
 import modulType from "@/types/model/modul";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Collapsible } from "@radix-ui/react-collapsible";
-import { ChevronDown, ChevronsDown, ChevronsUpDown, NotebookText, PencilIcon } from "lucide-react";
+import { ChevronDown, ChevronsDown, ChevronsUpDown, NotebookText, PencilIcon, ScrollText } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import React, { use, useEffect } from "react";
@@ -72,9 +73,7 @@ const table: {
               className="flex w-[350px] flex-col gap-2"
             >
               <div className="flex items-center justify-between gap-4 px-4">
-                {/* <h4 className="text-sm font-semibold">
-          @peduarte starred 3 repositories
-        </h4> */}
+                
                 <div></div>
                 {
                   table.dokumens?.length > 1 && (
@@ -189,7 +188,9 @@ const table: {
         const { tables, setTables } = useTablesStore(state => state);                
         
         return (
-        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          <div className="gap-1.5 flex">
+
           <TablesEdit
             api={api}
             IconButton={(
@@ -241,9 +242,22 @@ const table: {
             api={`${apiDokumen}?layanan_id=${table.layanan_id}`}
 
           />
+          </div>
         </TableCell>
       )}
     },
+    {
+      name: "Dokumen Template",
+      component: ({table}) => {
+        return <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 ">
+          <ButtonLayananTemplate level={table.layanan_lvl} IconButton={<Button size="sm" variant="primary"
+              className="bg-indigo-700"
+            >
+              <ScrollText />
+            </Button>} id={table.layanan_id} />
+        </TableCell>
+      }
+    }
   ]
 }
 
