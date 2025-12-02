@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma'
-import uploadFile from "@/helpher/uploadFile";
-import deleteFile from "@/helpher/deleteFile";
+import uploadFile from "@/helper/uploadFile";
+import deleteFile from "@/helper/deleteFile";
 
 
 export async function GET(req: NextRequest){

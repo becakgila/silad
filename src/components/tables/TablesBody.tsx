@@ -29,12 +29,9 @@ export default function TableBody({
         setLoading(true);
 
         const fetchData = async () => {
-            // Ensure the store knows about the current pathname and reset page if needed
-
             try{
                 setLastPath(pathname);
     
-                // Read the current page from the store after potential reset
                 const currentState = useTablesStore.getState();
                 const currentPage = currentState.tablesPage ?? 1;
     
@@ -83,8 +80,7 @@ export default function TableBody({
 
                             return (<Component key={`${data.nama}-${idx2}`} table={order} />)
                         })
-                    }                            
-                    
+                    }                                                
                 </TableRow>
             ))}
         </TBody>
