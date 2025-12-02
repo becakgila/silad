@@ -77,20 +77,58 @@ const table: {
       )
     },
     {
+      name: "Progress",
+      component: ({ table }) => {
+        const [progress, setProgressState] = useState("prodi");        
+        
+        async function fetchStatus() {
+
+          try {            
+            
+            const fetchData = await fetch(`/api/ajuanStatus?ajuan_id=${table.ajuan_id}`)
+
+            if (fetchData.ok) {
+              const data = await fetchData.json();              
+
+              if (data.data.length !== 0) {
+                const progress = (data.data.at(-1) as ajuanStatusType).progress;                                                
+                
+                setProgressState(progress === 1 ? 'fakultas' : progress === 2 ? 'administrator' : 'selesai')                
+              }
+            }
+
+          } catch (error) {
+              console.log(error);
+              
+          }
+        }
+
+        useEffect(() => {                  
+          fetchStatus()
+        }, [])
+
+        return (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {progress || "-"}
+        </TableCell>
+      )}
+    },
+    {
       name: "Status",
-      component: ({ table }) => (
+      component: ({ table }) => {        
+        
+        return (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           {table.status || "-"}
         </TableCell>
-      )
+      )}
     },
     {
       name: "Preview",
       component: ({ table }) => {
 
-        return (<TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
 
-          {/* <p>test</p> */}
+        return (<TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">          
           <ButtonPengajuanPreview
             id={table.layanan.layanan_id}
             IconButton={
@@ -219,6 +257,7 @@ const table: {
               uploadView && (
                 <PengajuanUpload
                   id={table.ajuan_id}
+                  idLayanan={table.layanan.layanan_id}
                   onSubmitFinish={(progress) => {                    
                     
                     const progressText : string = (Object.keys(progressNumber).find(k => progressNumber[k] === (progress+1)) as string)

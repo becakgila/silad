@@ -60,5 +60,4 @@ export const useTablesStore = create<tableState<any>>((set) => ({
     setTableFromId: (id: string | number, idTable="id", tableUpdate) => set((state) => ({
         tables: state.tables.map(table => table[idTable] === id ? { ...table ,...tableUpdate } : table)
     }))
-
 })); 

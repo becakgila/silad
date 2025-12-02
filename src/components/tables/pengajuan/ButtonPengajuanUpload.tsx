@@ -27,7 +27,7 @@ import {
 import Radio from "@/components/form/input/Radio"
 import { log, table } from "console"
 import dokumenType from "@/types/model/dokumen"
-import { CheckCheck, Eye, Paperclip } from "lucide-react"
+import { CheckCheck, Eye, Paperclip, ScrollText } from "lucide-react"
 import Link from "next/link"
 import { buttonVariants } from "@/components/ui/button"
 import { toast } from "react-toastify"
@@ -41,6 +41,7 @@ import ajuanStatusType from "@/types/model/ajuanStatus"
 interface PengajuanUploadProps<T = any> {
     IconButton: React.JSX.Element,
     id: string | number;
+    idLayanan: string;
     progress: number;
     title?: string;
     description?: string;
@@ -61,15 +62,17 @@ const pengajuanFileFormSchema = z.object({
 export default function PengajuanUpload({
     IconButton,
     id,
+    idLayanan,
     progress,
-    onSubmitFinish = () => {},
+    onSubmitFinish = () => { },
     title = "Upload Pengajuan File",
     description = "Upload file yang di perlukan. klik icon upload sesuai dengan file yang ingin di upload!",
 }: Readonly<PengajuanUploadProps>) {
 
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [dokumen, setDokumen] = useState<dokumenType[]>([])
+    const [template, setTemplate] = useState<string>("")
+
 
     const form = useForm<z.infer<any>>({
         resolver: zodResolver(pengajuanFileFormSchema),
@@ -79,39 +82,16 @@ export default function PengajuanUpload({
         },
     })
 
-    // async function dokumenFetch() {
-
-    //     try {
-
-    //         setIsLoading(true)
-
-    //         const res = await fetch(`/api/dokumen?layanan_id=${id}`)
-
-    //         const data = (await res.json().finally(() => {
-    //             setIsLoading(false)
-    //         })).data
-
-    //         setDokumen(data)
-    //         console.log(data, "dokumen");
-
-
-    //     } catch (error: unknown) {
-
-    //         console.log(error);
-
-    //     }
-
-    // }
-
     async function onSubmit(values: z.infer<typeof pengajuanFileFormSchema>) {
 
-        try {            
+        try {
+            setIsLoading(true)
 
             const form = new FormData()
 
             form.append("file", values.layananFile)
             form.append("ajuan_id", id.toString())
-            form.append("progress", progress.toString() )
+            form.append("progress", progress.toString())
 
             const fetchData = await fetch('/api/ajuanStatus', {
                 method: "POST",
@@ -120,66 +100,47 @@ export default function PengajuanUpload({
 
             const fetchJson = await fetchData.json()
 
-            const data : ajuanStatusType = fetchJson.data
+            const data: ajuanStatusType = fetchJson.data
 
             onSubmitFinish(data.progress)
 
         } catch {
 
-        } finally{
-            
+        } finally {
+            setIsLoading(false)
         }
 
     }
 
-    // const uploadDokumen = async (e: FormEvent<HTMLInputElement>, dokumen_id: string, update: boolean) => {
+    async function getTemplate() {
+        try{
+            setIsLoading(true)
 
-    //     const selectedFile = e.currentTarget.files![0];
-    //     const inputElement = e.currentTarget;
+            const template_name = progress === 1 ? "prodi" : progress === 2 ? "fakultas" : progress === 3 ? "rektorat" : "";
+            
 
-    //     const formData = new FormData();
-    //     formData.append('file', selectedFile, selectedFile.name);
-    //     formData.append('ajuan_id', id.toString())
-    //     formData.append('dokumen_id', dokumen_id.toString())
+            const fetchData = await fetch(`/api/layananTemplate?layanan_id=${idLayanan}&template_name=${template_name}`)
+    
+            const dataJson = (await fetchData.json()).data[0]                        
 
-    //     try {
-    //         const res = await fetch('/api/ajuanDok', {
-    //             method: update ? "PATCH" : "POST",
-    //             body: formData
-    //         });
+            if(dataJson){                
+                
+                setTemplate(dataJson.template_url);
+            }
 
-    //         if (res.ok) {
+        }catch{
 
-    //             const resData = await res.json();
-
-    //             const data = resData.data
-
-    //             setDokumen((prevState) => {
-
-    //                 return prevState.map(val => val.dokumen_id === dokumen_id ? {
-    //                     ...val,
-    //                     ajuan_dok: data
-    //                 } : val)
-    //             })
-
-    //             toast.success(resData.message)
-
-    //         } else {
-    //             console.log("error upload ajuan dok");
-    //         }
-    //     } finally {
-    //         inputElement.value = '';
-    //     }
-
-    // }
-
-    // useEffect(() => {
-    //     dokumenFetch()
-    // }, [])
+        }finally{
+            setIsLoading(false)
+        }
+        
+    }
 
     useEffect(() => {
         if (!isOpen) {
             form.reset();
+        } else {
+            getTemplate()
         }
     }, [isOpen, form])
 
@@ -216,6 +177,12 @@ export default function PengajuanUpload({
                                     />
                                 )}
                             />
+                            <Link href={template} target="_blank">
+                                <Button className="cursor-pointer" asChild>
+                                    <p className="text-xl">Template</p>
+                                    <ScrollText />
+                                </Button>
+                            </Link>
                         </div>
                         <DialogFooter>
                             <DialogClose asChild>
