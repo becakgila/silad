@@ -2,9 +2,9 @@
 
 import ComponentCard from "@/components/common/ComponentCard";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
-import PengajuanUpload from "@/components/tables/layanan/ButtonPengajuanUpload";
+import PengajuanUpload from "@/components/tables/pengajuan/ButtonPengajuanUpload";
 import prodiModalForm, { prodiFormSchema } from "@/components/tables/modal/prodiModalForm";
-import ButtonPengajuanPreview from "@/components/tables/layanan/ButtonPengajuanPreview";
+import ButtonPengajuanPreview from "@/components/tables/pengajuan/ButtonPengajuanPreview";
 import Tables from "@/components/tables/Tables";
 import TableDelete from "@/components/tables/TablesDelete";
 import TablesEdit from "@/components/tables/TablesEdit";
@@ -18,13 +18,16 @@ import { useTablesStore } from "@/store/useTablesStore";
 import listDataType from "@/types/listDataTable";
 import ajuanType from "@/types/model/ajuan";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { FileSearch, PencilIcon, Upload } from "lucide-react";
+import { FileSearch, PencilIcon, Upload, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { usePathname } from "next/navigation";
 import React, { use, useEffect, useState } from "react";
 import userType from "@/types/model/users";
 import ajuanStatusType from "@/types/model/ajuanStatus";
 import { toast } from "react-toastify";
+import progressNumber from "@/variable/progressNumber";
+import usePengajuanStore from "@/store/usePengajuanStore";
+import Badge from "@/components/ui/badge/Badge";
 
 
 const api = "/api/pengajuan";
@@ -76,20 +79,71 @@ const table: {
       )
     },
     {
+      name: "Progress",
+      component: ({ table }) => {
+        const [progress, setProgressState] = useState("prodi");
+        const refresh = usePengajuanStore(state => state.refresh)
+
+        async function fetchStatus() {
+          try {
+
+            const fetchData = await fetch(`/api/ajuanStatus?ajuan_id=${table.ajuan_id}`)
+
+            if (fetchData.ok) {
+              const data = await fetchData.json();
+
+              if (data.data.length !== 0) {
+                const progress = (data.data.at(-1) as ajuanStatusType).progress;
+
+                setProgressState(progress === 1 ? 'fakultas' : progress === 2 ? 'administrator' : 'selesai')
+              }
+            }
+
+          } catch (error) {
+            console.log(error);
+          }
+        }
+
+        useEffect(() => {
+          fetchStatus()
+        }, [refresh])
+
+        return (
+          <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+            {progress || "-"}
+          </TableCell>
+        )
+      }
+    },
+    {
       name: "Status",
-      component: ({ table }) => (
-        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-          {table.status || "-"}
-        </TableCell>
-      )
+      component: ({ table }) => {
+
+        return (
+          <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+            {table.status === "process" ? (
+              <Badge color="primary">
+                {table.status}
+              </Badge>
+            ) : table.status === "selesai" ? (
+              <Badge color="success">
+                {table.status}
+              </Badge>
+            ) : (
+              <Badge color="error">
+                {table.status}
+              </Badge>
+            )}
+          </TableCell>
+        )
+      }
     },
     {
       name: "Preview",
       component: ({ table }) => {
 
-        return (<TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
 
-          {/* <p>test</p> */}
+        return (<TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           <ButtonPengajuanPreview
             id={table.layanan.layanan_id}
             IconButton={
@@ -114,20 +168,15 @@ const table: {
         const [progress, setProgressState] = useState("prodi");
         const [user, setUserState] = useState<userType>()
         const [uploadView, setUploadView] = useState<boolean>(false)
+        const refreshLayanan = usePengajuanStore(state => state.layananRefresh)
 
-        const progressNumber: any = {
-          prodi : 1,
-          fakultas : 2,
-          administrator : 3
-        }
-
-        async function fetchUser() {          
+        async function fetchUser() {
 
           try {
             const user = session?.user;
             const fetchData = await fetch(`/api/users/${user?.id}`);
-            const data = await fetchData.json();            
-            
+            const data = await fetchData.json();
+
             setUserState(data.data)
           } catch (error) {
 
@@ -139,23 +188,23 @@ const table: {
 
         async function fetchStatus() {
 
-          try {            
-            
+          try {
+
             const fetchData = await fetch(`/api/ajuanStatus?ajuan_id=${table.ajuan_id}`)
 
             if (fetchData.ok) {
-              const data = await fetchData.json();              
+              const data = await fetchData.json();
 
               if (data.data.length !== 0) {
-                const progress = (data.data.at(0) as ajuanStatusType).progress;                
-                
-                setProgressState(progress === 1 ? 'fakultas' : progress === 2 ? 'administrator' : 'selesai')                
+                const progress = (data.data.at(-1) as ajuanStatusType).progress;
+
+                setProgressState(progress === 1 ? 'fakultas' : progress === 2 ? 'administrator' : 'selesai')
               }
             }
 
           } catch (error) {
-              console.log(error);
-              
+            console.log(error);
+
           }
         }
 
@@ -169,22 +218,24 @@ const table: {
         }, [status])
 
         useEffect(() => {
-          
+
           const layanan_lvl = progressNumber[table.layanan.layanan_lvl]
-          const progress_lvl = progressNumber[progress]                              
+          const progress_lvl = progressNumber[progress]
 
-          if( (layanan_lvl < progress_lvl) ) return                              
+          console.log(progress, 'ini progress');
+          if ((layanan_lvl < progress_lvl) || user?.level.toLowerCase() !== progress) {
+            setUploadView(false)
+            return
+          }
 
-          if (user?.level.toLowerCase() !== progress) return
-          
-          if(progress === "prodi") {
+          if (progress === "prodi") {
             setUploadView(user?.prodi_id === table.mahasiswa.prodi_id)
           }
 
           if (progress === "fakultas") {
             setUploadView(user?.fakultas_id === table.mahasiswa.prodi.fakultas_id)
           }
-          
+
         }, [user, progress])
 
         return (
@@ -217,26 +268,39 @@ const table: {
               idLabel="ajuan_id"
             />
             {
-              
+
               // user?.level.toLowerCase() === progress && user?.prodi_id === table.mahasiswa.prodi_id && (
               uploadView && (
-                <PengajuanUpload
-                  id={table.ajuan_id}
-                  onSubmitFinish={(progress) => {                    
-                    
-                    setProgressState(progress === 1 ? 'fakultas' : 'administrator')
-                  }}
-                  progress={progress === 'prodi' ? 1 : (progress === "fakultas") ? 2 : 3}
-                  IconButton={
-                    (
-                      <Button size="sm" variant="primary"
-                        className="bg-brand-500"
-                      >
-                        <Upload />
-                      </Button>
-                    )
-                  }
-                />
+                <>
+                  <PengajuanUpload
+                    id={table.ajuan_id}
+                    idLayanan={table.layanan.layanan_id}
+                    onSubmitFinish={(progress) => {
+
+                      const progressText: string = (Object.keys(progressNumber).find(k => progressNumber[k] === (progress + 1)) as string)
+
+                      // console.log(progressText, 'ini progress text');  
+
+                      setProgressState(progressText)
+                      refreshLayanan();
+                    }}
+                    progress={progressNumber[progress]}
+                    IconButton={
+                      (
+                        <Button size="sm" variant="primary"
+                          className="bg-brand-500"
+                        >
+                          <Upload />
+                        </Button>
+                      )
+                    }
+                  />
+                  <Button size="sm" variant="primary"
+                    className="bg-yellow-500"
+                  >
+                    <X />
+                  </Button>
+                </>
               )
             }
           </TableCell>
