@@ -1,6 +1,44 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma'
+import uploadFile from "@/helper/uploadFile";
+import deleteFile from "@/helper/deleteFile";
 
+
+export async function GET(req: NextRequest){
+    
+    
+    try {
+        
+        const params = Object.fromEntries(req.nextUrl.searchParams.entries());
+
+        console.log(params);
+        
+
+        const data = await prisma.layanan_template.findMany({
+            where: params
+        })
+
+        return NextResponse.json({
+            data: data,
+            messages: "success mengambil data layanan template"
+        })
+
+    } catch (error) {
+        const err = error as Error;
+
+        console.log(err.message)
+
+        return NextResponse.json({
+            messages: "error dalam mengambil data layanan template!!!"
+        },
+            {
+                status: 500
+            }
+        )
+    }
+
+
+}
 
 export async function POST(req: NextRequest) {
 
@@ -9,40 +47,54 @@ export async function POST(req: NextRequest) {
         const formData = await req.formData()
 
         const layanan_id = formData.get("layanan_id");
+        const prodi = formData.get("template_prodi") as File
+        const fakultas = formData.get("template_fakultas") as File
+        const rektorat = formData.get("template_rektorat") as File
 
         const dataInput = []
 
         dataInput.push({
-            template_name: "prodi",
-            template_url: "",
+            template_name: "prodi",            
+            template_url: (await uploadFile(prodi, 'layananTemplate', 'prodi')),
             layanan_id
         })
 
 
-        if (formData.get("template_fakultas")) {
+        if (fakultas) {
             dataInput.push({
                 template_name: "fakultas",
-                template_url: "",
+                template_url: (await uploadFile(fakultas, 'layananTemplate', 'fakultas')),
                 layanan_id
             })
             dataInput.push({
                 template_name: "rektorat",
-                template_url: "",
+                template_url: (await uploadFile(rektorat, 'layananTemplate', 'rektorat')),
                 layanan_id
             })
-
-            await prisma.layanan_template.deleteMany({
-                layanan_id
-            })
-        }else{
-
+                        
         }
+        
+        
+        const checkRes = await prisma.layanan_template.findMany({
+            where: {layanan_id}            
+        })        
+        
+
+        await checkRes.forEach(async (val: any)=> {
+            await deleteFile(val.template_url)
+        })
+
+        const deleteRes =await prisma.layanan_template.deleteMany({
+            where: {
+                layanan_id
+            }
+        })
 
         const layanan_template = await prisma.layanan_template.createMany({
             data: dataInput
         })
 
-        console.log(layanan_template);
+        // console.log(layanan_template);
         
         // const serializeData = ajuanTemplate.map((val :any) => val)
         

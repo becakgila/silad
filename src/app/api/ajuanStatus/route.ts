@@ -19,7 +19,6 @@ export async function GET(request: NextRequest) {
             user_id: data.user_id.toString(),            
         }))        
         
-
         return Response.json({ message: "berhasil mendapatkan ajuan status!!!", data: serialized }, {
             status: 200,            
         });
