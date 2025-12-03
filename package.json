@@ -23,6 +23,8 @@
     "@fullcalendar/timegrid": "^6.1.15",
     "@hookform/resolvers": "^5.2.2",
     "@next-auth/prisma-adapter": "^1.0.5",
+    "@pdfme/common": "^5.5.6",
+    "@pdfme/ui": "^5.5.6",
     "@prisma/client": "^6.18.0",
     "@radix-ui/react-alert-dialog": "^1.1.15",
     "@radix-ui/react-collapsible": "^1.1.12",
