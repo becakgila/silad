@@ -15,9 +15,6 @@ export async function PATCH(request: NextRequest, { params } : { params: { id: s
     }    
     const updated = await prisma.fakultas.update({
       where: { fakultas_id: BigInt(idData) },
-      include: {
-        dosen: true
-      },
       data: body
     });
 
@@ -40,7 +37,7 @@ export async function PATCH(request: NextRequest, { params } : { params: { id: s
 
       console.log(error);
       
-      return new Response(JSON.stringify({ message: "Error updating fakultas", error: error.message }), {
+      return new Response(JSON.stringify({ message: "Error updating modul", error: error.message }), {
         status: 500,
         headers: { "Content-Type": "application/json" },
       });

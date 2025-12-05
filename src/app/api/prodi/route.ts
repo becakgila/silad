@@ -43,6 +43,13 @@ export async function GET(request: Request) {
           }
         },
         {
+          dosen: {
+            dosen_name: {
+              contains: search,
+            }
+          }
+        },
+        {
           prodi_jenjang: {
             in: Object.values(prodi_prodi_jenjang).filter(s =>
                           s.toLowerCase().includes(search)
@@ -61,7 +68,8 @@ export async function GET(request: Request) {
       ...pagination,
       where: whereClause,
       include: {
-        fakultas: true
+        fakultas: true,
+        dosen: true
       }
     });
 

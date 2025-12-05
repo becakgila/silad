@@ -15,12 +15,20 @@ export async function PATCH(request: NextRequest, { params } : { params: { id: s
     }    
     const updatedModul = await prisma.prodi.update({
       where: { prodi_id: id },
+      include: {
+        fakultas: true,
+        dosen: true
+      },
       data: body
     });
 
     const serializedModul = {
       ...updatedModul,
-      fakultas_id: updatedModul.fakultas_id.toString()
+        fakultas_id: updatedModul.fakultas_id.toString(),
+        fakultas: {
+          ...updatedModul.fakultas,
+          fakultas_id: updatedModul.fakultas.fakultas_id.toString(),
+        }
     };    
 
     

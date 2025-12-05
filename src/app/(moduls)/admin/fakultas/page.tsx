@@ -39,6 +39,14 @@ const table: {
       )
     },
     {
+      name: "Dekan",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.dosen.dosen_name || "-"}
+        </TableCell>
+      )
+    },
+    {
       name: "Aksi",
       component: ({ table }) => (
         <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">
@@ -57,6 +65,7 @@ const table: {
             resolver={zodResolver(fakultasFormSchema)}
             id={table.fakultas_id}
             idLabel="fakultas_id"
+            
           />
 
 

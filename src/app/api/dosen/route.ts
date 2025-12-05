@@ -12,7 +12,7 @@ export async function GET(request: Request) {
         const whereClause = {
           OR: [
             {
-              fakultas_name: {
+              dosen_name: {
                 contains: search,
               }
             },
@@ -20,38 +20,33 @@ export async function GET(request: Request) {
           ]
         }
 
-    const data = await prisma.fakultas.findMany({
-      take: take,
-      skip: skip,
+    const data = await prisma.dosen.findMany({
       where: whereClause,
-      include: {
-        dosen: true
-      }
     });
 
     
     
-    const serializedData = data.map((item: any) => {
-      return {
-        ...item,
-        fakultas_id: item.fakultas_id.toString(),
-      };
-    });    
+    // const serializedData = data.map((item: any) => {
+    //   return {
+    //     ...item,
+    //     dosen_id: item.dosen_id.toString(),
+    //   };
+    // });    
 
-    const dataCount = await prisma.fakultas.count({
+    const dataCount = await prisma.dosen.count({
       where: whereClause,
     });
 
     return new Response(JSON.stringify({
-      message: "Fakultas retrieved successfully",
-      data: serializedData,
+      message: "dosen retrieved successfully",
+      data: data,
       total: dataCount
     }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Unable to fetch fakultas:", error);
+    console.error("Unable to fetch dosen:", error);
     return new Response(JSON.stringify({ message: String(error) }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
@@ -63,9 +58,9 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     const body = await request.json();
 
      
-    const check = await prisma.fakultas.findFirst({
+    const check = await prisma.dosen.findFirst({
       where: { 
-        fakultas_name: body.fakultas_name,
+        dosen_name: body.dosen_name,
       }
     })
 
@@ -73,7 +68,7 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
     
 
     if (check) {
-      return new Response(JSON.stringify({ message: "Fakultas sudah ada di database" }), {
+      return new Response(JSON.stringify({ message: "dosen sudah ada di database" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
@@ -81,16 +76,16 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
 
 
 
-    const addData = await prisma.fakultas.create({
+    const addData = await prisma.dosen.create({
       data: {
-        fakultas_name: body.fakultas_name,
+        dosen_name: body.dosen_name,
         ...body
       }
     });
 
     const serializedModul = {
       ...addData,
-      fakultas_id: addData.fakultas_id.toString()
+      dosen_id: addData.dosen_id.toString()
     };    
 
 
@@ -120,24 +115,24 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
   }
 }
 export async function PUT(request: Request) {
-  const { fakultas_id, ...updateData } = await request.json();
+  const { dosen_id, ...updateData } = await request.json();
   try {
 
-    const updatedFakultas = await prisma.fakultas.upsert({
-      where: { fakultas_id },
-      create: { fakultas_id, ...updateData },
+    const updateddosen = await prisma.dosen.upsert({
+      where: { dosen_id },
+      create: { dosen_id, ...updateData },
       update: { ...updateData },
     });
     return new Response(JSON.stringify({
-      message: "Fakultas updated successfully",
-      data: updatedFakultas
+      message: "dosen updated successfully",
+      data: updateddosen
     }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });
   }
   catch (error) {
-    console.error("Error updating Fakultas:", error);
+    console.error("Error updating dosen:", error);
     return new Response(JSON.stringify({ message: String(error) }), {
       status: 500,
       headers: { "Content-Type": "application/json" },

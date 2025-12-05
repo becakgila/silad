@@ -56,12 +56,16 @@ model moduls {
 }
 
 model fakultas {
-  users         users[]   @relation("UserFakultas")
-  prodis        prodi[]   @relation("ProdiFakultas")
-  fakultas_id   BigInt    @id @unique(map: "fakultas_fakultas_id_unique") @default(autoincrement()) @db.UnsignedBigInt
-  fakultas_name String    @db.VarChar(255)
-  created_at    DateTime? @db.Timestamp(0)
-  updated_at    DateTime? @db.Timestamp(0)
+  users           users[]   @relation("UserFakultas")
+  prodis          prodi[]   @relation("ProdiFakultas")
+  fakultas_id     BigInt    @id @unique(map: "fakultas_fakultas_id_unique") @default(autoincrement()) @db.UnsignedBigInt
+  fakultas_name   String    @db.VarChar(255)
+  fakultas_dekan  String   @unique@db.VarChar(255)
+  created_at      DateTime? @db.Timestamp(0)
+  updated_at      DateTime? @db.Timestamp(0)
+
+  dosen         dosen     @relation(fields: [fakultas_dekan], references: [dosen_id])
+
 }
 
 model mahasiswa {
@@ -87,11 +91,22 @@ model mahasiswa {
   ajuan ajuan[] @relation("MahasiswaAjuan")
 }
 
+model dosen {
+  dosen_id        String    @id @db.VarChar(255)
+  dosen_name      String    @db.VarChar(255)
+  dosen_nik       String    @db.VarChar(255)
+  dosen_email     String?   @db.VarChar(255)
+
+  fakultas    fakultas?
+  prodi       prodi?
+}
+
 model prodi {
   prodi_id         String              @id @unique(map: "prodi_prodi_id_unique") @db.VarChar(255)
   prodi_name       String              @db.VarChar(255)
   prodi_jenjang    prodi_prodi_jenjang @default(S1)
   prodi_akreditasi String?             @db.VarChar(255)
+  kaprodi          String              @unique@db.VarChar(255)
   fakultas_id      BigInt?             @db.UnsignedBigInt
   created_at       DateTime?           @db.Timestamp(0)
   updated_at       DateTime?           @db.Timestamp(0)
@@ -99,6 +114,7 @@ model prodi {
   fakultas  fakultas?   @relation("ProdiFakultas", fields: [fakultas_id], references: [fakultas_id])
   users     users[]     @relation("UserProdi")
   mahasiswa mahasiswa[] @relation("MahasiswaProdi")
+  dosen     dosen       @relation(fields: [kaprodi], references: [dosen_id])
 
   @@index([fakultas_id], map: "fakultas_id")
 }

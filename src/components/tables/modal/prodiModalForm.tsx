@@ -8,6 +8,7 @@ import Select from "@/components/form/Select"
 import { useEffect, useState } from "react"
 import { prodi_prodi_jenjang } from "@/generated/prisma"
 import fakultasType from "@/types/model/fakultas"
+import dosenType from "@/types/model/dosen"
 
 interface OptionType {
   value: string;
@@ -20,7 +21,7 @@ const prodiFormSchema = z.object({
     prodi_jenjang: z.string().nonempty({ message: "Wajib Diisi!!!" }).default(""),
     prodi_akreditasi: z.string().nonempty({ message: "Wajib Diisi!!!" }).default(""),
     fakultas_id: z.string().nonempty({ message: "Wajib Diisi!!!" }).default(""),
-    
+    kaprodi: z.string().nonempty({ message: "Wajib Diisi!!!" }).default(""),
 })
 
 const prodiModulForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [  
@@ -102,7 +103,6 @@ const prodiModulForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
     )}
     />
   ),
-
   ({ form }) => (
     <TableFormField form={form} name="prodi_akreditasi" label="Akreditasi" InputComponent={({ field }) => (
       <Input
@@ -113,7 +113,53 @@ const prodiModulForm: React.FC<{ form: UseFormReturn<any, any, any> }>[] = [
     )}
     />
   ),
+  ({ form }) => {
+      const [kaprodiOptions, setKaprodiOptions] = useState<OptionType[]>([]);
+      const [isLoading, setIsLoading] = useState(true);    
   
+      useEffect(() => {
+        const fetchDosen = async () => {
+          try {
+            const response = await fetch('/api/dosen');
+            const result = await response.json();          
+            
+            if (result.data) {
+              const arrOption : OptionType[] = result.data.map((data: dosenType) => ({
+                value: data.dosen_id,
+                label: data.dosen_name
+              }))            
+              
+              setKaprodiOptions(arrOption);
+            }
+          } catch (error) {
+            console.error('Failed to fetch dosen:', error);
+          } finally {
+            setIsLoading(false);
+          }
+        };
+  
+        fetchDosen();
+      }, []);
+  
+      return (
+        <TableFormField form={form} name="kaprodi" label="Kaprodi" InputComponent={({ field }) => (
+          <div className="relative">
+            <Select
+              options={isLoading ? [] : kaprodiOptions}
+              {...field}
+              defaultValue={field.value}
+              placeholder={isLoading ? "Loading..." : "Select Kaprodi"}
+              className="dark:bg-dark-900"
+              
+            />
+            <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none right-3 top-1/2 dark:text-gray-400">
+              <ChevronDownIcon/>
+            </span>
+          </div>
+        )}
+        />
+      );
+    },
  
 ]
 

@@ -1,3 +1,4 @@
+import dosenType from "./dosen";
 import fakultasType from "./fakultas";
 
 export default interface prodiType {
@@ -6,8 +7,10 @@ export default interface prodiType {
   prodi_jenjang: string,
   prodi_akreditasi: string,
   fakultas_id: string,
+  kaprodi: string,
   created_at: string,
   updated_at: string,
 
   fakultas: fakultasType,
+  dosen: dosenType
 }
