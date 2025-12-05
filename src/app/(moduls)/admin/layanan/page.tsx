@@ -247,7 +247,7 @@ const table: {
       )}
     },
     {
-      name: "Dokumen Template",
+      name: "Layanan Template",
       component: ({table}) => {
         return <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 ">
           <ButtonLayananTemplate level={table.layanan_lvl} IconButton={<Button size="sm" variant="primary"

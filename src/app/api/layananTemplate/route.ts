@@ -1,18 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import prisma from '@/lib/prisma'
-import uploadFile from "@/helper/uploadFile";
-import deleteFile from "@/helper/deleteFile";
+import { writeFile, mkdir } from "fs";
+import { join } from "path";
+import { Template } from "@pdfme/common";
 
 
-export async function GET(req: NextRequest){
-    
-    
+export async function GET(req: NextRequest) {
+
     try {
-        
+
         const params = Object.fromEntries(req.nextUrl.searchParams.entries());
 
         console.log(params);
-        
+
 
         const data = await prisma.layanan_template.findMany({
             where: params
@@ -44,63 +44,32 @@ export async function POST(req: NextRequest) {
 
     try {
 
-        const formData = await req.formData()
+        const body = await req.json();
 
-        const layanan_id = formData.get("layanan_id");
-        const prodi = formData.get("template_prodi") as File
-        const fakultas = formData.get("template_fakultas") as File
-        const rektorat = formData.get("template_rektorat") as File
+        const { layanan_id, template, level } = body;        
 
-        const dataInput = []
+        const publicPath = join(process.cwd(), "public", "template", "pdf");
 
-        dataInput.push({
-            template_name: "prodi",            
-            template_url: (await uploadFile(prodi, 'layananTemplate', 'prodi')),
-            layanan_id
-        })
+        // Create directory if it doesn't exist
+        await mkdir(publicPath, { recursive: true }, ()=>{});
+        const filename = `${Date.now()}-${level}.json`;
 
+        const filePath = join(publicPath, filename);
 
-        if (fakultas) {
-            dataInput.push({
-                template_name: "fakultas",
-                template_url: (await uploadFile(fakultas, 'layananTemplate', 'fakultas')),
-                layanan_id
-            })
-            dataInput.push({
-                template_name: "rektorat",
-                template_url: (await uploadFile(rektorat, 'layananTemplate', 'rektorat')),
-                layanan_id
-            })
-                        
-        }
-        
-        
-        const checkRes = await prisma.layanan_template.findMany({
-            where: {layanan_id}            
-        })        
-        
+        const savedRelativePath = `/template/pdf/${filename}`;
 
-        await checkRes.forEach(async (val: any)=> {
-            await deleteFile(val.template_url)
-        })
+        await writeFile(filePath, JSON.stringify(template, null, 2), ()=>{});
 
-        const deleteRes =await prisma.layanan_template.deleteMany({
-            where: {
-                layanan_id
+        const data = await prisma.layanan_template.create({
+            data: {
+                layanan_id,
+                template_name: level,
+                template_url : savedRelativePath,
             }
         })
 
-        const layanan_template = await prisma.layanan_template.createMany({
-            data: dataInput
-        })
-
-        // console.log(layanan_template);
-        
-        // const serializeData = ajuanTemplate.map((val :any) => val)
-        
-
         return NextResponse.json({
-            data: [],
+            data,
             message: "POST Layanan Template Berhasil!!!"
         })
     } catch (error) {
@@ -116,8 +85,4 @@ export async function POST(req: NextRequest) {
             }
         )
     }
-
-
-
-
 }
