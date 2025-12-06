@@ -2,58 +2,93 @@
 
 import { Designer } from "@pdfme/ui";
 import { CUSTOM_A4_PDF, type Template } from '@pdfme/common';
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import getBlankTemplate from "@/helper/pdfme/BlankTemplate";
 import { getPlugins } from "@/helper/pdfme/plugin";
 import Button from "@/components/ui/button/Button";
 import { saveTemplateToFile } from "@/actions/saveTemplate";
 import { useRouter } from "next/navigation";
+import path from 'path'
+import fs from "fs";
 
 
 export default function PDFDesignerPage({ searchParams }: { searchParams: { level: string, layanan_id: string } }) {
     const designerRef = useRef<HTMLDivElement | null>(null);
     const designer = useRef<Designer | null>(null);
+    const [updated, setUpdated] = useState<boolean>(false)
     const router = useRouter();
-    // const { level, layanan_id } = searchParams;
+
+
+    async function fetchTemplateId() {
+        try {
+
+            const { layanan_id, level } = await searchParams;
+
+            const designerProps = {
+                domContainer: designerRef.current!,
+                template: getBlankTemplate() as any,
+                options: {
+                },
+                plugins: getPlugins(),
+            }
+
+            const req = await fetch(`/api/layananTemplate?template_name=${level}&layanan_id=${layanan_id}`);
+
+            if (req.ok) {
+
+                const res = await req.json();
+
+                const data = res.data;
+
+                if (data.length !== 0) {
+
+                    const fetchJson = await fetch(data[0].template_url)
+                    designerProps.template = await fetchJson.json()
+                    setUpdated(true);
+
+                }
+            }
+
+            designer.current = new Designer(
+                designerProps
+            );
+
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     useEffect(() => {
-        if (designer.current) return;
         if (!designerRef.current) return;
-        designer.current = new Designer({
-            domContainer: designerRef.current,
-            template: getBlankTemplate(),
-            options: {
-            },
-            plugins: getPlugins(),
-        });
+
+        fetchTemplateId()
+
+
     }, [designerRef]);
 
     const onSaveTemplate = async (template?: Template) => {
-        
-        if (!designer.current) return
 
+        if (!designer.current) return
         const currentTemplate = template || designer.current.getTemplate();
-        const filename = "mydata";
 
         try {
-            const params = await searchParams;
-            const { layanan_id, level } = params;
-                        
-            await saveTemplateToFile(filename, currentTemplate, layanan_id, level);
+            const { layanan_id, level } = await searchParams;
+
+            // await saveTemplateToFile(filename, currentTemplate, layanan_id, level);
 
             const req = await fetch('/api/layananTemplate', {
-                method: 'POST',
+                method: updated ? 'PATCH' : 'POST',
                 body: JSON.stringify({
                     layanan_id,
                     template: currentTemplate,
-                    level,                    
+                    level,
                 }),
                 headers: {
                     'Content-Type': 'application/json'
                 }
             });
 
-            if(req.ok){
+            if (req.ok) {
                 console.log(await req.json());
             }
 
