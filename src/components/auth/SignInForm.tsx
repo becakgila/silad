@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { toast } from "react-toastify";
 
 export default function SignInForm() {
+  const [isLoading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
   const [email, setEmail] = useState("");
@@ -20,18 +21,27 @@ export default function SignInForm() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await signIn("Credentials", {
+        redirect: false,
+        email,
+        password,
+      });
 
-    const res = await signIn("Credentials", {
-      redirect: false,
-      email,
-      password,
-    });
+      if (res?.status === 401 || res?.error) {
+        toast.error(`Login Gagal: ${res?.error || 'Unknown error'}`);
+      } else {
+        router.push('/admin/');
+      }
 
-    if (res?.status === 401 || res?.error) {
-      toast.error(`Login Gagal: ${res?.error || 'Unknown error'}`);
-    } else {
-      router.push('/admin/');
+    } catch (error) {
+      console.log(error);
+
+    } finally {
+      setLoading(false);
     }
+
   };
 
   return (
@@ -96,7 +106,7 @@ export default function SignInForm() {
                   </Link>
                 </div>
                 <div>
-                  <Button className="w-full" size="sm">
+                  <Button className="w-full" size="sm" disabled={isLoading}>
                     Sign in
                   </Button>
                 </div>

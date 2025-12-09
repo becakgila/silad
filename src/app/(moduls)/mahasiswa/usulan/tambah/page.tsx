@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 import FileInput from "@/components/form/input/FileInput";
 import Button from "@/components/ui/button/Button";
@@ -11,17 +11,20 @@ import { ChevronDownIcon } from "lucide-react";
 import layananType from "@/types/model/layanan";
 import dokumenType from "@/types/model/dokumen";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { set } from "zod";
 
 export default function Page() {
   const [selectedFile, setSelectedFile] = useState<{
     file: File;
     id: string;
   }[]>([]);
-  const [layananId, setLayananId] = useState<any>(null);
+  const [ajuanId, setAjuanId] = useState<any>(null);
   const [errorList, setErrorList] = useState<any[]>([]);
   const [inputErrors, setInputErrors] = useState<Record<string, string>>({});
   const [layanan, setLayanan] = useState<layananType[]>([]);
   const [dok, setDok] = useState<dokumenType[]>([]);
+  const session = useSession();
 
   const route = useRouter();
 
@@ -74,7 +77,7 @@ export default function Page() {
         formData.append(`id_document`, v.id);
       });
 
-      formData.append("ajuan_id", layananId);
+      formData.append("ajuan_id", ajuanId);
 
       const response = await fetch(`/api/ajuanDok`, {
         method: "POST",
@@ -87,7 +90,9 @@ export default function Page() {
 
       // handle response as needed
     } catch (err) {
-      // optionally set errorList or show toast
+      
+      console.log(err);      
+
     }
   }
 
@@ -107,6 +112,18 @@ export default function Page() {
     setInputErrors({});
   }
 
+  async function getAjuanId(id: string){
+    const idMahasiswa = session.data?.user?.id;
+    // console.log(id, session);
+    
+    const res = await fetch(`/api/pengajuan?layanan_id=${id}&mahasiswa_id=${idMahasiswa}`);
+    const dataJson = await res.json();
+    console.log(dataJson);
+
+    setAjuanId(dataJson.data?.ajuan_id);
+    
+  }
+
   useEffect(() => {
     getAjuan();
   }, []);
@@ -120,9 +137,10 @@ export default function Page() {
             <h1 className="text-2xl font-bold mb-4">Upload File: </h1>
             <div className="relative">
               <Select
-                onChange={(idAjuan) => {
-                  getDokumen(idAjuan);
-                  setLayananId(idAjuan);
+                onChange={(idLayanan) => {
+                  getDokumen(idLayanan);
+                  getAjuanId(idLayanan)
+                  // setAjuanId(idAjuan);
                   setSelectedFile([]);
                   setInputErrors({});
                 }}

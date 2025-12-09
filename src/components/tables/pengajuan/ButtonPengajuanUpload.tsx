@@ -37,6 +37,9 @@ import { useForm } from "react-hook-form"
 import z from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import ajuanStatusType from "@/types/model/ajuanStatus"
+import DesignerPage from "@/components/pdf-me/DesignerPage"
+import { numberToProgress, progressToNumber } from "@/variable/progressNumber"
+import ViewerPdfme from "@/components/pdf-me/ViewerPdfme"
 
 interface PengajuanUploadProps<T = any> {
     IconButton: React.JSX.Element,
@@ -71,7 +74,7 @@ export default function PengajuanUpload({
 
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [template, setTemplate] = useState<string>("")
+    const [template, setTemplate] = useState<any>(null)    
 
 
     const form = useForm<z.infer<any>>({
@@ -82,58 +85,64 @@ export default function PengajuanUpload({
         },
     })
 
-    async function onSubmit(values: z.infer<typeof pengajuanFileFormSchema>) {
+    // async function onSubmit(values: z.infer<typeof pengajuanFileFormSchema>) {
 
-        try {
-            setIsLoading(true)
+    //     try {
+    //         setIsLoading(true)
 
-            const form = new FormData()
+    //         const form = new FormData()
 
-            form.append("file", values.layananFile)
-            form.append("ajuan_id", id.toString())
-            form.append("progress", progress.toString())
+    //         form.append("file", values.layananFile)
+    //         form.append("ajuan_id", id.toString())
+    //         form.append("progress", progress.toString())
 
-            const fetchData = await fetch('/api/ajuanStatus', {
-                method: "POST",
-                body: form
-            })
+    //         const fetchData = await fetch('/api/ajuanStatus', {
+    //             method: "POST",
+    //             body: form
+    //         })
 
-            const fetchJson = await fetchData.json()
+    //         const fetchJson = await fetchData.json()
 
-            const data: ajuanStatusType = fetchJson.data
+    //         const data: ajuanStatusType = fetchJson.data
 
-            onSubmitFinish(data.progress)
+    //         onSubmitFinish(data.progress)
 
-        } catch {
+    //     } catch {
 
-        } finally {
-            setIsLoading(false)
-        }
+    //     } finally {
+    //         setIsLoading(false)
+    //     }
 
-    }
+    // }
 
     async function getTemplate() {
         try{
             setIsLoading(true)
-
-            const template_name = progress === 1 ? "prodi" : progress === 2 ? "fakultas" : progress === 3 ? "rektorat" : "";
             
+            const level = numberToProgress[progress];
 
-            const fetchData = await fetch(`/api/layananTemplate?layanan_id=${idLayanan}&template_name=${template_name}`)
-    
-            const dataJson = (await fetchData.json()).data[0]                        
+           
+            const req = await fetch(`/api/layananTemplate?template_name=${level}&layanan_id=${idLayanan}`);
 
-            if(dataJson){                
-                
-                setTemplate(dataJson.template_url);
+            if (req.ok) {
+
+                const res = await req.json();
+                const data = res.data;
+                if (data.length !== 0) {
+
+                    
+                    const fetchJson = await fetch(data[0].template_url)
+                    const dataTemplate = await fetchJson.json()                    
+                    setTemplate(dataTemplate)
+                                        
+                }
             }
-
-        }catch{
-
+        }catch(error){
+            console.log(error);            
         }finally{
             setIsLoading(false)
         }
-        
+
     }
 
     useEffect(() => {
@@ -150,50 +159,27 @@ export default function PengajuanUpload({
                 {IconButton}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[720px] sm:max-h-[480px] md:max-h-[720px] max-w-full max-h-full flex" >
-                <Form {...form} >
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="gap-8 flex flex-col h-auto w-full" >
-                        <DialogHeader>
-                            <DialogTitle>{title}</DialogTitle>
-                            <DialogDescription>
-                                {description}
-                            </DialogDescription>
-                        </DialogHeader>
-                        <div className="grid gap-4 overflow-y-auto">
-                            <TableFormField form={form} name="layananFile"
-                                InputComponent={({ field }) => (
-                                    <input
-                                        type="file"
-                                        id={field.name}
-                                        name={field.name}
-                                        onBlur={field.onBlur}
-                                        ref={field.ref}
-                                        onChange={(e) => {
 
-                                            console.log(e, 'change');
+                <div className="gap-8 flex flex-col h-auto w-full" >                  
+                    <DialogHeader>
+                        <DialogTitle>{title}</DialogTitle>
+                        <DialogDescription>
+                            {description}
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="grid gap-4 h-full overflow-auto">
+                        <ViewerPdfme template={template} />
+                    </div>
+                    <DialogFooter>
+                        <DialogClose asChild>
+                            <Button disabled={isLoading} variant="outline">Batal</Button>
+                        </DialogClose>
+                        {/* <Button type="submit" disabled={isLoading}>{isLoading ? "Loading..." : "Simpan Perubahan"}</Button> */}
+                        <Button type="submit" disabled={isLoading} >Upload</Button>
+                    </DialogFooter>
 
-                                            field.onChange(e.target.files?.[0])
-                                        }}
-                                        className={`focus:border-ring-brand-300 h-11 w-full overflow-hidden rounded-lg border border-gray-300 bg-transparent text-sm text-gray-500 shadow-theme-xs transition-colors file:mr-5 file:border-collapse file:cursor-pointer file:rounded-l-lg file:border-0 file:border-r file:border-solid file:border-gray-200 file:bg-gray-50 file:py-3 file:pl-3.5 file:pr-3 file:text-sm file:text-gray-700 placeholder:text-gray-400 hover:file:bg-gray-100 focus:outline-hidden focus:file:ring-brand-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-400 dark:text-white/90 dark:file:border-gray-800 dark:file:bg-white/[0.03] dark:file:text-gray-400 dark:placeholder:text-gray-400 `}
-                                    />
-                                )}
-                            />
-                            <Link href={template} target="_blank">
-                                <Button className="cursor-pointer" asChild>
-                                    <p className="text-xl">Template</p>
-                                    <ScrollText />
-                                </Button>
-                            </Link>
-                        </div>
-                        <DialogFooter>
-                            <DialogClose asChild>
-                                <Button disabled={isLoading} variant="outline">Batal</Button>
-                            </DialogClose>
-                            {/* <Button type="submit" disabled={isLoading}>{isLoading ? "Loading..." : "Simpan Perubahan"}</Button> */}
-                            <Button type="submit" disabled={isLoading} >Upload</Button>
-                        </DialogFooter>
+                </div>
 
-                    </form>
-                </Form>
 
             </DialogContent>
         </Dialog>

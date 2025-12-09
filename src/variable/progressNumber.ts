@@ -1,7 +1,15 @@
-const progressNumber: any = {
-          prodi : 1,
-          fakultas : 2,
-          administrator : 3
-        }
+const progressToNumber: any = {
+  prodi: 1,
+  fakultas: 2,
+  universitas: 3
+}
 
-export default progressNumber;
+const numberToProgress: {
+  [key: string]: string;
+} = {
+  1: 'prodi',
+  2: 'fakultas',
+  3: 'universitas'
+}
+
+export { numberToProgress, progressToNumber };        

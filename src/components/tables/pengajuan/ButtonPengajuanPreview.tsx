@@ -18,24 +18,29 @@ import { CheckCheck, Eye, Paperclip } from "lucide-react"
 import Link from "next/link"
 import { buttonVariants } from "@/components/ui/button"
 import { toast } from "react-toastify"
+import { numberToProgress } from "@/variable/progressNumber";
+import ajuanStatusType from "@/types/model/ajuanStatus";
 
 interface HakEditProps<T = any> {
     IconButton: React.JSX.Element,
     id: string | number;
     title?: string;
     description?: string;
+    layananId: string | number;
 }
 
 
 export default function ButtonPengajuanPreview({
     IconButton,
     id,
+    layananId,
     title = "Preview File Pengajuan",
     description = "Preview file yang di perlukan. klik icon preview untuk melihat file!",
 }: Readonly<HakEditProps>) {
 
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [dokumen, setDokumen] = useState<dokumenType[]>([])
+    const [dokumenProgress, setDokumenProgress] = useState<ajuanStatusType[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(false)
 
     async function dokumenFetch() {
@@ -43,16 +48,22 @@ export default function ButtonPengajuanPreview({
         try {
 
             setIsLoading(true)
-                                
-            const res = await fetch(`/api/dokumen?layanan_id=${id}`)
+
+            const res = await fetch(`/api/dokumen?layanan_id=${layananId}`)
 
             const data = (await res.json().finally(() => {
                 setIsLoading(false)
             })).data
 
             setDokumen(data)
-            console.log(data, "dokumen");
 
+            const res2 = await fetch('/api/ajuanStatus?ajuan_id=' + id)
+
+            if (res2.ok) {
+                const data2 = (await res2.json()).data
+
+                setDokumenProgress(data2)
+            }
 
         } catch (error: unknown) {
 
@@ -117,6 +128,38 @@ export default function ButtonPengajuanPreview({
                                 </div>
                             )
                         })}
+
+                        {
+                            dokumenProgress.map(val => {
+
+                                return (
+                                    <div key={val.ajuan_status_id}>
+                                        <div className="flex justify-between items-center">
+
+                                            <div>
+                                                {
+                                                    <p className="capitalize">
+                                                        {numberToProgress[val.progress]}
+                                                    </p>
+                                                }
+
+                                            </div>
+                                            <div className="flex gap-2">
+                                                <Link href={val.dok_url} target="_blank">
+                                                    <Button size="sm" variant="primary"
+                                                        className="bg-green-600" asChild>
+                                                        <Eye />
+                                                    </Button>
+                                                </Link> 
+                                            </div>
+                                        </div>
+
+                                        <hr className="mt-3.5" />
+
+                                    </div>
+                                )
+                            })
+                        }
 
                     </div>
 

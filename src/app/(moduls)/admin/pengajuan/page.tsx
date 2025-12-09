@@ -25,7 +25,7 @@ import React, { use, useEffect, useState } from "react";
 import userType from "@/types/model/users";
 import ajuanStatusType from "@/types/model/ajuanStatus";
 import { toast } from "react-toastify";
-import progressNumber from "@/variable/progressNumber";
+import {progressToNumber} from "@/variable/progressNumber";
 import usePengajuanStore from "@/store/usePengajuanStore";
 import Badge from "@/components/ui/badge/Badge";
 
@@ -95,7 +95,7 @@ const table: {
               if (data.data.length !== 0) {
                 const progress = (data.data.at(-1) as ajuanStatusType).progress;
 
-                setProgressState(progress === 1 ? 'fakultas' : progress === 2 ? 'administrator' : 'selesai')
+                setProgressState(progress === 1 ? 'fakultas' : progress === 2 ? 'universitas' : 'selesai')
               }
             }
 
@@ -145,7 +145,8 @@ const table: {
 
         return (<TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
           <ButtonPengajuanPreview
-            id={table.layanan.layanan_id}
+            id={table.ajuan_id}
+            layananId={table.layanan.layanan_id}
             IconButton={
               (
                 <Button size="sm" variant="primary"
@@ -198,7 +199,7 @@ const table: {
               if (data.data.length !== 0) {
                 const progress = (data.data.at(-1) as ajuanStatusType).progress;
 
-                setProgressState(progress === 1 ? 'fakultas' : progress === 2 ? 'administrator' : 'selesai')
+                setProgressState(progress === 1 ? 'fakultas' : progress === 2 ? 'universitas' : 'selesai')
               }
             }
 
@@ -219,10 +220,10 @@ const table: {
 
         useEffect(() => {
 
-          const layanan_lvl = progressNumber[table.layanan.layanan_lvl]
-          const progress_lvl = progressNumber[progress]
+          const layanan_lvl = progressToNumber[table.layanan.layanan_lvl]
+          const progress_lvl = progressToNumber[progress]
 
-          console.log(progress, 'ini progress');
+          
           if ((layanan_lvl < progress_lvl) || user?.level.toLowerCase() !== progress) {
             setUploadView(false)
             return
@@ -239,23 +240,7 @@ const table: {
         }, [user, progress])
 
         return (
-          <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">
-            <TablesEdit
-              api={api}
-              IconButton={(
-                <Button size="sm" variant="primary"
-                  className="bg-green-600"
-                >
-                  <PencilIcon />
-                </Button>
-              )}
-              data={table}
-              formData={prodiModalForm}
-              formSchema={prodiFormSchema}
-              resolver={zodResolver(prodiFormSchema)}
-              id={table.ajuan_id}
-              idLabel="ajuan_id"
-            />
+          <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400 gap-1.5 flex">            
 
             <TableDelete api={api} OpenButton={
               (<Button size="sm" variant="primary"
@@ -277,14 +262,14 @@ const table: {
                     idLayanan={table.layanan.layanan_id}
                     onSubmitFinish={(progress) => {
 
-                      const progressText: string = (Object.keys(progressNumber).find(k => progressNumber[k] === (progress + 1)) as string)
+                      const progressText: string = (Object.keys(progressToNumber).find(k => progressToNumber[k] === (progress + 1)) as string)
 
                       // console.log(progressText, 'ini progress text');  
 
                       setProgressState(progressText)
                       refreshLayanan();
                     }}
-                    progress={progressNumber[progress]}
+                    progress={progressToNumber[progress]}
                     IconButton={
                       (
                         <Button size="sm" variant="primary"

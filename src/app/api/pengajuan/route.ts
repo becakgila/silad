@@ -1,8 +1,9 @@
 import { prodi_prodi_jenjang } from '@/generated/prisma';
 import prisma from '@/lib/prisma'
 import { log } from 'console';
-import { NextRequest } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { includes } from 'zod';
+import { ta } from 'zod/v4/locales';
 
 // Function to generate prodi ID
 function generateProdiId(): string {
@@ -14,6 +15,29 @@ function generateProdiId(): string {
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
+
+    const layanan_id = searchParams.get('layanan_id') || "";
+    const mahasiswa_id = searchParams.get('mahasiswa_id') || "";
+
+    if(layanan_id && mahasiswa_id){
+      const data = await prisma.ajuan.findFirst({
+        where: {
+          layanan_id: layanan_id,
+          nim: mahasiswa_id
+        },        
+      });
+
+      const serializedData = {
+        ...data,
+        tahun_ajaran_id: data?.tahun_ajaran_id.toString() || "",
+      }
+
+      return NextResponse.json({
+        data: serializedData,
+        messages: "success mengambil data pengajuan"
+      })
+    }
+
     const search = searchParams.get('search') || "";
     const take: number = Number(searchParams.get('take')) || 10;
     const page: number = Number(searchParams.get('page')) || 1;

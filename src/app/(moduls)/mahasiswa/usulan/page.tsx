@@ -87,7 +87,9 @@ const table: {
 
           {/* <p>test</p> */}
           <ButtonPengajuanPreview
-            id={table.layanan.layanan_id}
+            id={table.ajuan_id}
+            layananId={table.layanan.layanan_id}
+
             IconButton={
               (
                 <Button size="sm" variant="primary"
