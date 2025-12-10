@@ -19,93 +19,89 @@ export default function ViewerPdfme({
     const viewerRef = useRef<HTMLDivElement | null>(null);
     const viewer = useRef<Viewer | null>(null);
 
-    // useEffect(() => {
-    //         if (!viewerRef.current) return;                    
+    const customData = {
+        field10: JSON.stringify({ nama: 'John Doe' }),
+    };    
 
-    //         const previewProps : PreviewProps = {
-    //             domContainer: viewerRef.current!,
-    //             template: template || getBlankTemplate(),
-    //             plugins: getPlugins(),
-    //             options: {
-    //             },
-    //             inputs: [{
-    //                 name : "John Doe",
-    //                 id: "name_1"
-
-    //             }],
-    //         }
-
-    //         console.log(previewProps, "ini preview props");
-
-    //         viewer.current = new Viewer(
-    //            previewProps
-    //         );
-
-    //     }, [viewerRef, template, inputs]);
-
-    async function testFetch() {
+    const initViewer = async () => {
         try {
-            if (!viewerRef.current) return;
-
-            const res = await fetch("/template/pdf/1765262513780-prodi.json")
-
-            if (!res.ok) {
-                throw new Error(`Failed to fetch template: ${res.status}`);
+            if (!viewerRef.current) {
+                console.error('Container ref not available');
+                return;
             }
 
-            const rawTemplate = await res.json()
+            const response = await fetch('/template/pdf/1765265101050-prodi.json');
+            const template = (await response.json()) as Template;
 
-            if (viewerRef.current) {
-                viewer.current = new Viewer({
-                    domContainer: viewerRef.current,
-                    template: rawTemplate,
-                    inputs: [{}],
-                    options: { },
-                    plugins: getPlugins(),
+            console.log('Template fetched:', template);
+
+            // Destroy previous viewer
+            if (viewer.current) {
+                viewer.current.destroy();
+            }
+
+            console.log('Initializing Viewer with template');
+
+            // Use custom data for multiVariableText, use content for others
+            const inputData: Record<string, any> = {};
+            if (template.schemas && template.schemas[0]) {
+                template.schemas[0].forEach((field: any) => {
+                    if (field.type === 'multiVariableText') {
+                        // Use custom data for multiVariableText
+                        inputData[field.name] = customData[field.name as keyof typeof customData] || field.content || '';
+                    } else {
+                        // Use content from template for all other types
+                        inputData[field.name] = field.content || '';
+                    }
                 });
             }
-        
 
-        console.log("Viewer initialized successfully");
+            console.log('Input data:', inputData);
 
-    } catch (error) {
-        console.error("Error loading template:", error);
-    }
-}
+            viewer.current = new Viewer({
+                domContainer: viewerRef.current,
+                template,
+                inputs: [inputData],
+                plugins: getPlugins(),
+            });
 
-useEffect(() => {
-
-    testFetch();
-
-
-
-    return () => {
-        if (viewer.current) {
-            viewer.current.destroy();
+            console.log('Viewer initialized successfully');
+        } catch (error) {
+            console.error('Error initializing viewer:', error);
         }
     };
 
-}, [viewerRef]);
+    useEffect(() => {        
 
-useEffect(() => {
+        initViewer();
 
-
-    return () => {
-        // Cleanup
-        if (viewer.current) {
-            try {
-                (viewer.current as any).destroy?.();
-            } catch (e) {
-                console.warn("Error during cleanup:", e);
+        return () => {
+            if (viewer.current) {
+                viewer.current.destroy();
             }
-            viewer.current = null;
-        }
-    };
-}, [inputs]);
+        };
 
-return (
-    <div>
-        <div ref={viewerRef} style={{ height: "100vh" }} />
-    </div>
-)
+    }, [viewerRef]);
+
+    useEffect(() => {
+
+
+        return () => {
+            // Cleanup
+            if (viewer.current) {
+                try {
+                    (viewer.current as any).destroy?.();
+                } catch (e) {
+                    console.warn("Error during cleanup:", e);
+                }
+                viewer.current = null;
+            }
+        };
+    }, [inputs]);
+
+    return (
+        <div>
+            <div ref={viewerRef} style={{ height: "100vh" }} />
+        </div>
+    )
 }

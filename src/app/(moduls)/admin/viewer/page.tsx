@@ -12,7 +12,8 @@ export default function PDFViewerPage({ searchParams }: { searchParams: { level:
 
     // Custom data for the PDF fields
     const customData = {
-        field10: JSON.stringify({ nama: 'John Doe' }), // multiVariableText with variable as JSON string
+        // field10: JSON.stringify({ nama: 'John Doe' }),
+        // field99: JSON.stringify({ nama: 'John Doe' }),
     };
 
     useEffect(() => {
@@ -22,12 +23,6 @@ export default function PDFViewerPage({ searchParams }: { searchParams: { level:
                     console.error('Container ref not available');
                     return;
                 }
-
-                console.log('Container element:', containerRef.current);
-                console.log('Container dimensions:', {
-                    width: containerRef.current.offsetWidth,
-                    height: containerRef.current.offsetHeight,
-                });
 
                 const response = await fetch('/template/pdf/1765265101050-prodi.json');
                 const template = (await response.json()) as Template;
