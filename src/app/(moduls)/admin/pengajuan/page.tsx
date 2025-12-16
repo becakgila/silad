@@ -258,8 +258,10 @@ const table: {
               uploadView && (
                 <>
                   <PengajuanUpload
+                    
                     id={table.ajuan_id}
                     idLayanan={table.layanan.layanan_id}
+                    nama={table.mahasiswa.nama}                    
                     onSubmitFinish={(progress) => {
 
                       const progressText: string = (Object.keys(progressToNumber).find(k => progressToNumber[k] === (progress + 1)) as string)

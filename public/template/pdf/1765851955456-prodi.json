@@ -2,12 +2,12 @@
   "schemas": [
     [
       {
-        "name": "field3",
+        "name": "nama",
         "type": "text",
-        "content": "test format",
+        "content": "test",
         "position": {
-          "x": 63.24,
-          "y": 45.51
+          "x": 101.34,
+          "y": 38.63
         },
         "width": 45,
         "height": 10,
@@ -22,7 +22,9 @@
         "opacity": 1,
         "strikethrough": false,
         "underline": false,
-        "required": false
+        "required": false,
+        "readOnly": false,
+        "fontName": "Roboto"
       },
       {
         "name": "field4",
@@ -144,34 +146,6 @@
         "height": 40,
         "rotate": 0,
         "opacity": 1,
-        "required": false
-      },
-      {
-        "name": "field10",
-        "type": "multiVariableText",
-        "content": "{\"nama\":\"NAMA\"}",
-        "position": {
-          "x": 126.74,
-          "y": 63.49
-        },
-        "width": 50,
-        "height": 15,
-        "rotate": 0,
-        "alignment": "left",
-        "verticalAlignment": "top",
-        "fontSize": 13,
-        "lineHeight": 1,
-        "characterSpacing": 0,
-        "fontColor": "#000000",
-        "backgroundColor": "",
-        "opacity": 1,
-        "strikethrough": false,
-        "underline": false,
-        "readOnly": false,
-        "text": "{nama}",
-        "variables": [
-          "nama"
-        ],
         "required": false
       }
     ]

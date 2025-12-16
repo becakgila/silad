@@ -10,36 +10,15 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import Modul from "@/types/model/modul"
-import { FormEvent, FormEventHandler, useEffect, useRef, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 import Button from "@/components/ui/button/Button";
-
-
-import {
-    Table as TableUi,
-    TableCell,
-    TableHeader,
-    TableRow,
-    TableBody
-} from "@/components/ui/table";
-import Radio from "@/components/form/input/Radio"
-import { log, table } from "console"
-import dokumenType from "@/types/model/dokumen"
-import { CheckCheck, Eye, Paperclip, ScrollText } from "lucide-react"
-import Link from "next/link"
-import { buttonVariants } from "@/components/ui/button"
-import { toast } from "react-toastify"
-import TableFormField from "../TableFormField"
-import { Form } from "@/components/ui/form"
 import { useForm } from "react-hook-form"
-import z from "zod"
+import z, { set } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
-import ajuanStatusType from "@/types/model/ajuanStatus"
-import DesignerPage from "@/components/pdf-me/DesignerPage"
-import { numberToProgress, progressToNumber } from "@/variable/progressNumber"
+
+import { numberToProgress } from "@/variable/progressNumber"
 import ViewerPdfme from "@/components/pdf-me/ViewerPdfme"
+import { useSession } from "next-auth/react"
 
 interface PengajuanUploadProps<T = any> {
     IconButton: React.JSX.Element,
@@ -48,6 +27,8 @@ interface PengajuanUploadProps<T = any> {
     progress: number;
     title?: string;
     description?: string;
+    nama: string;
+    nim: string;
     onSubmitFinish?: (progress: number) => void;
 }
 
@@ -67,6 +48,7 @@ export default function PengajuanUpload({
     id,
     idLayanan,
     progress,
+    nama,
     onSubmitFinish = () => { },
     title = "Upload Pengajuan File",
     description = "Upload file yang di perlukan. klik icon upload sesuai dengan file yang ingin di upload!",
@@ -74,113 +56,98 @@ export default function PengajuanUpload({
 
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const [isLoading, setIsLoading] = useState<boolean>(false)
-    const [template, setTemplate] = useState<any>(null)    
-
-
-    const form = useForm<z.infer<any>>({
-        resolver: zodResolver(pengajuanFileFormSchema),
-        // defaultValues: { ...JSON.parse(JSON.stringify(data).replace(/\:null/gi, "\:\"\"")) },
-        defaultValues: {
-            layananFile: ""
-        },
-    })
-
-    // async function onSubmit(values: z.infer<typeof pengajuanFileFormSchema>) {
-
-    //     try {
-    //         setIsLoading(true)
-
-    //         const form = new FormData()
-
-    //         form.append("file", values.layananFile)
-    //         form.append("ajuan_id", id.toString())
-    //         form.append("progress", progress.toString())
-
-    //         const fetchData = await fetch('/api/ajuanStatus', {
-    //             method: "POST",
-    //             body: form
-    //         })
-
-    //         const fetchJson = await fetchData.json()
-
-    //         const data: ajuanStatusType = fetchJson.data
-
-    //         onSubmitFinish(data.progress)
-
-    //     } catch {
-
-    //     } finally {
-    //         setIsLoading(false)
-    //     }
-
-    // }
+    const [template, setTemplate] = useState<any>(null)
 
     async function getTemplate() {
-        try{
+        try {
             setIsLoading(true)
-            
+
             const level = numberToProgress[progress];
 
-           
             const req = await fetch(`/api/layananTemplate?template_name=${level}&layanan_id=${idLayanan}`);
 
             if (req.ok) {
 
                 const res = await req.json();
                 const data = res.data;
-                if (data.length !== 0) {
+                // console.log(data[0].template_url, "ini template layanan");
+                setTemplate(data[0].template_url);
 
-                    
-                    const fetchJson = await fetch(data[0].template_url)
-                    const dataTemplate = await fetchJson.json()                    
-                    setTemplate(dataTemplate)
-                                        
-                }
             }
-        }catch(error){
-            console.log(error);            
-        }finally{
+        } catch (error) {
+            console.log(error);
+        } finally {
             setIsLoading(false)
         }
 
     }
 
     useEffect(() => {
+        console.log("Template url:", template);
+    }, [template]);
+
+    useEffect(() => {
         if (!isOpen) {
-            form.reset();
+            // form.reset();
         } else {
             getTemplate()
         }
-    }, [isOpen, form])
+    }, [isOpen])
+
+    const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
+        try {
+            event.preventDefault();
+            setIsLoading(true);
+
+            const formData = new FormData(event.currentTarget);
+
+            const formValues = Object.fromEntries(formData.entries());
+
+            console.log(formValues, "onsubmit");
+
+        } finally {
+            setIsLoading(false);
+        }
+    }
 
     return (
         <Dialog open={isOpen} onOpenChange={setIsOpen} >
             <DialogTrigger asChild>
                 {IconButton}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[720px] sm:max-h-[480px] md:max-h-[720px] max-w-full max-h-full flex" >
+            <DialogContent >
+                <form onSubmit={(val) => {
 
-                <div className="gap-8 flex flex-col h-auto w-full" >                  
-                    <DialogHeader>
-                        <DialogTitle>{title}</DialogTitle>
-                        <DialogDescription>
-                            {description}
-                        </DialogDescription>
-                    </DialogHeader>
-                    <div className="grid gap-4 h-full overflow-auto">
-                        <ViewerPdfme template={template} />
+                    onSubmit(val);
+
+                }}>
+
+                    <div className=" max-w-full max-h-full">
+
+                        <div className="gap-8 flex flex-col h-auto w-full" >
+                            <DialogHeader>
+                                <DialogTitle>{title}</DialogTitle>
+                                <DialogDescription>
+                                    {description}
+                                </DialogDescription>
+                            </DialogHeader>
+                            <div className="grid gap-4 h-full  overflow-auto">
+                                <ViewerPdfme nama={nama} template={template} />
+                            </div>
+                            <DialogFooter>
+                                <DialogClose asChild>
+                                    <Button disabled={isLoading} variant="outline">Batal</Button>
+                                </DialogClose>
+                                {/* <Button type="submit" disabled={isLoading}>{isLoading ? "Loading..." : "Simpan Perubahan"}</Button> */}
+                                <Button type="submit" disabled={isLoading} >Upload</Button>
+                            </DialogFooter>
+
+                        </div>
                     </div>
-                    <DialogFooter>
-                        <DialogClose asChild>
-                            <Button disabled={isLoading} variant="outline">Batal</Button>
-                        </DialogClose>
-                        {/* <Button type="submit" disabled={isLoading}>{isLoading ? "Loading..." : "Simpan Perubahan"}</Button> */}
-                        <Button type="submit" disabled={isLoading} >Upload</Button>
-                    </DialogFooter>
-
-                </div>
 
 
+
+                </form>
             </DialogContent>
         </Dialog>
     )
