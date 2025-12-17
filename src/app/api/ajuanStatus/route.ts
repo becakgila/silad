@@ -16,11 +16,11 @@ export async function GET(request: NextRequest) {
 
         const serialized = data.map((data) => ({
             ...data,
-            user_id: data.user_id.toString(),            
-        }))        
-        
+            user_id: data.user_id.toString(),
+        }))
+
         return Response.json({ message: "berhasil mendapatkan ajuan status!!!", data: serialized }, {
-            status: 200,            
+            status: 200,
         });
     } catch (error) {
         console.error("Unable to connect to the database:", error);
@@ -35,70 +35,70 @@ export async function POST(req: NextRequest) {
 
     try {
         const form = await req.formData()
-    const file = form.get('file') as File;
-    const ajuan_id = form.get('ajuan_id');
-    const progress = form.get('progress') as string;
-    
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-        
-    const user_id : bigint = BigInt(token?.id as string) ;
+        const file = form.get('file') as File;
+        const ajuan_id = form.get('ajuan_id');
+        const progress = form.get('progress') as string;            
 
-    let savedFilename: string | null = null;
-    let savedRelativePath: string | null = null;
-    let detectedFileSize: number | null = null;
+        const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
 
-    if (file && typeof file.arrayBuffer === 'function') {
+        const user_id: bigint = BigInt(token?.id as string);
 
-        const pathSave = "uploads/ajuanStatus";
-        const uploadsDir = path.join(process.cwd(), 'public', ...pathSave.split("/"))
-        await fs.promises.mkdir(uploadsDir, { recursive: true })
+        let savedFilename: string | null = null;
+        let savedRelativePath: string | null = null;
+        let detectedFileSize: number | null = null;
 
-        const originalName = path.basename(file.name || 'uploaded')
-        const safeName = originalName.replace(/[^a-zA-Z0-9.\-_]/g, '_')
-        const filename = `${Date.now()}-${safeName}`
-        const filePath = path.join(uploadsDir, filename)
+        if (file && typeof file.arrayBuffer === 'function') {
 
-        const buffer = Buffer.from(await file.arrayBuffer())
-        await fs.promises.writeFile(filePath, buffer)
+            const pathSave = "uploads/ajuanStatus";
+            const uploadsDir = path.join(process.cwd(), 'public', ...pathSave.split("/"))
+            await fs.promises.mkdir(uploadsDir, { recursive: true })
 
-        savedFilename = filename
-        savedRelativePath = `/${pathSave}/${filename}`
-        detectedFileSize = buffer.length
-    }
+            const originalName = path.basename(file.name || 'uploaded')
+            const safeName = originalName.replace(/[^a-zA-Z0-9.\-_]/g, '_')
+            const filename = `${Date.now()}-${safeName}`
+            const filePath = path.join(uploadsDir, filename)
 
-    const createData: any = {
-        ajuan_id,
-        user_id,
-        progress: Number(progress),
-        
-    }
+            const buffer = Buffer.from(await file.arrayBuffer())
+            await fs.promises.writeFile(filePath, buffer)
 
-    if (savedRelativePath) createData.dok_url = savedRelativePath
+            savedFilename = filename
+            savedRelativePath = `/${pathSave}/${filename}`
+            detectedFileSize = buffer.length
+        }
 
-    const ajuan_status = await prisma.ajuan_status.create({
-        data: createData
-    })
+        const createData: any = {
+            ajuan_id,
+            user_id,
+            progress: Number(progress),
 
-    const serialized = {
-        ...ajuan_status,
-        user_id: user_id.toString(),        
-    }
+        }
 
-    console.log(serialized);     
+        if (savedRelativePath) createData.dok_url = savedRelativePath
 
-    return new Response(JSON.stringify({
-        data: serialized,
-        message: "POST ajuan status berhasil!!!"
-    }))
+        const ajuan_status = await prisma.ajuan_status.create({
+            data: createData
+        })
+
+        const serialized = {
+            ...ajuan_status,
+            user_id: user_id.toString(),
+        }
+
+        console.log(serialized);
+
+        return new Response(JSON.stringify({
+            data: serialized,
+            message: "POST ajuan status berhasil!!!"
+        }))
     } catch (error) {
 
         const err = error as Error
-        console.log(err.message);        
+        console.log(err.message);
 
         return NextResponse.json({
             message: "POST ajuan status gagal!!!",
-            data: err,        
-        }, {status: 500})
-        
+            data: err,
+        }, { status: 500 })
+
     }
 }

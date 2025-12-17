@@ -19,6 +19,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { numberToProgress } from "@/variable/progressNumber"
 import ViewerPdfme from "@/components/pdf-me/ViewerPdfme"
 import { useSession } from "next-auth/react"
+import { mahasiswa } from "@/generated/prisma";
+import mahasiswaType from "@/types/model/mahasiswa";
 
 interface PengajuanUploadProps<T = any> {
     IconButton: React.JSX.Element,
@@ -27,28 +29,16 @@ interface PengajuanUploadProps<T = any> {
     progress: number;
     title?: string;
     description?: string;
-    nama: string;
-    nim: string;
+    mahasiswa?: mahasiswaType;
     onSubmitFinish?: (progress: number) => void;
 }
-
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ACCEPTED_TYPES = ["application/pdf",];
-
-const pengajuanFileFormSchema = z.object({
-    layananFile: z.custom<File>()
-        .refine((file) => file, `File is require`)
-        .refine((file) => file?.size <= MAX_FILE_SIZE, `Max size is ${MAX_FILE_SIZE / (1024 * 1024)}MB.`)
-        .refine((file) => ACCEPTED_TYPES.includes(file?.type), "Only .pdf formats are supported.")
-})
-
 
 export default function PengajuanUpload({
     IconButton,
     id,
     idLayanan,
     progress,
-    nama,
+    mahasiswa,
     onSubmitFinish = () => { },
     title = "Upload Pengajuan File",
     description = "Upload file yang di perlukan. klik icon upload sesuai dengan file yang ingin di upload!",
@@ -101,9 +91,23 @@ export default function PengajuanUpload({
 
             const formData = new FormData(event.currentTarget);
 
-            const formValues = Object.fromEntries(formData.entries());
+            formData.append('ajuan_id', id.toString());
+            formData.append('progress', (progress).toString());
 
-            console.log(formValues, "onsubmit");
+            const res = await fetch('/api/ajuanStatus', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (res.ok) {
+
+                setIsOpen(false);
+                onSubmitFinish(progress);
+                console.log('File uploaded successfully');
+
+            } else {
+                console.error('Failed to upload file');
+            }
 
         } finally {
             setIsLoading(false);
@@ -132,7 +136,7 @@ export default function PengajuanUpload({
                                 </DialogDescription>
                             </DialogHeader>
                             <div className="grid gap-4 h-full  overflow-auto">
-                                <ViewerPdfme nama={nama} template={template} />
+                                <ViewerPdfme mahasiswa={mahasiswa} template={template} />
                             </div>
                             <DialogFooter>
                                 <DialogClose asChild>

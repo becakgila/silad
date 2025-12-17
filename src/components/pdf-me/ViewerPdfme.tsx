@@ -6,16 +6,19 @@ import { Template } from "@pdfme/common";
 import Button from "../ui/button/Button";
 import { generate } from '@pdfme/generator';
 
+import { mahasiswa } from "@/generated/prisma";
+import mahasiswaType from "@/types/model/mahasiswa";
+
 interface ViewerPdfmeProps {
     template: string;
     inputs?: Record<string, string>[];
-    nama:  string
+    mahasiswa?: mahasiswaType;
 }
 
 export default function ViewerPdfme({
     template,
     inputs,
-    nama
+    mahasiswa
     
 }: ViewerPdfmeProps) {
 
@@ -24,7 +27,8 @@ export default function ViewerPdfme({
     const inputRef = useRef<HTMLInputElement | null>(null);
 
     const customData = {
-        nama,
+        nama : mahasiswa?.nama,
+        nim : mahasiswa?.nim,
     };        
 
     const initViewer = async () => {
@@ -68,13 +72,15 @@ export default function ViewerPdfme({
                 plugins: getPlugins(),
             });
 
-            // Convert PDF buffer to base64
-            const binary = String.fromCharCode.apply(null, Array.from(pdf));
-            const base64 = btoa(binary);
+            // Create a File object from the PDF
+            const pdfBlob = new Blob([pdf], { type: 'application/pdf' });
+            const pdfFile = new File([pdfBlob], `${mahasiswa?.nim || 'document'}.pdf`, { type: 'application/pdf' });
             
-            // Store in hidden input
+            // Create a DataTransfer object and set it to the file input
             if (inputRef.current) {
-                inputRef.current.value = base64;
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(pdfFile);
+                inputRef.current.files = dataTransfer.files;
             }
 
             console.log('Viewer initialized successfully');
@@ -99,7 +105,7 @@ export default function ViewerPdfme({
     return (
         <div>
             <div ref={viewerRef} style={{ height: "480px" }} />
-            <input type="hidden" name="pdf" ref={inputRef} />
+            <input type="file" className="hidden" name="file" ref={inputRef} />
         </div>
     )
 }

@@ -28,6 +28,7 @@ import { toast } from "react-toastify";
 import {progressToNumber} from "@/variable/progressNumber";
 import usePengajuanStore from "@/store/usePengajuanStore";
 import Badge from "@/components/ui/badge/Badge";
+import { mahasiswa } from "@/generated/prisma";
 
 
 const api = "/api/pengajuan";
@@ -258,10 +259,9 @@ const table: {
               uploadView && (
                 <>
                   <PengajuanUpload
-                    
+                    mahasiswa={table.mahasiswa}
                     id={table.ajuan_id}
-                    idLayanan={table.layanan.layanan_id}
-                    nama={table.mahasiswa.nama}                    
+                    idLayanan={table.layanan.layanan_id}                                       
                     onSubmitFinish={(progress) => {
 
                       const progressText: string = (Object.keys(progressToNumber).find(k => progressToNumber[k] === (progress + 1)) as string)

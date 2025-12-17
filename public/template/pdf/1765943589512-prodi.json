@@ -50,9 +50,9 @@
         "required": false
       },
       {
-        "name": "field5",
+        "name": "nim",
         "type": "text",
-        "content": "Type Something...",
+        "content": "nim",
         "position": {
           "x": 131.5,
           "y": 95.51
@@ -70,7 +70,9 @@
         "opacity": 1,
         "strikethrough": false,
         "underline": false,
-        "required": false
+        "required": false,
+        "readOnly": false,
+        "fontName": "Roboto"
       },
       {
         "name": "field6",
@@ -146,6 +148,29 @@
         "height": 40,
         "rotate": 0,
         "opacity": 1,
+        "required": false
+      },
+      {
+        "name": "field10",
+        "type": "text",
+        "content": "Type Something...",
+        "position": {
+          "x": 0,
+          "y": 0
+        },
+        "width": 45,
+        "height": 10,
+        "rotate": 0,
+        "alignment": "left",
+        "verticalAlignment": "top",
+        "fontSize": 13,
+        "lineHeight": 1,
+        "characterSpacing": 0,
+        "fontColor": "#000000",
+        "backgroundColor": "",
+        "opacity": 1,
+        "strikethrough": false,
+        "underline": false,
         "required": false
       }
     ]

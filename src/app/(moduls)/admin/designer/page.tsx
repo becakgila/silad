@@ -10,6 +10,7 @@ import { saveTemplateToFile } from "@/actions/saveTemplate";
 import { useRouter } from "next/navigation";
 import path from 'path'
 import fs from "fs";
+import { toast } from "react-toastify";
 
 
 export default function PDFDesignerPage({ searchParams }: { searchParams: { level: string, layanan_id: string } }) {
@@ -88,15 +89,20 @@ export default function PDFDesignerPage({ searchParams }: { searchParams: { leve
                 }
             });
 
-            if (req.ok) {
-                console.log(await req.json());
+            console.log(req?.ok);
+            
+            
+            if (req?.ok) {
+                console.log('Template saved successfully');
+                toast("Template saved successfully!");   
+                // toast.info("Returning to previous page...");             
             }
 
         } catch (error) {
             console.error("Error saving template:", error);
         }
 
-        console.log("Current Template:", currentTemplate);
+        // console.log("Current Template:", currentTemplate);
     }
 
     return (
