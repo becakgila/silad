@@ -61,6 +61,15 @@ const table: {
       )
     },
     {
+      name: "FAKULTAS",
+      tableName: "fakultas_id",
+      component: ({ table }) => (
+        <TableCell className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+          {table.prodi?.fakultas?.fakultas_name || '-'}
+        </TableCell>
+      )
+    },
+    {
       name: "ANGKATAN",
       tableName: "angkatan",
       component: ({ table }) => (
