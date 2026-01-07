@@ -64,8 +64,7 @@ export default function DefaultInputs() {
 
         <div>
           <DatePicker
-            id="date-picker"
-            label="Date Picker Input"
+            id="date-picker"            
             placeholder="Select a date"
             onChange={(dates, currentDateString) => {
               // Handle your logic

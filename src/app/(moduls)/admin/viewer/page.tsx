@@ -4,11 +4,15 @@ import { Viewer } from "@pdfme/ui";
 import { type Template } from '@pdfme/common';
 import { useEffect, useRef } from "react";
 import { getPlugins } from "@/helper/pdfme/plugin";
+import { useSearchParams } from "next/navigation";
 
 
-export default function PDFViewerPage({ searchParams }: { searchParams: { level: string, layanan_id: string } }) {
+export default function PDFViewerPage() {
     const containerRef = useRef<HTMLDivElement>(null);
     const viewerRef = useRef<Viewer | null>(null);
+    const searchParams = useSearchParams();
+    const level = searchParams.get('level');
+    const layanan_id = searchParams.get('layanan_id');
 
     // Custom data for the PDF fields
     const customData = {
@@ -72,7 +76,7 @@ export default function PDFViewerPage({ searchParams }: { searchParams: { level:
                 viewerRef.current.destroy();
             }
         };
-    }, [searchParams]);
+    }, [level, layanan_id]);
 
     return (
         <div style={{ width: '100%', height: '100vh', overflow: 'hidden' }}>

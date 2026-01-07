@@ -1,4 +1,4 @@
-
+"use client"
 import React from "react";
 import TablesSearch from "../tables/TablesSearch";
 import TablesPagination from "../tables/TablesPagination";
@@ -28,9 +28,10 @@ const useTablesPaginationState = () => {
 
 interface ComponentCardProps {
   children: React.ReactNode;
+  title?: string; // Title of the card
   className?: string; // Additional custom classes for styling
   desc?: string; // Description text
-  api: string; // Description text
+  api?: string; // Description text
   add?: {
     api: string,
     formSchema: z.ZodSchema<any>;

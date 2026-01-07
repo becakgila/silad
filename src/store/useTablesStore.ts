@@ -1,3 +1,4 @@
+import 'use-sync-external-store/shim';
 import { create } from "zustand";
 
 interface tableState<T = any> {

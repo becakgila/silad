@@ -118,7 +118,8 @@ interface AppSidebarProps {
 const AppSidebar: React.FC<AppSidebarProps> = ({ example = false }) => {
   const { isExpanded, isMobileOpen, isHovered, setIsHovered } = useSidebar();
   const pathname = usePathname();
-  const { data: session } = useSession();
+  const sessionHook = useSession();
+  const session = sessionHook?.data;
   
   
   const [navItemsState, setNavItemsState] = useState<NavItem[]>(example ? navItems : []);

@@ -1,3 +1,4 @@
+import 'use-sync-external-store/shim';
 import { Outfit } from 'next/font/google';
 import './globals.css';
 

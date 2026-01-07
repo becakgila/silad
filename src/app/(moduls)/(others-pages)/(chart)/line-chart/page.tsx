@@ -14,9 +14,9 @@ export default function LineChart() {
     <div>
       <PageBreadcrumb pageTitle="Line Chart" />
       <div className="space-y-6">
-        <ComponentCard title="Line Chart 1">
+        {/* <ComponentCard title="Line Chart 1">
           <LineChartOne />
-        </ComponentCard>
+        </ComponentCard> */}
       </div>
     </div>
   );

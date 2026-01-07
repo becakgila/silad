@@ -54,7 +54,7 @@ export async function uploadFile(files: File | null) {
     "KECAMATAN"
   ];    // Hanya ambil kolom yang sesuai header
   const filtered = rows.map((row: any) => {
-    let obj: any = {};
+    const obj: any = {};
     allowedHeaders.forEach((h) => {
       obj[h] = row[h] ?? null; // aman jika header tidak ditemukan
     });

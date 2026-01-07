@@ -9,11 +9,7 @@ export async function GET(request: NextRequest){
 
     const layanan_id = searchParams.get('layanan_id') || "";
 
-    const whereClause = layanan_id ? { layanan: { layanan_id } } : {}
-
-
-  
-
+    const whereClause = layanan_id ? { layanan: { layanan_id } } : {}  
 
     const data = await prisma.dokumen.findMany({
         where: whereClause,

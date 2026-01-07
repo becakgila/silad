@@ -1,9 +1,10 @@
 // lib/auth.ts
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from '@/lib/prisma'
 import bcrypt from "bcryptjs";
+import GoogleProvider from "next-auth/providers/google";
+import { log } from "node:console";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -14,8 +15,8 @@ export const authOptions: NextAuthOptions = {
         email: { label: "email", type: "text" },
         password: { label: "password", type: "password" },
       },
-      async authorize(credentials) {                
-        
+      async authorize(credentials) {
+
         try {
           if (!credentials?.email || !credentials?.password) {
             throw new Error("Please enter an email and password");
@@ -50,11 +51,11 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         nim: { label: "nim", type: "text" },
         password: { label: "password", type: "password" },
-      },
+      },      
       async authorize(credentials) {
-        
-        try {      
-          
+
+        try {
+
           if (!credentials?.nim || !credentials?.password) {
             throw new Error("Please enter an nim and password");
           }
@@ -83,6 +84,18 @@ export const authOptions: NextAuthOptions = {
         }
       },
     }),
+    GoogleProvider({
+      id: "google",
+      name: "google",
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,            
+    }),
+    GoogleProvider({
+      id: "googleMhs",
+      name: "googleMhs",
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,            
+    }),
   ],
   pages: {
     signIn: '/',
@@ -94,10 +107,71 @@ export const authOptions: NextAuthOptions = {
     maxAge: 24 * 60 * 60, // 30 days
   },
   callbacks: {
+     async signIn({ account, profile, user }) {
+      if (account?.provider === 'google') {
+        try {          
+                    
+          // Check if the user's email from Google exists in your database
+          const userInDB = await prisma.users.findUnique({
+            where: { email: profile?.email },
+          });                                       
+
+          if (userInDB) {
+            
+            user.level = userInDB.level;
+            user.id = String(userInDB.id);
+            // user.nim= user.nim,
+            user.name= userInDB.name;
+            user.email= userInDB.email;
+
+            return true; 
+          } else {
+            // User does not exist, return false or redirect to an unauthorized page
+            // You can return '/unauthorized' to redirect to a custom error page
+            return false; 
+          }
+        } catch (error) {
+          console.error("Database error during sign-in:", error);
+          return false; // Handle database connection errors gracefully
+        }
+      }
+      if (account?.provider === 'googleMhs') {
+        try {          
+                    
+          // Check if the user's email from Google exists in your database
+          const userInDB = await prisma.mahasiswa.findUnique({
+            where: { email: profile?.email },
+          });                                       
+
+          if (userInDB) {
+            user.level = "mahasiswa";
+            user.id = String(userInDB.nim);
+            user.nim = userInDB.nim;
+            user.name = userInDB.nama;
+            user.email = userInDB.email;
+
+            return true; 
+          } else {
+            // User does not exist, return false or redirect to an unauthorized page
+            // You can return '/unauthorized' to redirect to a custom error page
+            return false; 
+          }
+        } catch (error) {
+          console.error("Database error during sign-in:", error);
+          return false; // Handle database connection errors gracefully
+        }
+      }
+      // For other providers or credentials, return true if you want to allow them
+      return true;
+    },
     async jwt({ token, user }) {
+
+      console.log(user, 'jwt');
+      
       if (user) {
         token.level = user.level;
         token.id = user.id;
+        token.nim = (user as any).nim ?? token.nim;
       }
       return token;
     },
@@ -105,6 +179,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         (session.user as any).level = token.level;
         (session.user as any).id = token.id;
+        (session.user as any).nim = token.nim;
       }
       return session;
     }

@@ -22,7 +22,7 @@ const formSchema = z.object({
 
   modul_name: z.string().nonempty({ message: "Wajib Diisi!!!" }),
   modul_url: z.string().nonempty({ message: "Wajib Diisi!!!" }),
-  modul_urut: z.string().refine(v => { let n = Number(v); return !Number.isNaN(n) }, { message: "Bukan angka!!!" }).refine(v => { let n = Number(v); return n > 0 }, { message: "Harus lebih dari 0!!!" }),
+  modul_urut: z.string().refine(v => { const n = Number(v); return !Number.isNaN(n) }, { message: "Bukan angka!!!" }).refine(v => { const n = Number(v); return n > 0 }, { message: "Harus lebih dari 0!!!" }),
   modul_simbol: z.string().nonempty({ message: "Wajib Diisi!!!" }),
   modul_akses: z.string().nonempty({ message: "Wajib Diisi!!!" }),
 })
