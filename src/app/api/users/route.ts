@@ -48,23 +48,6 @@ export async function GET(request: NextRequest) {
             contains: search,
           }
         },
-      //   {
-      //     phone: {
-      //       contains: search,
-      //     }
-      //   },
-      //   {
-      //     level: {
-      //       contains: search,
-      //     }
-      //   },
-      //   // {
-      //   //   modul_akses: {
-      //   //     in: Object.values(moduls_modul_akses).filter(s =>
-      //   //       s.toLowerCase().includes(search)
-      //   //     ),
-      //   //   }
-      //   // },
 
       ]
     }    

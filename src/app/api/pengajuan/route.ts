@@ -142,15 +142,12 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       }
     })
 
-
     if (check) {
       return new Response(JSON.stringify({ message: "prodi sudah ada di database" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
-
-
 
     const prodiId = body.prodi_id || generateProdiId();
 
@@ -165,8 +162,6 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
       ...addData,
       fakultas_id: addData.fakultas_id.toString()
     };
-
-
 
     return new Response(JSON.stringify({
       message: "Data added successfully",

@@ -1,9 +1,27 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Badge from "../ui/badge/Badge";
 import { ArrowDownIcon, ArrowUpIcon, BoxIconLine, GroupIcon } from "@/icons";
 
 export const EcommerceMetrics = () => {
+  const [usersCount, setUsersCount] = useState(0);
+  const [ajuanCount, setAjuanCount] = useState(0);
+
+  useEffect(() => {
+    fetch('/api/users/count', { cache: 'no-store' })
+      .then(res => res.json())
+      .then(data => setUsersCount(data.count))
+      .catch(() => setUsersCount(0));
+    fetch('/api/pengajuan/count', { cache: 'no-store' })
+      .then(res => res.json())
+      .then(data =>  {
+        
+        console.log(data);
+        
+        setAjuanCount(data.count)})
+      .catch(() => setAjuanCount(0));
+  }, []);
+
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-6">
       {/* <!-- Metric Item Start --> */}
@@ -15,16 +33,12 @@ export const EcommerceMetrics = () => {
         <div className="flex items-end justify-between mt-5">
           <div>
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              Customers
+              Users
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              3,782
+              {usersCount}
             </h4>
-          </div>
-          <Badge color="success">
-            <ArrowUpIcon />
-            11.01%
-          </Badge>
+          </div>          
         </div>
       </div>
       {/* <!-- Metric Item End --> */}
@@ -37,17 +51,12 @@ export const EcommerceMetrics = () => {
         <div className="flex items-end justify-between mt-5">
           <div>
             <span className="text-sm text-gray-500 dark:text-gray-400">
-              Orders
+              Ajuan
             </span>
             <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              5,359
+              {ajuanCount}
             </h4>
-          </div>
-
-          <Badge color="error">
-            <ArrowDownIcon className="text-error-500" />
-            9.05%
-          </Badge>
+          </div>          
         </div>
       </div>
       {/* <!-- Metric Item End --> */}
